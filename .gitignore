@@ -1,0 +1,11 @@
+/_build
+/deps
+/doc
+erl_crash.dump
+*.ez
+mix.lock
+.DS_Store
+.hex
+.mix
+.bash_history
+.rediscli_history
