@@ -4,7 +4,6 @@ FinTex
 [![Build Status](https://travis-ci.org/my-flow/fintex.svg?branch=master)](https://travis-ci.org/my-flow/fintex)
 [![Coverage Status](https://coveralls.io/repos/my-flow/fintex/badge.svg?branch=master)](https://coveralls.io/r/my-flow/fintex?branch=master)
 [![Hex.pm](https://img.shields.io/hexpm/v/fintex.svg)](https://hex.pm/packages/fintex)
-[![Inline docs](http://inch-ci.org/github/my-flow/fintex.svg)](http://inch-ci.org/github/my-flow/fintex)
 
 An Elixir-based client library for **HBCI 2.2** and **FinTS 3.0**.
 
