@@ -17,6 +17,8 @@ Include a dependency in your `mix.exs`:
 ```elixir
 deps: [
   {:fintex, "~> 0.0.1"}
+  {:ibrowse, tag: "v4.1.1", github: "cmullaparthi/ibrowse"},
+  {:xml_builder, commit: "84c310903af9b80fc54829c88d2c4bc898a65233", github: "joshnuss/xml_builder"}
 ]
 ```
 
