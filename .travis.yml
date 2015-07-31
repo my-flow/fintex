@@ -3,8 +3,6 @@ elixir:
     - 1.0.5
 otp_release:
     - 17.5
-script:
-  - mix test
 after_success:
   - mix do compile, coveralls.travis
 after_script:
