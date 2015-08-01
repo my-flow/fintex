@@ -13,6 +13,20 @@ defmodule FinTex.Model.Transaction do
     * `booking_text`    - Booking text. This field might be empty if the transaction has no booking text
   """
 
+  use Timex
+
+  @type t :: %__MODULE__{
+    name: binary,
+    account_number: binary,
+    bank_code: binary,
+    amount: %Decimal{},
+    booking_date: %DateTime{},
+    value_date: %DateTime{},
+    purpose: binary,
+    code: non_neg_integer,
+    booking_text: binary
+  }
+
   defstruct [
     :name,
     :account_number,
@@ -24,8 +38,6 @@ defmodule FinTex.Model.Transaction do
     :code,
     :booking_text
   ]
-
-  @type t :: %__MODULE__{}
 
   @doc false
   def from_statement(%MT940.StatementLineBundle{

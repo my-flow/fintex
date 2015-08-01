@@ -4,6 +4,7 @@ defmodule FinTex.Parser.Serializer do
   alias FinTex.Model.Dialog
   alias FinTex.Command.AbstractCommand
   alias FinTex.Parser.Lexer
+  alias FinTex.Parser.TypeConverter
   alias FinTex.Segment.HNVSD
   alias FinTex.Segment.HNVSK
 
@@ -13,20 +14,14 @@ defmodule FinTex.Parser.Serializer do
 
   def serialize(segments, d = %Dialog{}) do
     segments = segments
-      |> escape
-      |> Stream.with_index
-      |> Stream.map(fn {[[h, _ | t] | tail], index} -> [[h |> to_string |> String.upcase, index + 1 | t] | tail] end)
-
-
-    [[["HNHBK" | t1], _ | t2] | tail] = segments |> Enum.to_list
-    segments = [[["HNHBK" | t1], "$SIZE" | t2] | tail]
+    |> escape
+    |> Stream.with_index
+    |> Stream.map(fn {[[h, _ | t] | tail], index} -> [[h |> to_string |> String.upcase, index + 1 | t] | tail] end)
 
     segments = cond do
       d |> Dialog.anonymous? -> segments # anonymous access is not encrypted
       true                   -> segments |> encrypt(d)
     end
-
-    segments |> inspect(binaries: :as_strings, pretty: true, limit: :infinity) |> debug
 
     string = segments |> Lexer.join_segments
 
@@ -74,8 +69,8 @@ defmodule FinTex.Parser.Serializer do
     [hnhbk | tail] = segments |> Enum.to_list
     [
       hnhbk,
-      %HNVSK{} |> create(d),
-      %HNVSD{tail: tail |> Stream.drop(-1)} |> create(d),
+      %HNVSK{}                              |> create(d) |> TypeConverter.type_to_string,
+      %HNVSD{tail: tail |> Stream.drop(-1)} |> create(d) |> TypeConverter.type_to_string,
       tail |> Enum.at(-1)
     ]
   end

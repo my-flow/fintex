@@ -8,13 +8,13 @@ defmodule FinTex.Model.Response do
 
   def new(segments) do
     index_by_segment_names = segments
-    |> Enum.group_by(fn s -> s |> Enum.at(0, []) |> Enum.at(0) end)
+    |> Enum.group_by(fn s -> s.segment |> Enum.at(0, []) |> Enum.at(0) end)
     |> Stream.map(fn {k, v} -> {k, v |> Enum.sort(&sort_segments/2)} end)
     |> Enum.into(HashDict.new)
 
     index_by_reference = segments
-    |> Stream.filter(fn s -> s |> Enum.at(0, []) |> Enum.count == 4 end)
-    |> Enum.group_by(fn s -> s |> Enum.at(0, []) |> Enum.at(3) end)
+    |> Stream.filter(fn s -> s.segment |> Enum.at(0, []) |> Enum.count == 4 end)
+    |> Enum.group_by(fn s -> s.segment |> Enum.at(0, []) |> Enum.at(3) end)
     |> Enum.into(HashDict.new)
 
     %__MODULE__{
@@ -24,7 +24,7 @@ defmodule FinTex.Model.Response do
   end
 
 
-  def sort_segments [[_, pos1 | _] | _], [[_, pos2 | _] | _] do
+  def sort_segments %{segment: [[_, pos1 | _] | _]}, %{segment: [[_, pos2 | _] | _]} do
     pos1 <= pos2
   end
 end
@@ -33,11 +33,11 @@ end
 defimpl Access, for: FinTex.Model.Response do
 
   def get(%{index_by_segment_names: index_by_segment_names}, key) when is_atom(key) do
-    index_by_segment_names |> Access.get(key |> to_string) || []
+    (index_by_segment_names |> Access.get(key |> to_string) || []) |> Stream.map(fn s -> s.segment end)
   end
 
   def get(%{index_by_reference: index_by_reference}, ref) when is_integer(ref) and ref >= 0 do
-    index_by_reference |> Access.get(ref ) || []
+    (index_by_reference |> Access.get(ref ) || []) |> Stream.map(fn s -> s.segment end)
   end
 
   def get(_dict, key) do

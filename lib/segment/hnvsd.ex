@@ -3,13 +3,20 @@ defmodule FinTex.Segment.HNVSD do
 
   alias FinTex.Parser.Lexer
 
-  defstruct [:tail]
+  defstruct [:tail, segment: nil]
 
-  def create(%__MODULE__{tail: tail}, _) do
-    [
-      ["HNVSD", 999, 1],
-      tail |> Lexer.join_segments |> Lexer.encode_binary
-    ]
+  def new(s = %__MODULE__{tail: tail}, _) do
+    %__MODULE__{ s |
+      segment:
+        [
+          ["HNVSD", 999, 1],
+          tail |> Lexer.join_segments |> Lexer.encode_binary
+        ]
+    }
   end
+end
 
+
+defimpl Inspect, for: FinTex.Segment.HNVSD do
+  use FinTex.Helper.Inspect
 end

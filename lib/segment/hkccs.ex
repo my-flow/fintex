@@ -16,9 +16,9 @@ defmodule FinTex.Segment.HKCCS do
   use AbstractCommand
   use Timex
 
-  defstruct [:payment]
+  defstruct [:payment, segment: nil]
 
-  def create(
+  def new(
     payment = %__MODULE__{
       payment: %Payment{
         sender_account: %Account{
@@ -32,24 +32,35 @@ defmodule FinTex.Segment.HKCCS do
     ktv = [sender_iban, sender_bic]
 
 
-    sepa_descriptor_urn = bpd
-    |> Dict.get(control_structure_to_bpd("HKSPA"))
+    available_sepa_descriptor_urns = bpd
+    |> Dict.get("HKSPA" |> control_structure_to_bpd)
     |> Enum.at(0)
     |> Enum.at(-1)
     |> Enum.at(-1)
-    |> Enum.find(fn urn -> @supported_sepa_descriptor_urns |> Enum.any?(fn s -> String.contains?(s, urn) end) end)
+    |> Enum.map(fn urn -> urn |> String.split(":") |> Enum.at(-1) end)
+
+    sepa_descriptor_urn = @supported_sepa_descriptor_urns
+    |> Enum.find(fn urn -> available_sepa_descriptor_urns |> Enum.any?(fn s -> String.contains?(urn, s) end) end)
+
+    unless sepa_descriptor_urn do
+      raise ArgumentError,
+        "could not find any supported descriptor URN: #{inspect available_sepa_descriptor_urns}"
+    end
 
     sepa_descriptor = ~r/\.xsd$/
     |> Regex.replace(sepa_descriptor_urn, "")
 
     sepa_pain_message = sepa_pain_message(sepa_descriptor, payment) |> Lexer.encode_binary
 
-    [
-      ["HKCCS", "?", 1],
-      ktv,
-      sepa_descriptor,
-      sepa_pain_message
-    ]
+    %__MODULE__{
+      segment:
+        [
+          ["HKCCS", "?", 1],
+          ktv,
+          sepa_descriptor,
+          sepa_pain_message
+        ]
+    }
   end
 
 
@@ -89,7 +100,7 @@ defmodule FinTex.Segment.HKCCS do
             NbOfTxs: 1,
             CtrlSum: amount,
             InitgPty: [
-              Nm: sender_owner || ""
+              Nm: (sender_owner || "") |> Lexer.to_latin1
             ]
           ],
           PmtInf: [
@@ -104,7 +115,7 @@ defmodule FinTex.Segment.HKCCS do
             ],
             ReqdExctnDt: "1999-01-01",
             Dbtr: [
-              Nm: sender_owner || ""
+              Nm: (sender_owner || "") |> Lexer.to_latin1
             ],
             DbtrAcct: [
               Id: [
@@ -131,7 +142,7 @@ defmodule FinTex.Segment.HKCCS do
                 ]
               ],
               Cdtr: [
-                Nm: receiver_owner || ""
+                Nm: (receiver_owner || "") |> Lexer.to_latin1
               ],
               CdtrAcct: [
                 Id: [
@@ -139,7 +150,7 @@ defmodule FinTex.Segment.HKCCS do
                 ]
               ],
               RmtInf: [
-                Ustrd: purpose || ""
+                Ustrd: (purpose || "") |> Lexer.to_latin1
               ]
             ]
           ]
@@ -155,4 +166,9 @@ defmodule FinTex.Segment.HKCCS do
     ~r/^(.*:)(pain.*)$/
     |> Regex.replace(schema, "\\1\\2 \\2.xsd", global: false)
   end
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HKCCS do
+  use FinTex.Helper.Inspect
 end

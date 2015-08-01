@@ -13,9 +13,6 @@ defmodule FinTex.Command.FinPing do
 
 
   def ping(bank, options) do
-    IO.puts "ping with #{bank.blz}"
-    warn "Starting anonymous dialog with #{bank.blz}"
-
     seq = Sequencer.new(bank)
 
     request_segments = [
@@ -36,7 +33,5 @@ defmodule FinTex.Command.FinPing do
     ]
 
     {:ok} = seq |> Sequencer.call_http(request_segments, ignore_response: true)
-
-    warn "Finishing anonymous dialog with #{bank.blz}"
   end
 end

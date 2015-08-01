@@ -51,7 +51,8 @@ defmodule FinTex.Command.GetAccountBalance do
   end
 
 
-  defp to_date(date, time) when is_binary(date) and is_binary(time) and byte_size(date) == 8 and byte_size(time) == 6 do
+  defp to_date(date, time)
+  when is_binary(date) and is_binary(time) and byte_size(date) == 8 and byte_size(time) == 6 do
     date = Regex.run(~r"(\d{4})(\d{2})(\d{2})", date, capture: :all_but_first)
     time = Regex.run(~r"(\d{2})(\d{2})(\d{2})", time, capture: :all_but_first)
 

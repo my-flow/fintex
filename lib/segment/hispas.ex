@@ -1,38 +1,50 @@
 defmodule FinTex.Segment.HISPAS do
   @moduledoc false
 
-  def string_to_type(segment = [["HISPAS", _, 1, _] | _]) do
-    [
-      segment |> Enum.at(0),
-      segment |> Enum.at(1),
-      segment |> Enum.at(2),
-      segment |> Enum.at(3),
-      [
-        segment |> Enum.at(4) |> Enum.at(0),
-        segment |> Enum.at(4) |> Enum.at(1),
-        segment |> Enum.at(4) |> Enum.at(2),
+  defstruct [segment: nil]
 
-        segment |> Enum.at(4) |> Enum.drop(3)
-      ]
-    ]
+  def new(segment = [["HISPAS", _, 1, _] | _]) do
+    %__MODULE__{
+      segment:
+        [
+          segment |> Enum.at(0),
+          segment |> Enum.at(1),
+          segment |> Enum.at(2),
+          segment |> Enum.at(3),
+          [
+            segment |> Enum.at(4) |> Enum.at(0),
+            segment |> Enum.at(4) |> Enum.at(1),
+            segment |> Enum.at(4) |> Enum.at(2),
+
+            segment |> Enum.at(4) |> Enum.drop(3)
+          ]
+        ]
+    }
   end
 
 
-  def string_to_type(segment = [["HISPAS", _, 2, _] | _]) do
-    [
-      segment |> Enum.at(0),
-      segment |> Enum.at(1),
-      segment |> Enum.at(2),
-      segment |> Enum.at(3),
-      [
-        segment |> Enum.at(4) |> Enum.at(0),
-        segment |> Enum.at(4) |> Enum.at(1),
-        segment |> Enum.at(4) |> Enum.at(2),
-        segment |> Enum.at(4) |> Enum.at(3),
+  def new(segment = [["HISPAS", _, 2, _] | _]) do
+    %__MODULE__{
+      segment:
+        [
+          segment |> Enum.at(0),
+          segment |> Enum.at(1),
+          segment |> Enum.at(2),
+          segment |> Enum.at(3),
+          [
+            segment |> Enum.at(4) |> Enum.at(0),
+            segment |> Enum.at(4) |> Enum.at(1),
+            segment |> Enum.at(4) |> Enum.at(2),
+            segment |> Enum.at(4) |> Enum.at(3),
 
-        segment |> Enum.at(4) |> Enum.drop(4)
-      ]
-    ]
+            segment |> Enum.at(4) |> Enum.drop(4)
+          ]
+        ]
+    }
   end
+end
 
+
+defimpl Inspect, for: FinTex.Segment.HISPAS do
+  use FinTex.Helper.Inspect
 end

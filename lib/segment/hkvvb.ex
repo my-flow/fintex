@@ -3,10 +3,10 @@ defmodule FinTex.Segment.HKVVB do
 
   alias FinTex.Model.Dialog
 
-  defstruct []
+  defstruct [segment: nil]
 
-  def create(
-    _,
+  def new(
+    s,
     %Dialog{
       :bank               => bank,
       :user_agent_name    => user_agent_name,
@@ -18,15 +18,21 @@ defmodule FinTex.Segment.HKVVB do
       _     -> 2
     end
 
-    [
-      ["HKVVB", "?", v],
-      0,
-      0,
-      1,
-      user_agent_name,
-      user_agent_version
-    ]
-
+    %__MODULE__{ s |
+      segment:
+        [
+          ["HKVVB", "?", v],
+          0,
+          0,
+          1,
+          user_agent_name,
+          user_agent_version
+        ]
+    }
   end
-
 end
+
+
+# defimpl Inspect, for: FinTex.Segment.HKVVB do
+#   use FinTex.Helper.Inspect
+# end

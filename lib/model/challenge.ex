@@ -9,6 +9,15 @@ defmodule FinTex.Model.Challenge do
     * `medium`  - TAN medium
   """
 
+  @type t :: %__MODULE__{
+    title: binary,
+    label: binary,
+    format: atom,
+    data: bitstring,
+    medium: binary,
+    ref: binary
+  }
+
   defstruct [
     :title,
     :label,
@@ -17,7 +26,5 @@ defmodule FinTex.Model.Challenge do
     :medium,
     :ref
   ]
-
-  @type t :: %__MODULE__{}
 
 end

@@ -3,13 +3,14 @@ defmodule FinTex.Segment.HKKAZ do
 
   alias FinTex.Model.Account
   alias FinTex.Model.Dialog
-  alias FinTex.Segment.Segment
+  alias FinTex.Helper.Segment
 
-  defstruct [:account, :start_point]
+  defstruct [:account, :from, :to, :start_point, segment: nil]
 
   import Segment
+  use Timex
 
-  def create(
+  def new(
     %__MODULE__{
       account: %Account{
         :iban           => iban,
@@ -18,6 +19,8 @@ defmodule FinTex.Segment.HKKAZ do
         :account_number => account_number,
         :subaccount_id  => subaccount_id
       },
+      from: from,
+      to: to,
       start_point: start_point
     },
     d = %Dialog{
@@ -29,18 +32,32 @@ defmodule FinTex.Segment.HKKAZ do
     ktv = case v do
       6 when iban != nil and bic != nil -> [iban, bic]
       7 when iban != nil and bic != nil -> [iban, bic]
-      _                                   -> [account_number, subaccount_id, country_code, blz]
+      _                                 -> [account_number, subaccount_id, country_code, blz]
     end
 
-    [
-    	["HKKAZ", "?", v],
-      ktv,
-      "N",
-      "", # TODO from
-      "", # TODO to
-      "", # TODO max results
-      start_point
-    ]
+    %__MODULE__{
+      segment:
+        [
+        	["HKKAZ", "?", v],
+          ktv,
+          "N",
+          case from do
+            nil -> ""
+            _   -> from |> DateFormat.format!("%Y%m%d", :strftime)
+          end,
+          case to do
+            nil -> ""
+            _   -> to |> DateFormat.format!("%Y%m%d", :strftime)
+          end,
+          "",
+          start_point
+        ]
+    }
   end
 
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HKKAZ do
+  use FinTex.Helper.Inspect
 end

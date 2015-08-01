@@ -2,17 +2,25 @@ defmodule FinTex.Segment.HKSPA do
   @moduledoc false
 
   alias FinTex.Model.Dialog
-  alias FinTex.Segment.Segment
+  alias FinTex.Helper.Segment
 
-  defstruct []
+  defstruct [segment: nil]
 
   import Segment
 
-  def create(_, d = %Dialog{}) do
+  def new(_, d = %Dialog{}) do
     v = max_version(d, __MODULE__)
-    [
-      ["HKSPA", "?", v]
-    ]
+    %__MODULE__{
+      segment:
+        [
+          ["HKSPA", "?", v]
+        ]
+    }
   end
 
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HKSPA do
+  use FinTex.Helper.Inspect
 end

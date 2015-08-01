@@ -8,19 +8,26 @@ defmodule FinTex.Connection.HTTPBody do
   alias FinTex.Parser.TypeConverter
 
 
-  def encode_body(segments, d = %Dialog{:bank => bank}) when is_list(segments) do
+  def encode_body(segments, d = %Dialog{}) when is_list(segments) do
     segments
-      |> TypeConverter.type_to_string(bank.version)
-      |> Serializer.serialize(d)
-      |> Base.encode64
+    |> TypeConverter.type_to_string
+    |> Serializer.serialize(d)
+    |> Base.encode64
   end
 
 
   def decode_body(response_body) when is_binary(response_body) do
-    Response.new response_body
+    result = response_body
     |> Lexer.remove_newline
-    |> Base.decode64!
-    |> Serializer.deserialize
-    |> TypeConverter.string_to_type
+    |> Base.decode64
+
+    case result do
+      :error -> raise ArgumentError,
+        message: "could not base 64 decode server response \"#{response_body}\""
+      {:ok, string} -> string
+        |> Serializer.deserialize
+        |> TypeConverter.string_to_type
+        |> Response.new
+    end
   end
 end

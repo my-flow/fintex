@@ -16,12 +16,11 @@ defmodule FinTex.Command.GetTransactions do
   use MT940
 
 
-  def get_transactions(bank, account, login, client_id, pin, options)
-  when is_binary(login) and is_binary(client_id) and is_binary(pin) do
+  def get_transactions(bank, credentials, account, from, to, options) do
 
-    {seq, _} = Synchronization.initialize_dialog(bank, login, client_id, pin)
+    {seq, _} = Synchronization.initialize_dialog(bank, credentials)
 
-    {seq, transactions} = seq |> check_transactions(account, [])
+    {seq, transactions} = seq |> check_transactions(account, [], from, to)
 
     %{} = Task.async(fn -> seq |> Synchronization.terminate_dialog end)
 
@@ -29,12 +28,12 @@ defmodule FinTex.Command.GetTransactions do
   end
 
 
-  defp check_transactions(seq, account, transactions, start_point \\ nil) do
+  defp check_transactions(seq, account, transactions, from, to, start_point \\ nil) do
 
     request_segments = [
       %HNHBK{},
       %HNSHK{},
-      %HKKAZ{account: account, start_point: start_point},
+      %HKKAZ{account: account, from: from, to: to, start_point: start_point},
       %HNSHA{},
       %HNHBS{}
     ]
@@ -48,13 +47,11 @@ defmodule FinTex.Command.GetTransactions do
     |> Stream.filter_map(fn [code | _] -> code === 3040 end, fn [_code, _ref, _text, start_point] -> start_point end)
     |> Enum.at(0)
 
-    warn "Start point: #{inspect start_point}"
-
     seq = seq |> Sequencer.inc
 
     case start_point do
       nil -> {seq, transactions}
-      _   -> check_transactions(seq, account, transactions, start_point)
+      _   -> check_transactions(seq, account, transactions, from, to, start_point)
     end
   end
 

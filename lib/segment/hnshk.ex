@@ -3,11 +3,11 @@ defmodule FinTex.Segment.HNSHK do
 
   alias FinTex.Model.Dialog
 
-  defstruct []
+  defstruct [segment: nil]
 
   use Timex
 
-  def create(_, d = %Dialog{}) do
+  def new(s, d = %Dialog{}) do
 
     %Dialog{
       bank:                bank,
@@ -27,7 +27,7 @@ defmodule FinTex.Segment.HNSHK do
     now = Date.local
     date = [1, DateFormat.format!(now, "%Y%m%d", :strftime), DateFormat.format!(now, "%H%M%S", :strftime)]
 
-    result = [
+    segment = [
       ["HNSHK", "?", v],
       ["PIN", 1],
       tan_scheme_sec_func,
@@ -42,11 +42,16 @@ defmodule FinTex.Segment.HNSHK do
       [country_code, bank.blz, login, "S", 0, 0]
     ]
 
-    case bank.version do
-      "300" -> result
-      _     -> result |> List.delete_at(1) # remove security profile
+    segment = case bank.version do
+      "300" -> segment
+      _     -> segment |> List.delete_at(1) # remove security profile
     end
 
+    %__MODULE__{s | segment: segment}
   end
+end
 
+
+defimpl Inspect, for: FinTex.Segment.HNSHK do
+  use FinTex.Helper.Inspect
 end

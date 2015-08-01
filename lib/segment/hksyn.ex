@@ -5,18 +5,25 @@ defmodule FinTex.Segment.HKSYN do
 
   @synchronization_mode 0
 
-  defstruct []
+  defstruct [segment: nil]
 
-  def create(_, %Dialog{:bank => bank}) do
+  def new(_, %Dialog{:bank => bank}) do
     v = case bank.version do
       "300" -> 3
       _     -> 2
     end
 
-    [
-      ["HKSYN", "?", v],
-      @synchronization_mode
-    ]
+    %__MODULE__{
+      segment:
+        [
+          ["HKSYN", "?", v],
+          @synchronization_mode
+        ]
+    }
   end
+end
 
+
+defimpl Inspect, for: FinTex.Segment.HKSYN do
+  use FinTex.Helper.Inspect
 end

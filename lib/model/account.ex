@@ -1,5 +1,7 @@
 defmodule FinTex.Model.Account do
+
   alias FinTex.Model.Balance
+  alias FinTex.Model.TANScheme
 
   @moduledoc """
   The following fields are public:
@@ -19,6 +21,23 @@ defmodule FinTex.Model.Account do
     * `supported_transactions`  - List of supported transactions
   """
 
+  @type t :: %__MODULE__{
+    account_number: binary,
+    subaccount_id: binary,
+    blz: binary,
+    bank_name: binary,
+    currency: binary,
+    iban: binary,
+    bic: binary,
+    name: binary,
+    owner: binary,
+    balance: Balance.t,
+#    supported_payments: [],
+    supported_tan_schemes: [TANScheme.t],
+    preferred_tan_scheme: binary,
+    supported_transactions: [binary]
+  }
+
   defstruct [
     :account_number,
     :subaccount_id,
@@ -29,12 +48,11 @@ defmodule FinTex.Model.Account do
     :bic,
     :name,
     :owner,
-    balance: %Balance{},
-    supported_payments: [],
+    balance: nil,
+#    supported_payments: [],
     supported_tan_schemes: [],
     preferred_tan_scheme: nil,
     supported_transactions: []
   ]
 
-  @type t :: %__MODULE__{}
 end

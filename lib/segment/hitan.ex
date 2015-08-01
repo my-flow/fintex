@@ -4,6 +4,9 @@ defmodule FinTex.Segment.HITAN do
   alias FinTex.Model.Challenge
   alias FinTex.Model.TANScheme
 
+  defstruct [segment: nil]
+
+
   def to_challenge(
     segment = [["HITAN", _, 1 | _] | _],
     %TANScheme{
@@ -16,7 +19,7 @@ defmodule FinTex.Segment.HITAN do
       title:  name,
       format: format,
       ref:    segment |> Enum.at(3),
-      label:  "#{label} #{segment |> Enum.at(4)}"
+      label:  "#{label}: #{segment |> Enum.at(4)}"
     }
   end
 
@@ -33,7 +36,7 @@ defmodule FinTex.Segment.HITAN do
       title:  name,
       format: format,
       ref:    segment |> Enum.at(3),
-      label:  "#{label} #{segment |> Enum.at(4)}"
+      label:  "#{label}: #{segment |> Enum.at(4)}"
     }
   end
 
@@ -50,7 +53,7 @@ defmodule FinTex.Segment.HITAN do
       title:  name,
       format: format,
       ref:    segment |> Enum.at(3),
-      label:  "#{label} #{segment |> Enum.at(4)}",
+      label:  "#{label}: #{segment |> Enum.at(4)}",
       medium: segment |> Enum.at(8)
     }
   end
@@ -68,7 +71,7 @@ defmodule FinTex.Segment.HITAN do
       title:  name,
       format: format,
       ref:    segment |> Enum.at(3),
-      label:  "#{label} #{segment |> Enum.at(4)}",
+      label:  "#{label}: #{segment |> Enum.at(4)}",
       data:   segment |> Enum.at(5),
       medium: segment |> Enum.at(9)
     }
@@ -87,9 +90,14 @@ defmodule FinTex.Segment.HITAN do
       title:  name,
       format: format,
       ref:    segment |> Enum.at(3),
-      label:  "#{label} #{segment |> Enum.at(4)}",
+      label:  "#{label}: #{segment |> Enum.at(4)}",
       data:   segment |> Enum.at(5),
       medium: segment |> Enum.at(9)
     }
   end
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HITAN do
+  use FinTex.Helper.Inspect
 end

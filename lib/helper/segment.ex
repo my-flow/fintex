@@ -1,4 +1,4 @@
-defmodule FinTex.Segment.Segment do
+defmodule FinTex.Helper.Segment do
   @moduledoc false
 
   alias FinTex.Model.Dialog

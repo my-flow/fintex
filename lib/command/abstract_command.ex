@@ -14,7 +14,7 @@ defmodule FinTex.Command.AbstractCommand do
 
 
   def create(struct, d = %Dialog{}) do
-    struct.__struct__.create(struct, d)
+    struct.__struct__.new(struct, d)
   end
 
 

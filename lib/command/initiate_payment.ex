@@ -7,6 +7,8 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Model.Account
   alias FinTex.Model.Bank
   alias FinTex.Model.Challenge
+  alias FinTex.Model.ChallengeResponder
+  alias FinTex.Model.Credentials
   alias FinTex.Model.Payment
   alias FinTex.Model.TANScheme
   alias FinTex.Segment.HITAN
@@ -21,17 +23,13 @@ defmodule FinTex.Command.InitiatePayment do
 
   use AbstractCommand
 
-  @type login :: String.t
-  @type client_id :: String.t
-  @type pin :: String.t
-  @type options :: [timeout: timeout]
+  @type options :: []
 
 
-  @spec initiate_payment(Bank.t, login, client_id, pin, Payment.t, (Challenge.t -> any), options) :: binary
-  def initiate_payment(bank, login, client_id, pin, payment, callback_fn, options)
-  when is_function(callback_fn) and is_binary(login) and is_binary(client_id) and is_binary(pin) do
+  @spec initiate_payment(Bank.t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary
+  def initiate_payment(bank, credentials, %Payment{tan_scheme: tan_scheme} = payment, challenge_responder, options) do
 
-    {seq, accounts} = Synchronization.initialize_dialog(bank, login, client_id, pin, payment.tan_scheme.sec_func)
+    {seq, accounts} = Synchronization.initialize_dialog(bank, credentials, tan_scheme.sec_func)
 
     sender_account = accounts
     |> Dict.values
@@ -44,18 +42,18 @@ defmodule FinTex.Command.InitiatePayment do
         "could not find sender account: #{inspect payment.sender_account}"
     end
 
-    unless payment.sender_account.supported_transactions |> Enum.into(HashSet.new) |> Set.member?("HKCCS") do
+    unless sender_account.supported_transactions |> Enum.into(HashSet.new) |> Set.member?("HKCCS") do
       raise ArgumentError,
-        "could not find \"HKCCS\" in sender account's supported transactions: #{inspect payment.sender_account.supported_transactions}"
+        "could not find \"HKCCS\" in sender account's supported transactions: #{inspect sender_account.supported_transactions}"
     end
 
     # filter out valid HKTAN/HITANS segment version based on given sec_func
     valid_tan_schemes = (seq |> Sequencer.dialog).supported_tan_schemes
-    |> Enum.filter(fn %TANScheme{:sec_func => sec_func} -> sec_func == payment.tan_scheme.sec_func end)
+    |> Enum.filter(fn %TANScheme{:sec_func => sec_func} -> sec_func == tan_scheme.sec_func end)
 
     if valid_tan_schemes |> Enum.count == 0 do
       raise ArgumentError,
-        "could not find supported TAN scheme for sec_func: #{inspect payment.tan_scheme.sec_func}"
+        "could not find supported TAN scheme for sec_func: #{inspect tan_scheme.sec_func}"
     end
 
     # find maximum version of supported TAN schemes
@@ -64,7 +62,7 @@ defmodule FinTex.Command.InitiatePayment do
 
     tan_medium_required = tan_scheme.medium_name == :required &&
     (seq |> Sequencer.dialog).pintan
-    |> Dict.get("HKTAB" |> control_structure_to_bpd)
+    |> Dict.get("HKTAB")
 
     if tan_medium_required do
       request_segments = [
@@ -90,16 +88,16 @@ defmodule FinTex.Command.InitiatePayment do
 
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
-    challenge = response[:HITAN]
+    %Challenge{ref: ref} = challenge = response[:HITAN]
     |> Enum.at(0)
     |> HITAN.to_challenge(tan_scheme)
 
-    response_string = callback_fn.(challenge)
+    response_string = apply(challenge_responder, :read_user_input, [challenge])
 
     request_segments = [
       %HNHBK{},
       %HNSHK{},
-      %HKTAN{v: tan_scheme.v, process: 2, ref: challenge.ref},
+      %HKTAN{v: tan_scheme.v, process: 2, ref: ref},
       %HNSHA{response: response_string},
       %HNHBS{}
     ]

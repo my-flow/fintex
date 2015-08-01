@@ -83,6 +83,26 @@ defmodule FinTex.Parser.Lexer do
   def latin1_to_utf8(c), do: c
 
 
+  # convert charset from UTF-8 to ISO 8859-1
+  def to_latin1(string) when is_binary(string) do
+    string
+    |> String.codepoints
+    |> Enum.map(&utf8_to_latin1/1)
+    |> :binary.list_to_bin
+  end
+
+
+  defp utf8_to_latin1(x = <<195, c>>) do
+    cond do
+      c >= 132 && c <= 188 -> <<c + 64>>
+      true                 -> x
+    end
+  end
+
+
+  defp utf8_to_latin1(c), do: c
+
+
   defp replace_escape_sequences(tokenization(tokens: tokens, escape_sequences: escape_sequences)) do
     escape_sequences
     |> Enum.reduce(tokens, fn ({k, v}, t) -> replace_escape_sequences(t, k, v) end) # replace only first occurence

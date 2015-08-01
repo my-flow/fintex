@@ -15,7 +15,7 @@ defmodule FinTex.Command.Sequencer do
     dialog: nil
 
 
-  def new(bank, login \\ nil, client_id \\ nil, pin \\ nil) do
+  def new(bank, credentials \\ nil) do
     children = [
       worker(HTTPClient, [[]], restart: :transient)
     ]
@@ -24,25 +24,26 @@ defmodule FinTex.Command.Sequencer do
     {_, _, _} = :random.seed
 
     d = cond do 
-      login && pin -> Dialog.new(bank, login, client_id, pin)
-      true         -> Dialog.new(bank)
+      credentials -> Dialog.new(bank, credentials.login, credentials.client_id, credentials.pin)
+      true        -> Dialog.new(bank)
     end
     state(sup: sup, dialog: d)
   end
 
 
-  def call_http(state(sup: sup, dialog: d), request_segments, options \\ []) do
+  def call_http(state(sup: sup, dialog: %Dialog{bank: bank} = d), request_segments, options \\ []) do
     {:ok, worker_pid} = Supervisor.start_child(sup, [])
 
     try do
       request_segments = request_segments |> Enum.map(&create(&1, d))
-      body = HTTPBody.encode_body(request_segments, d)
-      result = HTTPClient.send_request(worker_pid, d.bank.url, body, options)
+      request_segments |> inspect(binaries: :as_strings, pretty: true, limit: :infinity) |> debug
+      body = request_segments |> HTTPBody.encode_body(d)
+      result = HTTPClient.send_request(worker_pid, bank.url, body, options)
 
       case result do
         {:ok, response_body} ->
           response = HTTPBody.decode_body(response_body)
-          debug inspect(response, pretty: true, limit: :infinity)
+          response |> inspect(pretty: true, limit: :infinity) |> debug
           Stream.concat(response[:HIRMG], response[:HIRMS]) |> messages |> format_messages
           {:ok, response}
         :ok ->

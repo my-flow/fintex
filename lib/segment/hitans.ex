@@ -3,7 +3,9 @@ defmodule FinTex.Segment.HITANS do
 
   alias FinTex.Model.TANScheme
 
-  def string_to_type(segment) when is_list(segment) do
+  defstruct [segment: nil]
+
+  def new(segment) when is_list(segment) do
     [[_, _, v | _] | _] = segment
     params_count = case v do
       1 -> 11
@@ -13,18 +15,21 @@ defmodule FinTex.Segment.HITANS do
       5 -> 22 # deviation from specification
     end
 
-    [
-      segment |> Enum.at(0),
-      segment |> Enum.at(1),
-      segment |> Enum.at(2),
-      segment |> Enum.at(3),
-      [
-        segment |> Enum.at(4) |> Enum.at(0),
-        segment |> Enum.at(4) |> Enum.at(1),
-        segment |> Enum.at(4) |> Enum.at(2),
-        segment |> Enum.at(4) |> Enum.drop(3) |> Enum.chunk(params_count)
-      ]
-    ]
+    %__MODULE__{
+      segment:
+        [
+          segment |> Enum.at(0),
+          segment |> Enum.at(1),
+          segment |> Enum.at(2),
+          segment |> Enum.at(3),
+          [
+            segment |> Enum.at(4) |> Enum.at(0),
+            segment |> Enum.at(4) |> Enum.at(1),
+            segment |> Enum.at(4) |> Enum.at(2),
+            segment |> Enum.at(4) |> Enum.drop(3) |> Enum.chunk(params_count)
+          ]
+        ]
+    }
   end
 
 
@@ -123,5 +128,9 @@ defmodule FinTex.Segment.HITANS do
 
   defp to_format(nil), do: :text
   defp to_format(_), do: :text
+end
 
+
+defimpl Inspect, for: FinTex.Segment.HITANS do
+  use FinTex.Helper.Inspect
 end

@@ -3,13 +3,20 @@ defmodule FinTex.Segment.HKEND do
 
   alias FinTex.Model.Dialog
 
-  defstruct []
+  defstruct [segment: nil]
 
-  def create(_, %Dialog{:dialog_id => dialog_id}) do
-    [
-      ["HKEND", "?", 1],
-      dialog_id
-    ]
+  def new(_, %Dialog{:dialog_id => dialog_id}) do
+    %__MODULE__{
+      segment:
+        [
+          ["HKEND", "?", 1],
+          dialog_id
+        ]
+    }
   end
+end
 
+
+defimpl Inspect, for: FinTex.Segment.HKEND do
+  use FinTex.Helper.Inspect
 end

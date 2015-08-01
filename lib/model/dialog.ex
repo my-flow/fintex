@@ -27,10 +27,10 @@ defmodule FinTex.Model.Dialog do
 
   def new(bank, login, client_id, pin) do
     %__MODULE__{
-      bank:                 bank,
-      login:                login,
-      client_id:            client_id,
-      pin:                  pin
+      bank:       bank,
+      login:      login,
+      client_id:  client_id,
+      pin:        pin
     }
   end
 

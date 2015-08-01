@@ -15,13 +15,15 @@ defmodule FinTex.Command.Synchronization do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
+  alias FinTex.Segment.HKSPA
+
 
   @allowed_methods 3920
 
   use AbstractCommand
 
-  def initialize_dialog(bank, login, client_id, pin, tan_scheme_sec_func \\ nil) do
-    seq = Sequencer.new(bank, login, client_id, pin)
+  def initialize_dialog(bank, credentials, tan_scheme_sec_func \\ nil) do
+    seq = Sequencer.new(bank, credentials)
 
     case seq |> Sequencer.needs_synchronization? do
       true  -> seq |> synchronize(tan_scheme_sec_func)
@@ -130,6 +132,20 @@ defmodule FinTex.Command.Synchronization do
     |> Sequencer.dialog
     |> accounts(response[:HIUPD])
 
+    request_segments = [
+      %HNHBK{},
+      %HNSHK{},
+      %HKSPA{},
+      %HNSHA{},
+      %HNHBS{}
+    ]
+
+    {:ok, response} = seq |> Sequencer.call_http(request_segments)
+
+    accounts = add_sepa_data(accounts, response)
+
+    seq = seq |> Sequencer.inc
+
     {seq, accounts}
   end
 
@@ -200,5 +216,23 @@ defmodule FinTex.Command.Synchronization do
     |> Stream.map(fn account = %Account{:account_number => account_number} -> {account_number, account} end)
 
     |> Enum.into(HashDict.new)
+  end
+
+
+  defp add_sepa_data(accounts, response) do
+    response[:HISPA]
+    |> Enum.at(0)
+    |> Stream.drop(1)
+    |> Stream.filter(fn info -> Enum.at(info, 0) === "J" end)
+    |> Stream.map(fn info ->
+        account = accounts |> Dict.get(Enum.at(info, 3))
+        account = %Account{account |
+          iban: Enum.at(info, 1),
+          bic:  Enum.at(info, 2)
+        }
+        %{account_number: account_number} = account
+        {account_number, account}
+       end)
+    |> Enum.into(accounts)
   end
 end

@@ -3,9 +3,9 @@ defmodule FinTex.Segment.HKIDN do
 
   alias FinTex.Model.Dialog
 
-  defstruct []
+  defstruct [segment: nil]
 
-  def create(_, d = %Dialog{
+  def new(_, d = %Dialog{
     :bank             => bank,
     :country_code     => country_code,
     :client_id        => client_id,
@@ -17,12 +17,20 @@ defmodule FinTex.Segment.HKIDN do
       false -> "1" # require a new client system ID
     end
 
-		[
-			["HKIDN", "?", 2],
-			[country_code, bank.blz],
-			client_id,
-			client_system_id,
-			client_system_status
-		]
+    %__MODULE__{
+      segment:
+    		[
+    			["HKIDN", "?", 2],
+    			[country_code, bank.blz],
+    			client_id,
+    			client_system_id,
+    			client_system_status
+    		]
+    }
   end
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HKIDN do
+  use FinTex.Helper.Inspect
 end

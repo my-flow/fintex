@@ -9,6 +9,15 @@ defmodule FinTex.Model.TANScheme do
     * `label`       - response label
   """
 
+  @type t :: %__MODULE__{
+    name: binary,
+    medium_name: binary,
+    sec_func: pos_integer,
+    format: atom,
+    label: binary,
+    v: pos_integer
+  }
+
   defstruct [
     :name,
     :medium_name,
@@ -17,7 +26,5 @@ defmodule FinTex.Model.TANScheme do
     :label,
     :v
   ]
-
-  @type t :: %__MODULE__{}
 
 end

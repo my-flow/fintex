@@ -46,6 +46,7 @@ defmodule Fintex.Mixfile do
       {:mt940,                 "~> 0.3.0"},
       {:ssl_verify_hostname,   "<= 1.0.3"},
       {:timex,                 "~> 0.13.3"},
+      {:vex,                   "~> 0.5.3"},
       {:xml_builder,   commit: "84c310903af9b80fc54829c88d2c4bc898a65233", github: "joshnuss/xml_builder"}
     ]
   end

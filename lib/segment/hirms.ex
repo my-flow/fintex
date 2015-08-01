@@ -3,11 +3,16 @@ defmodule FinTex.Segment.HIRMS do
 
   alias FinTex.Parser.Lexer
 
-  def string_to_type(segment) when is_list(segment) do
-    [
-      segment |> Enum.at(0),
-      segment |> Stream.drop(1) |> Stream.map &to_feedback/1
-    ]
+  defstruct [segment: nil]
+
+  def new(segment) when is_list(segment) do
+    %__MODULE__{
+      segment:
+      [
+        segment |> Enum.at(0),
+        segment |> Stream.drop(1) |> Enum.map &to_feedback/1
+      ]
+    }
   end
 
 
@@ -15,4 +20,9 @@ defmodule FinTex.Segment.HIRMS do
     group
       |> List.update_at(0, &Lexer.to_digit/1)
   end
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HIRMS do
+  use FinTex.Helper.Inspect
 end

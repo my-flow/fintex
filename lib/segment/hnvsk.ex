@@ -6,9 +6,9 @@ defmodule FinTex.Segment.HNVSK do
 
   use Timex
 
-  defstruct []
+  defstruct [segment: nil]
 
-  def create(_, d = %Dialog{}) do
+  def new(s, d = %Dialog{}) do
 
     %Dialog{
       bank:             bank,
@@ -25,7 +25,7 @@ defmodule FinTex.Segment.HNVSK do
     now = Date.local
     date = [1, DateFormat.format!(now, "%Y%m%d", :strftime), DateFormat.format!(now, "%H%M%S", :strftime)]
 
-    result = [
+    segment = [
       ["HNVSK", 998, v],
       998,
       1,
@@ -36,9 +36,16 @@ defmodule FinTex.Segment.HNVSK do
       0
     ]
 
-    case bank.version do
-      "300" -> result |> List.insert_at(1, ["PIN", 1]) # add security profile
-      _     -> result
+    segment = case bank.version do
+      "300" -> segment |> List.insert_at(1, ["PIN", 1]) # add security profile
+      _     -> segment
     end
+
+    %__MODULE__{s | segment: segment}
   end
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HNVSK do
+  use FinTex.Helper.Inspect
 end

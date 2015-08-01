@@ -1,6 +1,6 @@
-defmodule FinTex.User.ChallengeResponderTest do
+defmodule FinTex.User.FinChallengeResponderTest do
   alias FinTex.Model.Challenge
-  alias FinTex.User.ChallengeResponder
+  alias FinTex.User.FinChallengeResponder
   use ExUnit.Case
   import ExUnit.CaptureIO
 
@@ -18,7 +18,7 @@ defmodule FinTex.User.ChallengeResponderTest do
 
     assert ~r/^title\nmedium$/m
     |> Regex.match? capture_io([input: "123456", capture_prompt: false], fn ->
-      challenge |> ChallengeResponder.read_user_input
+      challenge |> FinChallengeResponder.read_user_input
     end)
   end
 end

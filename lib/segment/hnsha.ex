@@ -3,10 +3,10 @@ defmodule FinTex.Segment.HNSHA do
 
   alias FinTex.Model.Dialog
 
-  defstruct [:response]
+  defstruct [:response, segment: nil]
 
-  def create(
-    %__MODULE__{response: response},
+  def new(
+    s = %__MODULE__{response: response},
     %Dialog{
       bank: bank,
       user_agent_name: user_agent_name,
@@ -24,12 +24,27 @@ defmodule FinTex.Segment.HNSHA do
       _   -> [pin, response]
     end
 
-    [
-    	["HNSHA", "?", v],
-    	user_agent_name,
-    	"",
-    	pin
-    ]
+    %__MODULE__{ s |
+      segment:
+        [
+        	["HNSHA", "?", v],
+        	user_agent_name,
+        	"",
+        	pin
+        ]
+    }
   end
+end
 
+
+defimpl Inspect, for: FinTex.Segment.HNSHA do
+
+  @asterisks "******"
+
+  def inspect(%{segment: segment}, opts) do
+    segment
+    |> Enum.to_list
+    |> List.replace_at(3, @asterisks)
+    |> Inspect.inspect(opts)
+  end
 end

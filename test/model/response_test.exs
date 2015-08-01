@@ -1,17 +1,22 @@
 defmodule FinTex.Model.ResponseTest do
   alias FinTex.Model.Response
+  alias FinTex.Segment.HIRMS
+  alias FinTex.Segment.HNHBK
+  alias FinTex.Segment.HNHBS
+  alias FinTex.Segment.HNVSD
+  alias FinTex.Segment.HNVSK
   use ExUnit.Case
 
 
   setup do
     raw = [
-      [["HNHBK", 1, 3], "2"],
-      [["HNVSK", 998, 3], ["PIN", 1]],
-      [["HNVSD", 999, 1]],
-      [["HIRMS", 5, 2, 7]],
-      [["HIRMS", 6, 2, 9]],
-      [["HIRMS", 4, 2, 8]],
-      [["HNHBS", 5, 1], "2"]
+      %HNHBK{segment: [["HNHBK", 1, 3], "2"]},
+      %HNVSK{segment: [["HNVSK", 998, 3], ["PIN", 1]]},
+      %HNVSD{segment: [["HNVSD", 999, 1]]},
+      %HIRMS{segment: [["HIRMS", 5, 2, 7]]},
+      %HIRMS{segment: [["HIRMS", 6, 2, 9]]},
+      %HIRMS{segment: [["HIRMS", 4, 2, 8]]},
+      %HNHBS{segment: [["HNHBS", 5, 1], "2"]}
     ]
     {:ok, response: Response.new(raw)}
   end

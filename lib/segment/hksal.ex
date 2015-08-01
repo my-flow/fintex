@@ -3,13 +3,13 @@ defmodule FinTex.Segment.HKSAL do
 
   alias FinTex.Model.Account
   alias FinTex.Model.Dialog
-  alias FinTex.Segment.Segment
+  alias FinTex.Helper.Segment
 
-  defstruct [:account]
+  defstruct [:account, segment: nil]
 
   import Segment
 
-  def create(
+  def new(
     %__MODULE__{
       account: %Account{
         :iban           => iban,
@@ -28,13 +28,21 @@ defmodule FinTex.Segment.HKSAL do
     ktv = case v do
       6 when iban != nil and bic != nil -> [iban, bic]
       7 when iban != nil and bic != nil -> [iban, bic]
-      _                                   -> [account_number, subaccount_id, country_code, blz]
+      _                                 -> [account_number, subaccount_id, country_code, blz]
     end
 
-    [
-      ["HKSAL", "?", v],
-      ktv,
-      "N"
-    ]
+    %__MODULE__{
+      segment:
+        [
+          ["HKSAL", "?", v],
+          ktv,
+          "N"
+        ]
+    }
   end
+end
+
+
+defimpl Inspect, for: FinTex.Segment.HKSAL do
+  use FinTex.Helper.Inspect
 end
