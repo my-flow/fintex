@@ -1,5 +1,4 @@
 defmodule FinTex.Model.TANScheme do
-
   @moduledoc """
   The following fields are public:
     * `name`        - TAN scheme name

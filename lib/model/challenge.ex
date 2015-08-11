@@ -1,5 +1,4 @@
 defmodule FinTex.Model.Challenge do
-
   @moduledoc """
   The following fields are public:
     * `title`   - Challenge title

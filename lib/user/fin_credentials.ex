@@ -1,7 +1,4 @@
 defmodule FinTex.User.FinCredentials do
-
-  alias FinTex.Model.Credentials
-
   @moduledoc """
     Provides a default implementation of the `FinTex.Model.Credentials` protocol.
 
@@ -10,6 +7,8 @@ defmodule FinTex.User.FinCredentials do
     * `client_id` - client ID. Can be `nil`.
     * `pin`       - personal identification number
   """
+
+  alias FinTex.Model.Credentials
 
   @type t :: %__MODULE__{
     login: binary,

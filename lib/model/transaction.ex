@@ -1,5 +1,4 @@
 defmodule FinTex.Model.Transaction do
-
   @moduledoc """
   The following fields are public:
     * `name`            - Name of originator or recipient

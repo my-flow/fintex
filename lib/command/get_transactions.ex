@@ -18,7 +18,7 @@ defmodule FinTex.Command.GetTransactions do
 
   def get_transactions(bank, credentials, account, from, to, options) do
 
-    {seq, _} = Synchronization.initialize_dialog(bank, credentials)
+    {seq, _} = Synchronization.initialize_dialog(bank, credentials, options)
 
     {seq, transactions} = seq |> check_transactions(account, [], from, to)
 

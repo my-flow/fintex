@@ -1,10 +1,9 @@
 defmodule FinTex.User.FinChallengeResponder do
-
-  alias FinTex.Model.Challenge
-
   @moduledoc """
     Provides a default implementation of the `FinTex.Model.ChallengeResponder` protocol.
   """
+
+  alias FinTex.Model.Challenge
 
   @type t :: term
 

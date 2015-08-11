@@ -3,29 +3,29 @@ defmodule FinTex.Validator.Uri do
 
   use Vex.Validator
 
-  def validate(uri, _) when is_binary(uri) do
-    case URI.parse(uri) do
+  def validate(value, options) when is_list(options) do
+    case value |> to_string |> URI.parse do
       %URI{scheme: scheme} when scheme != "https"
-        -> {:error, "scheme of URL \"#{uri}\" must be HTTPS."}
+        -> result(false, message(options, "must have HTTPS scheme", value: value))
       %URI{host: nil}
-        -> {:error, "host of URL \"#{uri}\" is invalid."}
+        -> result(false, message(options, "must have a valid host", value: value))
       %URI{host: host}
-        -> host |> to_char_list |> :inet.gethostbyname |> extract_message
+        -> host |> to_char_list |> :inet.gethostbyname |> extract_message(value, options)
     end
   end
 
 
-  def validate(url, _) do
-    {:error, "\"#{url}\" is not a valid URL"}
-  end
+  def validate(value, true), do: validate(value, [])
 
 
-  defp extract_message({:ok, _}) do
-    :ok
-  end
+  defp result(true, _), do: :ok
 
 
-  defp extract_message(result = {:error, _}) do
-    result
-  end
+  defp result(false, message), do: {:error, message}
+
+
+  defp extract_message({:ok, message}, _, _), do: result(true, message)
+
+
+  defp extract_message({:error, term}, value, options), do: result(false, message(options, to_string(term), value: value))
 end

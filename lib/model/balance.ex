@@ -1,13 +1,12 @@
 defmodule FinTex.Model.Balance do
-
-  alias FinTex.Model.Balance
-
   @moduledoc """
   The following fields are public:
     * `balance`      - Account balance
     * `balance_date` - Bank server timestamp of balance
     * `credit_line`  - Credit line
   """
+
+  alias FinTex.Model.Balance
 
   use Timex
 

@@ -1,7 +1,4 @@
 defmodule FinTex.User.FinBank do
-
-  alias FinTex.Model.Bank
-
   @moduledoc """
     Provides a default implementation of the `FinTex.Model.Bank` protocol.
 
@@ -10,6 +7,8 @@ defmodule FinTex.User.FinBank do
     * `url`     - URL of the bank server
     * `version` - API version. Possible values are `220` or `300`.
   """
+
+  alias FinTex.Model.Bank
 
   @type t :: %__MODULE__{
     blz: binary,

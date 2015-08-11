@@ -1,8 +1,4 @@
 defmodule FinTex.Model.Account do
-
-  alias FinTex.Model.Balance
-  alias FinTex.Model.TANScheme
-
   @moduledoc """
   The following fields are public:
     * `account_number`          - Account number
@@ -20,6 +16,9 @@ defmodule FinTex.Model.Account do
     * `preferred_tan_scheme`    - Security function of the TAN scheme preferred by the user
     * `supported_transactions`  - List of supported transactions
   """
+
+  alias FinTex.Model.Balance
+  alias FinTex.Model.TANScheme
 
   @type t :: %__MODULE__{
     account_number: binary,

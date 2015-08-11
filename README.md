@@ -73,7 +73,7 @@ payment = %FinTex.Model.Payment{
     bic:   "ABNAFRPPXXX",
     owner: "Jane Doe"
   },
-  amount: Decimal.new("1.00"),
+  amount: "1.00",
   currency: "EUR",
   purpose: "A new test payment",
   tan_scheme: %FinTex.Model.TANScheme{

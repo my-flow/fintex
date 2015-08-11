@@ -1,5 +1,4 @@
 defmodule FinTex.Model.Payment do
-
   @moduledoc """
   The following fields are public:
     * `sender_account`    - Bank account of the sender
@@ -10,13 +9,16 @@ defmodule FinTex.Model.Payment do
     * `tan_scheme`        - TAN scheme
   """
 
+  alias FinTex.Model.Account
+  alias FinTex.Model.TANScheme
+
   @type t :: %__MODULE__{
-    sender_account: FinTex.Model.Account.t,
-    receiver_account: FinTex.Model.Account.t,
+    sender_account: Account.t,
+    receiver_account: Account.t,
     amount: %Decimal{},
     currency: binary,
     purpose: binary,
-    tan_scheme: FinTex.Model.TANScheme.t
+    tan_scheme: TANScheme.t
   }
 
   defstruct [
@@ -34,11 +36,11 @@ defmodule FinTex.Model.Payment do
 
   validates :receiver_account, presence: true
 
-  validates :amount, presence: true
+  validates :amount, amount: true
 
-  validates :currency, presence: true, format: ~r/^[A-Z]{3}$/
+  validates :currency, presence: true, currency: true
 
-  validates :purpose, presence: true, length: [in: 1..140]
+  validates :purpose, presence: true, latin_char_set: true, length: [in: 1..140]
 
   validates :tan_scheme, presence: true
 

@@ -13,7 +13,7 @@ defmodule FinTex.Command.FinPing do
 
 
   def ping(bank, options) do
-    seq = Sequencer.new(bank)
+    seq = Sequencer.new(bank, options)
 
     request_segments = [
       %HNHBK{},

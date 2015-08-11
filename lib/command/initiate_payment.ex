@@ -29,7 +29,7 @@ defmodule FinTex.Command.InitiatePayment do
   @spec initiate_payment(Bank.t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary
   def initiate_payment(bank, credentials, %Payment{tan_scheme: tan_scheme} = payment, challenge_responder, options) do
 
-    {seq, accounts} = Synchronization.initialize_dialog(bank, credentials, tan_scheme.sec_func)
+    {seq, accounts} = Synchronization.initialize_dialog(bank, credentials, tan_scheme.sec_func, options)
 
     sender_account = accounts
     |> Dict.values

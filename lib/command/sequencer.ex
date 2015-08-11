@@ -12,10 +12,11 @@ defmodule FinTex.Command.Sequencer do
 
   Record.defrecordp :state,
     sup: nil,
-    dialog: nil
+    dialog: nil,
+    options: nil
 
 
-  def new(bank, credentials \\ nil) do
+  def new(bank, credentials \\ nil, options) when is_list(options) do
     children = [
       worker(HTTPClient, [[]], restart: :transient)
     ]
@@ -27,11 +28,12 @@ defmodule FinTex.Command.Sequencer do
       credentials -> Dialog.new(bank, credentials.login, credentials.client_id, credentials.pin)
       true        -> Dialog.new(bank)
     end
-    state(sup: sup, dialog: d)
+    state(sup: sup, dialog: d, options: options)
   end
 
 
-  def call_http(state(sup: sup, dialog: %Dialog{bank: bank} = d), request_segments, options \\ []) do
+  def call_http(state(sup: sup, dialog: %Dialog{bank: bank} = d, options: options), request_segments, opts \\ []) do
+    options = Dict.merge(options, opts)
     {:ok, worker_pid} = Supervisor.start_child(sup, [])
 
     try do

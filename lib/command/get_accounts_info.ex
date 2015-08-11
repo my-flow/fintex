@@ -12,7 +12,7 @@ defmodule FinTex.Command.GetAccountsInfo do
 
   def get_account_info(bank, credentials, options) do
 
-    {seq, accounts} = Synchronization.initialize_dialog(bank, credentials)
+    {seq, accounts} = Synchronization.initialize_dialog(bank, credentials, options)
 
     {acc, seq} = accounts
     |> Dict.to_list

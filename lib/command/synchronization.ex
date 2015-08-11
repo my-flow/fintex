@@ -22,8 +22,8 @@ defmodule FinTex.Command.Synchronization do
 
   use AbstractCommand
 
-  def initialize_dialog(bank, credentials, tan_scheme_sec_func \\ nil) do
-    seq = Sequencer.new(bank, credentials)
+  def initialize_dialog(bank, credentials, tan_scheme_sec_func \\ nil, options) when is_list(options) do
+    seq = Sequencer.new(bank, credentials, options)
 
     case seq |> Sequencer.needs_synchronization? do
       true  -> seq |> synchronize(tan_scheme_sec_func)
