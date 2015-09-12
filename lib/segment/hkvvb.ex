@@ -33,6 +33,6 @@ defmodule FinTex.Segment.HKVVB do
 end
 
 
-# defimpl Inspect, for: FinTex.Segment.HKVVB do
-#   use FinTex.Helper.Inspect
-# end
+defimpl Inspect, for: FinTex.Segment.HKVVB do
+  use FinTex.Helper.Inspect
+end
