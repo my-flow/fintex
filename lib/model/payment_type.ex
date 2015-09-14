@@ -3,11 +3,13 @@ defmodule FinTex.Model.PaymentType do
 
   # @moduledoc """
   # The following fields are public:
+  #   * `allowed_recipients`  - List of account IDs. The payment recipient must be one of these accounts. No restriction applies if this field is omitted
   #   * `max_purpose_length`  - Maximum string length of purpose text
   #   * `supported_text_keys` - List of supported DTA text keys
   #   * `min_scheduled_date`  - Earliest scheduled date
   #   * `max_scheduled_date`  - Latest scheduled date
-  #   * `allowed_recipients`  - List of account IDs. The payment recipient must be one of these accounts. No restriction applies if this field is omitted
+  #   * `can_be_recurring`    - Is `true` if the payment supports standing orders
+  #   * `can_be_scheduled`    - Is `true` if the payment can be scheduled to be executed at a future date
   # """
 
   defstruct [
@@ -15,7 +17,9 @@ defmodule FinTex.Model.PaymentType do
     :supported_text_keys,
     :min_scheduled_date,
     :max_scheduled_date,
-    allowed_recipients: []
+    allowed_recipients: [],
+    can_be_recurring: false,
+    can_be_scheduled: false,
   ]
 
   @type t :: %__MODULE__{}

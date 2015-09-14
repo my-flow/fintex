@@ -15,7 +15,8 @@ defmodule FinTex.Command.Synchronization do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
-  alias FinTex.Segment.HKSPA
+  alias FinTex.Service.Accounts
+  alias FinTex.Service.SEPAInfo
 
 
   @allowed_methods 3920
@@ -86,8 +87,8 @@ defmodule FinTex.Command.Synchronization do
     supported_tan_schemes = pintan
     |> Dict.get("HKTAN")
     |> Stream.flat_map(&HITANS.to_tan_schemes(&1))
-    |> Stream.filter(fn %TANScheme{:sec_func => sec_func} -> tan_scheme_sec_funcs |> Set.member?(sec_func) end)
-    |> Enum.uniq(fn %TANScheme{:sec_func => sec_func} -> sec_func end)
+    |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> Set.member?(sec_func) end)
+    |> Enum.uniq(fn %TANScheme{sec_func: sec_func} -> sec_func end)
 
     seq = seq
     |> Sequencer.inc
@@ -113,126 +114,19 @@ defmodule FinTex.Command.Synchronization do
     seq = seq
     |> Sequencer.reset(new_tan_scheme_sec_func)
 
-    request_segments = [
-      %HNHBK{},
-      %HNSHK{},
-      %HKIDN{},
-      %HKVVB{},
-      %HNSHA{},
-      %HNHBS{}
-    ]
+    {seq, accounts} = {seq, []}
+    |> Accounts.update_accounts 
+    |> SEPAInfo.update_accounts
 
-    {:ok, response} = seq |> Sequencer.call_http(request_segments)
+    accountsDict = accounts
+    |> Stream.map(fn account = %Account{account_number: account_number} -> {account_number, account} end)
+    |> Enum.into(HashDict.new)
 
-    seq = seq
-    |> Sequencer.update(dialog_id(response))
-    |> Sequencer.inc
-
-    accounts = seq
-    |> Sequencer.dialog
-    |> accounts(response[:HIUPD])
-
-    request_segments = [
-      %HNHBK{},
-      %HNSHK{},
-      %HKSPA{},
-      %HNSHA{},
-      %HNHBS{}
-    ]
-
-    {:ok, response} = seq |> Sequencer.call_http(request_segments)
-
-    accounts = add_sepa_data(accounts, response)
-
-    seq = seq |> Sequencer.inc
-
-    {seq, accounts}
+    {seq, accountsDict}
   end
 
 
   defp client_system_id(response) do
     response[:HISYN] |> Enum.at(0) |> Enum.at(-1)
-  end
-
-
-  defp accounts(
-    %Dialog{
-      bank: bank,
-      supported_tan_schemes: supported_tan_schemes,
-      bpd: bpd,
-      pintan: pintan
-    },
-    user_params) do
-
-    offset = case bank.version do
-      "300" -> 2
-      _     -> 0
-    end
-
-    user_params
-
-    |> Stream.map(fn u ->
-      account = %Account{
-        :account_number         =>  u |> Enum.at(1) |> Enum.at(0),
-        :subaccount_id          =>  u |> Enum.at(1) |> Enum.at(1),
-        :blz                    =>  u |> Enum.at(1) |> Enum.at(3),
-        :currency               =>  u |> Enum.at(3 + offset),
-        :owner                  => [u |> Enum.at(4 + offset), u |> Enum.at(5 + offset)]
-                                    |> Enum.join(" ")
-                                    |> String.split
-                                    |> Stream.map(&String.capitalize/1)
-                                    |> Enum.join(" ")
-                                    |> String.strip,
-        :name                   =>  u |> Enum.at(6 + offset),
-        :bank_name              =>  bpd
-                                    |> Dict.get("HIBPA")
-                                    |> Enum.at(0)
-                                    |> Enum.at(3)
-                                    |> String.strip,
-        :supported_transactions =>  u
-                                    |> Stream.drop(8 + offset)
-                                    |> Stream.map(fn [transaction, _] -> transaction end)
-                                    |> Stream.filter(fn transaction -> pintan |> Dict.has_key?(transaction) end)
-                                    |> Enum.uniq,
-        :supported_tan_schemes  => supported_tan_schemes,
-        :preferred_tan_scheme   => supported_tan_schemes
-                                    |> Stream.map(fn %TANScheme{:sec_func => sec_func} -> sec_func end)
-                                    |> Enum.at(0)
-      }
-
-      # add IBAN if available
-      iban = case Enum.at(u, 2) do
-        ""  -> nil
-        els -> els
-      end
-
-      case bank.version do
-        "300" -> %Account{account | :iban => iban}
-        _ -> account
-      end
-
-    end)
-
-    |> Stream.map(fn account = %Account{:account_number => account_number} -> {account_number, account} end)
-
-    |> Enum.into(HashDict.new)
-  end
-
-
-  defp add_sepa_data(accounts, response) do
-    response[:HISPA]
-    |> Enum.at(0)
-    |> Stream.drop(1)
-    |> Stream.filter(fn info -> Enum.at(info, 0) === "J" end)
-    |> Stream.map(fn info ->
-        account = accounts |> Dict.get(Enum.at(info, 3))
-        account = %Account{account |
-          iban: Enum.at(info, 1),
-          bic:  Enum.at(info, 2)
-        }
-        %{account_number: account_number} = account
-        {account_number, account}
-       end)
-    |> Enum.into(accounts)
   end
 end

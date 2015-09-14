@@ -7,7 +7,7 @@ defmodule FinTex.Segment.HKSYN do
 
   defstruct [segment: nil]
 
-  def new(_, %Dialog{:bank => bank}) do
+  def new(_, %Dialog{bank: bank}) do
     v = case bank.version do
       "300" -> 3
       _     -> 2

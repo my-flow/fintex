@@ -21,7 +21,7 @@ defmodule FinTex.Connection.HTTPClient do
       [] ->
         []
       _ ->
-        %URI{:host => host} = URI.parse(url)
+        %URI{host: host} = URI.parse(url)
         hostname = to_char_list(host)
         {verify_fun, initial_user_state} = Dict.get(ssl_options, :verify_fun)        
         Dict.merge(

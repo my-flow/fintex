@@ -10,17 +10,19 @@ defmodule FinTex.Model.Account do
     * `bic`                     - BIC
     * `name`                    - Account name
     * `owner`                   - Account owner
+    * `type`                    - Account type. Possible values are `:giro_account`, `:savings_account`,
+                                  `:credit_card` or `:loan_account`, `:cash_book`, `:depot` or `:unknown`.
     * `balance`                 - Account balance
     * `supported_payments`      - List of payment types with payment parameters
     * `supported_tan_schemes`   - List of TAN schemes
     * `preferred_tan_scheme`    - Security function of the TAN scheme preferred by the user
-    * `supported_transactions`  - List of supported transactions
   """
 
   alias FinTex.Model.Balance
   alias FinTex.Model.TANScheme
 
   @type t :: %__MODULE__{
+    type: binary,
     account_number: binary,
     subaccount_id: binary,
     blz: binary,
@@ -31,10 +33,9 @@ defmodule FinTex.Model.Account do
     name: binary,
     owner: binary,
     balance: Balance.t,
-#    supported_payments: [],
+    supported_payments: Dict.t,
     supported_tan_schemes: [TANScheme.t],
     preferred_tan_scheme: binary,
-    supported_transactions: [binary]
   }
 
   defstruct [
@@ -47,8 +48,9 @@ defmodule FinTex.Model.Account do
     :bic,
     :name,
     :owner,
+    type: :unknown,
     balance: nil,
-#    supported_payments: [],
+    supported_payments: HashDict.new,
     supported_tan_schemes: [],
     preferred_tan_scheme: nil,
     supported_transactions: []

@@ -27,7 +27,7 @@ defmodule FinTex.Segment.HKCCS do
         }
       }
     },
-    %Dialog{:bpd => bpd}) do
+    %Dialog{bpd: bpd}) do
 
     ktv = [sender_iban, sender_bic]
 

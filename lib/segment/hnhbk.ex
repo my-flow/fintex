@@ -8,9 +8,9 @@ defmodule FinTex.Segment.HNHBK do
 
   def new(s, d = %Dialog{}) do
     %{
-      :bank       => bank,
-      :dialog_id  => dialog_id,
-      :message_no => message_no
+      bank:       bank,
+      dialog_id:  dialog_id,
+      message_no: message_no
     } = d
 
     %__MODULE__{ s |

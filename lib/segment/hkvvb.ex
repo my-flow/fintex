@@ -8,9 +8,9 @@ defmodule FinTex.Segment.HKVVB do
   def new(
     s,
     %Dialog{
-      :bank               => bank,
-      :user_agent_name    => user_agent_name,
-      :user_agent_version => user_agent_version
+      bank:               bank,
+      user_agent_name:    user_agent_name,
+      user_agent_version: user_agent_version
     }) do
 
     v = case bank.version do

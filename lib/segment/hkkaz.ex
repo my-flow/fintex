@@ -13,18 +13,18 @@ defmodule FinTex.Segment.HKKAZ do
   def new(
     %__MODULE__{
       account: %Account{
-        :iban           => iban,
-        :bic            => bic,
-        :blz            => blz,
-        :account_number => account_number,
-        :subaccount_id  => subaccount_id
+        iban:           iban,
+        bic:            bic,
+        blz:            blz,
+        account_number: account_number,
+        subaccount_id:  subaccount_id
       },
       from: from,
       to: to,
       start_point: start_point
     },
     d = %Dialog{
-      :country_code => country_code
+      country_code: country_code
     }
   ) do
 

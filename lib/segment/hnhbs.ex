@@ -6,7 +6,7 @@ defmodule FinTex.Segment.HNHBS do
 
   defstruct [segment: nil]
 
-  def new(s, %Dialog{:message_no => message_no}) do
+  def new(s, %Dialog{message_no: message_no}) do
     %__MODULE__{ s |
       segment:
         [

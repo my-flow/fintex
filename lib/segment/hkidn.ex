@@ -6,10 +6,10 @@ defmodule FinTex.Segment.HKIDN do
   defstruct [segment: nil]
 
   def new(_, d = %Dialog{
-    :bank             => bank,
-    :country_code     => country_code,
-    :client_id        => client_id,
-    :client_system_id => client_system_id}
+    bank:             bank,
+    country_code:     country_code,
+    client_id:        client_id,
+    client_system_id: client_system_id}
   ) do
 
     client_system_status = case Dialog.anonymous?(d) do

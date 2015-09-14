@@ -12,14 +12,13 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Model.Payment
   alias FinTex.Model.TANScheme
   alias FinTex.Segment.HITAN
-  alias FinTex.Segment.HITAB
   alias FinTex.Segment.HKCCS
-  alias FinTex.Segment.HKTAB
   alias FinTex.Segment.HKTAN
   alias FinTex.Segment.HNHBK
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
+  alias FinTex.Service.TANMedia
 
   use AbstractCommand
 
@@ -49,7 +48,7 @@ defmodule FinTex.Command.InitiatePayment do
 
     # filter out valid HKTAN/HITANS segment version based on given sec_func
     valid_tan_schemes = (seq |> Sequencer.dialog).supported_tan_schemes
-    |> Enum.filter(fn %TANScheme{:sec_func => sec_func} -> sec_func == tan_scheme.sec_func end)
+    |> Enum.filter(fn %TANScheme{sec_func: sec_func} -> sec_func == tan_scheme.sec_func end)
 
     if valid_tan_schemes |> Enum.count == 0 do
       raise ArgumentError,
@@ -58,23 +57,13 @@ defmodule FinTex.Command.InitiatePayment do
 
     # find maximum version of supported TAN schemes
     tan_scheme = valid_tan_schemes
-    |> Enum.max_by(fn %TANScheme{:v => v} -> v end)
+    |> Enum.max_by(fn %TANScheme{v: v} -> v end)
 
-    tan_medium_required = tan_scheme.medium_name == :required &&
-    (seq |> Sequencer.dialog).pintan
-    |> Dict.get("HKTAB")
+    tan_medium_required = tan_scheme.medium_name == :required && TANMedia.has_capability?(sender_account)
 
     if tan_medium_required do
-      request_segments = [
-        %HNHBK{},
-        %HNSHK{},
-        %HKTAB{},
-        %HNSHA{},
-        %HNHBS{}
-      ]
-      {:ok, response} = seq |> Sequencer.call_http(request_segments)
-      tan_scheme = response[:HITAB] |> Enum.at(0) |> HITAB.to_tan_scheme(tan_scheme)
-      seq = seq |> Sequencer.inc
+      {seq, accounts} = TANMedia.update_accounts {seq, [sender_account]}
+      tan_scheme = (accounts |> Enum.at(0)).supported_tan_schemes |> Enum.at(0)
     end
 
     request_segments = [

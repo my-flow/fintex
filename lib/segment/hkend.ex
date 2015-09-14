@@ -5,7 +5,7 @@ defmodule FinTex.Segment.HKEND do
 
   defstruct [segment: nil]
 
-  def new(_, %Dialog{:dialog_id => dialog_id}) do
+  def new(_, %Dialog{dialog_id: dialog_id}) do
     %__MODULE__{
       segment:
         [

@@ -1,13 +1,14 @@
-defmodule FinTex.Segment.HKSAL do
+defmodule FinTex.Segment.HKCUB do
   @moduledoc false
 
   alias FinTex.Model.Account
   alias FinTex.Model.Dialog
   alias FinTex.Helper.Segment
 
-  defstruct [:account, segment: nil]
+  defstruct [:account, :start_point, segment: nil]
 
   import Segment
+
 
   def new(
     %__MODULE__{
@@ -17,7 +18,8 @@ defmodule FinTex.Segment.HKSAL do
         blz:            blz,
         account_number: account_number,
         subaccount_id:  subaccount_id
-      }
+      },
+      start_point: start_point
     },
     d = %Dialog{
       country_code: country_code
@@ -25,24 +27,25 @@ defmodule FinTex.Segment.HKSAL do
   ) do
 
     v = max_version(d, __MODULE__)
-    ktv = case v do
-      6 when iban != nil and bic != nil -> [iban, bic]
-      7 when iban != nil and bic != nil -> [iban, bic]
-      _                                 -> [account_number, subaccount_id, country_code, blz]
+    ktv = cond do
+      iban != nil and bic != nil -> [iban, bic]
+      :else                      -> [account_number, subaccount_id, country_code, blz]
     end
 
     %__MODULE__{
       segment:
         [
-          ["HKSAL", "?", v],
+        	["HKCUB", "?", v],
           ktv,
-          "N"
+          "",
+          start_point
         ]
     }
   end
+
 end
 
 
-defimpl Inspect, for: FinTex.Segment.HKSAL do
+defimpl Inspect, for: FinTex.Segment.HKCUB do
   use FinTex.Helper.Inspect
 end
