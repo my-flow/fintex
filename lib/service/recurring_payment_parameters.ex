@@ -12,7 +12,7 @@ defmodule FinTex.Service.RecurringPaymentParameters do
   @behaviour ServiceBehaviour
 
 
-  def has_capability? account = %Account{supported_transactions: supported_transactions} do
+  def has_capability? %Account{supported_transactions: supported_transactions} do
     supported_transactions |>  Enum.member?("HKDAE")
   end
 

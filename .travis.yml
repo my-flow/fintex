@@ -1,8 +1,8 @@
 language: elixir
 elixir:
-    - 1.0.5
+    - 1.1.1
 otp_release:
-    - 17.5
+    - 18.1
 after_success:
   - mix do compile, coveralls.travis
 after_script:

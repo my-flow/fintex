@@ -27,29 +27,18 @@ defmodule FinTex.Model.Response do
   def sort_segments %{segment: [[_, pos1 | _] | _]}, %{segment: [[_, pos2 | _] | _]} do
     pos1 <= pos2
   end
-end
 
 
-defimpl Access, for: FinTex.Model.Response do
-
-  def get(%{index_by_segment_names: index_by_segment_names}, key) when is_atom(key) do
-    (index_by_segment_names |> Access.get(key |> to_string) || []) |> Stream.map(fn s -> s.segment end)
+  def fetch(%{index_by_segment_names: index_by_segment_names}, key) when is_atom(key) do
+    {:ok, (index_by_segment_names |> Access.get(key |> to_string) || []) |> Stream.map(fn s -> s.segment end)}
   end
 
-  def get(%{index_by_reference: index_by_reference}, ref) when is_integer(ref) and ref >= 0 do
-    (index_by_reference |> Access.get(ref ) || []) |> Stream.map(fn s -> s.segment end)
+  def fetch(%{index_by_reference: index_by_reference}, ref) when is_integer(ref) and ref >= 0 do
+    {:ok, (index_by_reference |> Access.get(ref ) || []) |> Stream.map(fn s -> s.segment end)}
   end
 
-  def get(_dict, key) do
-    raise ArgumentError,
-      "the access protocol for FinTex.Model.Response expect the key to be an atom, got: #{inspect key}"
-  end
-
-  def get_and_update(response, _, _) do
-   raise Protocol.UndefinedError,
-      protocol: @protocol,
-      value: response,
-      description: "updating is not supported"
+  def fetch(_dict, _key) do
+    :error
   end
 end
 

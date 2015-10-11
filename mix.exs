@@ -8,7 +8,7 @@ defmodule Fintex.Mixfile do
       name: "FinTex",
       source_url: "https://github.com/my-flow/fintex",
       homepage_url: "http://my-flow.github.io/fintex",
-      elixir: "~> 1.0",
+      elixir: "~> 1.1",
       description: description,
       package: package,
       build_embedded: Mix.env == :prod,
@@ -36,16 +36,16 @@ defmodule Fintex.Mixfile do
 
   defp deps do
     [
-      {:earmark,               "~> 0.1",    only: :dev},
-      {:ex_doc,                "~> 0.9.0",  only: [:dev, :test], override: true},
+      {:earmark,               "~> 0.1"},
+      {:ex_doc,                "~> 0.9.0",  override: true},
       {:exactor,               "~> 2.1.0"},
       {:excoveralls,           "~> 0.3.11", only: [:dev, :test]},
       {:httpotion,             "~> 2.1.0"},
-      {:ibrowse,            tag: "v4.1.1",  github: "cmullaparthi/ibrowse"},
+      {:ibrowse,            tag: "v4.2",  github: "cmullaparthi/ibrowse"},
       {:inch_ex,               "~> 0.4.0",  only: :docs},
       {:mt940,                 "~> 0.3.2"},
       {:ssl_verify_hostname,   "<= 1.0.3"},
-      {:timex,                 "~> 0.19.4"},
+      {:timex,                 "~> 0.19.5"},
       {:vex,                   "~> 0.5.3"},
       {:xml_builder,   commit: "84c310903af9b80fc54829c88d2c4bc898a65233", github: "joshnuss/xml_builder"}
     ]
