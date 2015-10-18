@@ -30,7 +30,7 @@ defmodule FinTex.Service.SEPAInfo do
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
     accounts = response[:HISPA]
-    |> Enum.at(0)
+    |> Enum.at(0, [])
     |> Stream.drop(1)
     |> Stream.filter(fn info -> Enum.at(info, 0) === "J" end)
     |> Enum.map(fn info ->
