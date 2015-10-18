@@ -36,6 +36,7 @@ defmodule Fintex.Mixfile do
 
   defp deps do
     [
+      {:decimal,               "~> 1.1.0"},
       {:earmark,               "~> 0.1"},
       {:ex_doc,                "~> 0.9.0",  override: true},
       {:exactor,               "~> 2.1.0"},

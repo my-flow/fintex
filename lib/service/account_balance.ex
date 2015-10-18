@@ -39,18 +39,14 @@ defmodule FinTex.Service.AccountBalance do
 
     account = %Account{account |
       balance: %Balance{
-        balance:          info |> Enum.at(4) |> Enum.at(1)
-                            |> (&(if info |> Enum.at(4) |> Enum.at(0) == "C",
-                                 do: &1,
-                               else: "-#{&1}")
-                          ).(), # TODO convert this value to a decimal
+        balance:          info |> Enum.at(4) |> Enum.at(1),
         balance_date:     to_date(
                              info |> Enum.at(4) |> Enum.at(3),
                              info |> Enum.at(4) |> Enum.at(4)
                           ),
         credit_line:      info |> Enum.at(6, []) |> Enum.at(0),
         amount_available: info |> Enum.at(7, []) |> Enum.at(0) ||
-                             info |> Enum.at(8, []) |> Enum.at(0)
+                          info |> Enum.at(8, []) |> Enum.at(0)
       }
     }
 

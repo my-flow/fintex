@@ -1,6 +1,7 @@
 defmodule FinTex.Parser.Lexer do
   @moduledoc false
 
+  alias FinTex.Helper.Amount
   require Record
 
   Record.defrecordp :tokenization,
@@ -188,9 +189,7 @@ defmodule FinTex.Parser.Lexer do
 
 
   def to_amount(string) when is_binary(string) do
-    string
-    |> String.replace(",", ".")
-    |> String.replace(~r/\.$/, ".00")
+    string |> Amount.parse
   end
 
 
