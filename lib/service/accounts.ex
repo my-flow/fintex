@@ -78,6 +78,7 @@ defmodule FinTex.Service.Accounts do
                                  |> String.strip,
         supported_transactions:  u
                                  |> Stream.drop(8 + offset)
+                                 |> Stream.filter(fn l -> l |> is_list && !Enum.empty?(l) end)
                                  |> Stream.map(fn [transaction, _] -> transaction end)
                                  |> Stream.filter(fn transaction -> pintan |> Dict.has_key?(transaction) end)
                                  |> Stream.uniq
