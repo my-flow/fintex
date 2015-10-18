@@ -76,6 +76,14 @@ defmodule FinTex.Connection.HTTPClient do
   end
 
 
+  defhandleinfo %HTTPotion.AsyncChunk{id: id, chunk: {:error, msg}},
+  state: {from, async_id, options}, export: false, when: id == async_id do
+
+    if !options[:ignore_response], do: GenServer.reply(from, {:error, msg})
+    noreply
+  end
+
+
   defhandleinfo %HTTPotion.AsyncChunk{id: id, chunk: chunk},
   state: {from, async_id, options}, export: false, when: id == async_id do
 

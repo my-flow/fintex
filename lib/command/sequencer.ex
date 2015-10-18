@@ -51,7 +51,7 @@ defmodule FinTex.Command.Sequencer do
         :ok ->
           {:ok}
         {:error, msg} ->
-          warn msg
+          error msg
           {:error, msg}
       end
     after
