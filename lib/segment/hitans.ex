@@ -122,10 +122,7 @@ defmodule FinTex.Segment.HITANS do
   end
 
 
-  defp to_format("HHD"), do: :hhd
-  defp to_format("HHD-Belegung"), do: :hhd
-  defp to_format("HHD-Erweiterung"), do: :hhd
-
+  defp to_format("HHD" <> _), do: :hhd
   defp to_format(nil), do: :text
   defp to_format(_), do: :text
 end
