@@ -4,15 +4,20 @@ defmodule FinTex.User.FinChallengeResponder do
   """
 
   alias FinTex.Model.Challenge
+  alias FinTex.Tan.FlickerCode
 
   @type t :: term
 
   @doc false
   @spec read_user_input(Challenge.t) :: binary
-  def read_user_input(challenge = %Challenge{title: title, medium: medium, data: data}) do
+  def read_user_input(challenge = %Challenge{title: title, label: label, medium: medium, data: data, format: format}) do
     IO.puts title
     IO.puts medium
-    data |> save_matrix(title)
+    case format do
+      :matrix -> data |> save_matrix(title)
+      :hhd -> (data || label) |> FlickerCode.new |> FlickerCode.render |> IO.puts
+      _ -> data |> IO.puts
+    end
     do_read_user_input(challenge, nil)
   end
 
