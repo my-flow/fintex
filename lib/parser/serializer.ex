@@ -54,7 +54,7 @@ defmodule FinTex.Parser.Serializer do
   end
 
 
-  defp escape(segments) do
+  def escape(segments) do
     segments |> Enum.map(fn s ->
       cond do
         is_list(s) -> escape(s)

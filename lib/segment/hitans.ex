@@ -110,7 +110,7 @@ defmodule FinTex.Segment.HITANS do
     |> Enum.map(fn method_params ->
         %TANScheme{
           sec_func: method_params |> Enum.at(0),
-          format:   method_params |> Enum.at(3) |> to_format,
+          format:   method_params |> Enum.at(2) |> to_format,
           name:     method_params |> Enum.at(5),
           label:    method_params |> Enum.at(8),
           medium_name: case method_params |> Enum.at(19) do
@@ -124,6 +124,7 @@ defmodule FinTex.Segment.HITANS do
 
 
   defp to_format("HHD" <> _), do: :hhd
+  defp to_format("M" <> _), do: :matrix
   defp to_format(nil), do: :text
   defp to_format(_), do: :text
 end

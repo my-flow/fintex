@@ -37,7 +37,8 @@ defmodule FinTex.User.FinBank do
     %__MODULE__{
       blz:      bank |> Bank.blz,
       url:      bank |> Bank.url,
-      version:  bank |> Bank.version}
+      version:  bank |> Bank.version
+    }
   end
 end
 

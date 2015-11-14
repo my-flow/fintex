@@ -16,7 +16,9 @@ defmodule FinTex.Command.Sequencer do
     options: nil
 
 
-  def new(bank, credentials \\ nil, options) when is_list(options) do
+  def new(client_system_id \\ "0", bank = %{}, credentials \\ nil, options)
+  when is_list(options) do
+
     children = [
       worker(HTTPClient, [[]], restart: :transient)
     ]
@@ -25,8 +27,8 @@ defmodule FinTex.Command.Sequencer do
     {_, _, _} = :random.seed
 
     d = cond do 
-      credentials -> Dialog.new(bank, credentials.login, credentials.client_id, credentials.pin)
-      true        -> Dialog.new(bank)
+      credentials -> Dialog.new(client_system_id, bank, credentials.login, credentials.client_id, credentials.pin)
+      true        -> Dialog.new(client_system_id, bank)
     end
     state(sup: sup, dialog: d, options: options)
   end
@@ -68,20 +70,16 @@ defmodule FinTex.Command.Sequencer do
   end
 
 
-  def needs_synchronization?(state(dialog: d)) do
-    d |> Dialog.needs_synchronization?
-  end
-
-
-  def update(state = state(dialog: d), client_system_id, dialog_id, bpd, pintan, supported_tan_schemes)
-  when is_binary(client_system_id) and is_binary(dialog_id) do
-    d = d |> Dialog.update(client_system_id, dialog_id, bpd, pintan, supported_tan_schemes)
+  def update(state = state(dialog: d), client_system_id)
+  when is_binary(client_system_id) do
+    d = d |> Dialog.update(client_system_id)
     state(state, dialog: d)
   end
 
 
-  def update(state = state(dialog: d), dialog_id) when is_binary(dialog_id) do
-    d = d |> Dialog.update(dialog_id)
+  def update(state = state(dialog: d), dialog_id, bpd \\ nil, pintan \\ nil, supported_tan_schemes \\ nil)
+  when is_binary(dialog_id) do
+    d = d |> Dialog.update(dialog_id, bpd, pintan, supported_tan_schemes)
     state(state, dialog: d)
   end
 
@@ -92,8 +90,8 @@ defmodule FinTex.Command.Sequencer do
   end
 
 
-  def reset(state = state(dialog: d), tan_scheme_sec_funcs) do
-    d = d |> Dialog.reset(tan_scheme_sec_funcs)
+  def reset(state = state(dialog: d), tan_scheme_sec_func) do
+    d = d |> Dialog.reset(tan_scheme_sec_func)
     state(state, dialog: d)
   end
 

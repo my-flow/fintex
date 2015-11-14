@@ -45,9 +45,9 @@ defmodule Fintex.Mixfile do
       {:ibrowse,            tag: "v4.2",    github: "cmullaparthi/ibrowse"},
       {:inch_ex,               "~> 0.4.0",  only: :docs},
       {:luhn,            branch: "master",  github: "my-flow/luhn_ex"},
-      {:mt940,                 "~> 0.3.2"},
+      {:mt940,           branch: "master",  github: "my-flow/mt940"},
       {:ssl_verify_hostname,   "<= 1.0.3"},
-      {:timex,                 "~> 0.19.5"},
+      {:timex,                 "~> 1.0.0-rc2"},
       {:vex,                   "~> 0.5.3"},
       {:xml_builder,   commit: "84c310903af9b80fc54829c88d2c4bc898a65233", github: "joshnuss/xml_builder"}
     ]

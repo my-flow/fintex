@@ -8,7 +8,7 @@ defmodule FinTex.Parser.Lexer do
     tokens: nil,
     escape_sequences: nil
 
-  @control_chars ["\\?", "\\+", ":", "'", "@"]
+  @control_chars ["?", "+", ":", "'", "@"]
 
 
   def segment_end, do: "(?<!\\?)'"
@@ -198,17 +198,17 @@ defmodule FinTex.Parser.Lexer do
     |> Enum.reduce(
       raw,
       fn sign, acc ->
-        String.replace(acc, Regex.compile!(sign), "\\?#{sign}")
+        String.replace(acc, sign |> Regex.escape |> Regex.compile!, "?#{sign}")
       end)
   end
 
 
-  defp unescape(raw) when is_binary(raw) do
+  def unescape(raw) when is_binary(raw) do
     @control_chars
     |> Enum.reduce(
       raw,
       fn sign, acc ->
-        String.replace(acc, Regex.compile!("\\?#{sign}"), sign)
+        String.replace(acc, "\\?#{Regex.escape(sign)}" |> Regex.compile!, sign)
       end)
   end
 

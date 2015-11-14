@@ -12,7 +12,7 @@ defmodule FinTex.Service.AbstractService do
           {{key, account}, seq}
         end)
 
-        {seq, accounts |> Dict.merge(acc)}
+        {seq, Dict.merge(accounts, acc)}
       end
     end
   end

@@ -16,13 +16,13 @@ defmodule FinTex.Command.GetTransactions do
   use MT940
 
 
-  def get_transactions(bank, credentials, account, from, to, options) do
+  def get_transactions(bank, client_system_id, tan_scheme_sec_func, credentials, account, from, to, options) do
 
-    {seq, _} = Synchronization.initialize_dialog(bank, credentials, options)
+    {seq, _} = Synchronization.synchronize(bank, client_system_id, tan_scheme_sec_func, credentials, options)
 
     {seq, transactions} = seq |> check_transactions(account, [], from, to)
 
-    %{} = Task.async(fn -> seq |> Synchronization.terminate_dialog end)
+    %{} = Task.async(fn -> seq |> Synchronization.terminate end)
 
     transactions
   end

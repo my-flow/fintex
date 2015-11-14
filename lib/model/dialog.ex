@@ -25,18 +25,22 @@ defmodule FinTex.Model.Dialog do
   ]
 
 
-  def new(bank, login, client_id, pin) do
+  def new(client_system_id, bank, login, client_id, pin) do
     %__MODULE__{
-      bank:       bank,
-      login:      login,
-      client_id:  client_id,
-      pin:        pin
+      client_system_id: client_system_id,
+      bank:             bank,
+      login:            login,
+      client_id:        client_id,
+      pin:              pin
     }
   end
 
 
-  def new(bank) do
-    %__MODULE__{ bank: bank }
+  def new(client_system_id, bank) do
+    %__MODULE__{
+      client_system_id: client_system_id,
+      bank:             bank
+    }
   end
 
 
@@ -45,26 +49,19 @@ defmodule FinTex.Model.Dialog do
   end
 
 
-  def needs_synchronization?(d = %__MODULE__{client_system_id: client_system_id}) do
-    !(d |> anonymous?) && client_system_id === "0"
+  def update(d = %__MODULE__{}, client_system_id)
+  when is_binary(client_system_id) do
+    %__MODULE__{d | client_system_id: client_system_id}
   end
 
 
-  def update(d = %__MODULE__{}, client_system_id, dialog_id, bpd, pintan, supported_tan_schemes)
-  when is_binary(client_system_id) and is_binary(dialog_id) do
-
+  def update(d = %__MODULE__{}, dialog_id, bpd, pintan, supported_tan_schemes) when is_binary(dialog_id) do
     %__MODULE__{d |
       dialog_id:              dialog_id,
-      client_system_id:       client_system_id,
       bpd:                    bpd,
       pintan:                 pintan,
       supported_tan_schemes:  supported_tan_schemes
     }
-  end
-
-
-  def update(d = %__MODULE__{}, dialog_id) when is_binary(dialog_id) do
-    %__MODULE__{d | dialog_id: dialog_id}
   end
 
 
@@ -78,10 +75,8 @@ defmodule FinTex.Model.Dialog do
   end
 
 
-  def reset(d = %__MODULE__{tan_scheme_sec_func: tan_scheme_sec_func}, new_tan_scheme_sec_func \\ nil) do
+  def reset(d = %__MODULE__{tan_scheme_sec_func: tan_scheme_sec_func}, new_tan_scheme_sec_func) do
     %__MODULE__{d |
-      dialog_id: 0,
-      message_no: 1,
       tan_scheme_sec_func: case new_tan_scheme_sec_func do
         nil -> tan_scheme_sec_func
         _   -> new_tan_scheme_sec_func

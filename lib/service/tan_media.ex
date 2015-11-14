@@ -31,7 +31,7 @@ defmodule FinTex.Service.TANMedia do
       {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
       accounts = accounts
-      |> Enum.map(fn account -> account |> update(response[:HITAB] |> Enum.map(&HITAB.to_medium_name/1)) end)
+      |> Enum.map(fn {key, account} -> {key, account |> update(response[:HITAB] |> Enum.map(&HITAB.to_medium_name/1))} end)
 
       {seq |> Sequencer.inc, accounts}
   end

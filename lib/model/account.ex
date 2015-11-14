@@ -56,4 +56,10 @@ defmodule FinTex.Model.Account do
     supported_transactions: []
   ]
 
+  def key(%__MODULE__{
+    account_number: account_number,
+    subaccount_id: subaccount_id
+  }) do
+    "#{account_number}#{subaccount_id}"
+  end
 end

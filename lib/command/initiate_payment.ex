@@ -4,6 +4,7 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Synchronization
   alias FinTex.Command.Sequencer
+  alias FinTex.Data.AccountHandler
   alias FinTex.Model.Account
   alias FinTex.Model.Bank
   alias FinTex.Model.Challenge
@@ -21,18 +22,18 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Service.TANMedia
 
   use AbstractCommand
+  import AccountHandler
 
   @type options :: []
+  @type client_system_id :: binary
 
 
-  @spec initiate_payment(Bank.t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary
-  def initiate_payment(bank, credentials, %Payment{tan_scheme: tan_scheme} = payment, challenge_responder, options) do
+  @spec initiate_payment(Bank.t, client_system_id, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary
+  def initiate_payment(bank, client_system_id, credentials, %Payment{tan_scheme: tan_scheme} = payment, challenge_responder, options) do
 
-    {seq, accounts} = Synchronization.initialize_dialog(bank, credentials, tan_scheme.sec_func, options)
+    {seq, accounts} = Synchronization.synchronize(bank, client_system_id, tan_scheme.sec_func, credentials, options)
 
-    sender_account = accounts
-    |> Dict.values
-    |> Enum.find(&find_account(payment.sender_account, &1))
+    sender_account = accounts |> find_account(payment.sender_account)
 
     if sender_account do
       payment = %Payment{payment | sender_account: sender_account}
@@ -62,8 +63,8 @@ defmodule FinTex.Command.InitiatePayment do
     tan_medium_required = tan_scheme.medium_name == :required && TANMedia.has_capability?(sender_account)
 
     if tan_medium_required do
-      {seq, accounts} = TANMedia.update_accounts {seq, [sender_account]}
-      tan_scheme = (accounts |> Enum.at(0)).supported_tan_schemes |> Enum.at(0)
+      {seq, accounts} = TANMedia.update_accounts {seq, [{Account.key(sender_account), sender_account}]}
+      tan_scheme = (accounts |> Dict.values |> Enum.at(0)).supported_tan_schemes |> Enum.at(0)
     end
 
     request_segments = [
@@ -97,32 +98,11 @@ defmodule FinTex.Command.InitiatePayment do
 
     seq = seq |> Sequencer.inc
 
-    %{} = Task.async(fn -> seq |> Synchronization.terminate_dialog end)
+    %{} = Task.async(fn -> seq |> Synchronization.terminate end)
 
     Stream.concat(response[:HIRMG], response[:HIRMS])
     |> messages
     |> Stream.map(fn [code, _ref, text | params] -> "#{code} #{text} #{Enum.join(params, ", ")}" end)
     |> Enum.join(", ")
   end
-
-
-  def find_account(
-    %Account{iban: iban},
-    %Account{iban: iban}
-  ) when iban != nil
-  do
-    true
-  end
-
-
-  def find_account(
-    %Account{account_number: account_number, subaccount_id: subaccount_id},
-    %Account{account_number: account_number, subaccount_id: subaccount_id}
-  ) when account_number != nil
-  do
-    true
-  end
-
-
-  def find_account(_, _), do: false
 end

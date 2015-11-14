@@ -3,9 +3,11 @@ defmodule FinTex.Service.Accounts do
 
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
+  alias FinTex.Data.AccountHandler
   alias FinTex.Model.Account
   alias FinTex.Model.TANScheme
   alias FinTex.Model.Dialog
+  alias FinTex.Segment.HITANS
   alias FinTex.Segment.HKIDN
   alias FinTex.Segment.HKVVB
   alias FinTex.Segment.HNHBK
@@ -15,8 +17,10 @@ defmodule FinTex.Service.Accounts do
   alias FinTex.Service.ServiceBehaviour
 
   use AbstractCommand
+  import AccountHandler
 
   @behaviour ServiceBehaviour
+  @allowed_methods 3920
 
 
   def has_capability?(_), do: true
@@ -34,11 +38,48 @@ defmodule FinTex.Service.Accounts do
 
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
+    bpd = response[4]
+    |> Enum.group_by(HashDict.new, fn [[name | _] | _] -> name end)
+
+
+    pintan = bpd |> Dict.get("HKPIN" |> control_structure_to_bpd)
+
+    pintan = case pintan do
+      nil -> bpd
+             |> Enum.map(fn {k, v} -> {k |> bpd_to_control_structure, v} end)
+             |> Enum.into(HashDict.new)
+      _   -> pintan
+             |> Enum.at(0)
+             |> Enum.at(4)
+             |> Enum.at(5)
+             |> Stream.map(fn {k, _} -> k end)
+             |> Stream.map(fn name -> {name, bpd[name |> control_structure_to_bpd]} end)
+             |> Enum.into(HashDict.new)
+    end
+
+    tan_scheme_sec_funcs = response[:HIRMS]
+    |> messages
+    |> Stream.filter(fn [code | _] -> code === @allowed_methods end)
+    |> Stream.map(fn [_, _, _ | params] -> params end)
+    |> Enum.at(0)
+    |> Enum.into(HashSet.new)
+
+    supported_tan_schemes = pintan
+    |> Dict.get("HKTAN")
+    |> Stream.flat_map(&HITANS.to_tan_schemes(&1))
+    |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> Set.member?(sec_func) end)
+    |> Enum.uniq(fn %TANScheme{sec_func: sec_func} -> sec_func end)
+
+    seq = seq
+    |> Sequencer.inc
+    |> Sequencer.update(dialog_id(response), bpd, pintan, supported_tan_schemes)
+
     accounts = seq
     |> Sequencer.dialog
     |> accounts(response[:HIUPD])
+    |> to_accounts_dict
 
-    {seq |> Sequencer.update(dialog_id(response)) |> Sequencer.inc, accounts}
+    {seq, accounts}
   end
 
 
@@ -58,7 +99,7 @@ defmodule FinTex.Service.Accounts do
 
     user_params
 
-    |> Enum.map(fn u ->
+    |> Stream.map(fn u ->
       account = %Account{
         account_number:          u |> Enum.at(1) |> Enum.at(0),
         subaccount_id:           u |> Enum.at(1) |> Enum.at(1),

@@ -2,6 +2,7 @@ defmodule FinTex.Service.SEPAInfo do
   @moduledoc false
 
   alias FinTex.Command.Sequencer
+  alias FinTex.Data.AccountHandler
   alias FinTex.Model.Account
   alias FinTex.Segment.HNHBK
   alias FinTex.Segment.HNSHK
@@ -11,6 +12,7 @@ defmodule FinTex.Service.SEPAInfo do
   alias FinTex.Service.ServiceBehaviour
 
   @behaviour ServiceBehaviour
+  import AccountHandler
 
 
   def has_capability? %Account{supported_transactions: supported_transactions} do
@@ -29,18 +31,20 @@ defmodule FinTex.Service.SEPAInfo do
 
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
-    accounts = response[:HISPA]
+    acc = response[:HISPA]
     |> Enum.at(0, [])
     |> Stream.drop(1)
     |> Stream.filter(fn info -> Enum.at(info, 0) === "J" end)
     |> Enum.map(fn info ->
-        account = accounts |> Enum.find(fn %Account{account_number: account_number} -> account_number === Enum.at(info, 3) end)
+        account = accounts
+        |> find_account(%Account{account_number: Enum.at(info, 3), subaccount_id: Enum.at(info, 4)})
         %Account{account |
           iban: Enum.at(info, 1),
           bic:  Enum.at(info, 2)
         }
-       end)
+    end)
+    |> to_accounts_dict
 
-    {seq |> Sequencer.inc, accounts}
+    {seq |> Sequencer.inc, Dict.merge(accounts, acc)}
   end
 end

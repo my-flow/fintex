@@ -24,7 +24,9 @@ defmodule FinTex.Command.FinPing do
 
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
-    seq = seq |> Sequencer.update(dialog_id(response)) |> Sequencer.inc
+    seq = seq
+    |> Sequencer.update(dialog_id(response))
+    |> Sequencer.inc
 
     request_segments = [
       %HNHBK{},
