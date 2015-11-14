@@ -10,6 +10,7 @@ defmodule FinTex.Command.Sequencer do
   import Supervisor.Spec
   require Record
 
+  @type t :: record(:state, sup: pid, dialog: term, options: list)
   Record.defrecordp :state,
     sup: nil,
     dialog: nil,

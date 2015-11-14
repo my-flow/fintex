@@ -20,7 +20,7 @@ defmodule FinTex.Service.AggregatedService do
   ]
 
 
-  def has_capability?(_), do: true
+  def has_capability?(_, _), do: true
 
 
   def update_accounts {seq, accounts} do

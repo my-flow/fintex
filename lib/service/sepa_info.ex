@@ -15,7 +15,7 @@ defmodule FinTex.Service.SEPAInfo do
   import AccountHandler
 
 
-  def has_capability? %Account{supported_transactions: supported_transactions} do
+  def has_capability?(_, %Account{supported_transactions: supported_transactions}) do
     supported_transactions |> Enum.member?("HKSPA")
   end
 

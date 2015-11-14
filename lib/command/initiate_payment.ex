@@ -60,7 +60,7 @@ defmodule FinTex.Command.InitiatePayment do
     tan_scheme = valid_tan_schemes
     |> Enum.max_by(fn %TANScheme{v: v} -> v end)
 
-    tan_medium_required = tan_scheme.medium_name == :required && TANMedia.has_capability?(sender_account)
+    tan_medium_required = tan_scheme.medium_name == :required && TANMedia.has_capability?(seq, sender_account)
 
     if tan_medium_required do
       {seq, accounts} = TANMedia.update_accounts {seq, [{Account.key(sender_account), sender_account}]}

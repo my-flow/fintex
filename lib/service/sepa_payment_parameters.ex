@@ -13,7 +13,7 @@ defmodule FinTex.Service.SEPAPaymentParameters do
   @max_purpose_length 140
 
 
-  def has_capability? %Account{supported_transactions: supported_transactions} do
+  def has_capability?(_, %Account{supported_transactions: supported_transactions}) do
     supported_transactions |> Enum.member?("HKCCS")
   end
 

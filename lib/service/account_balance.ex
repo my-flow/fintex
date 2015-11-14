@@ -1,8 +1,10 @@
 defmodule FinTex.Service.AccountBalance do
   @moduledoc false
 
+  alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
   alias FinTex.Model.Account
+  alias FinTex.Model.Dialog
   alias FinTex.Model.Balance
   alias FinTex.Segment.HNHBK
   alias FinTex.Segment.HNSHK
@@ -12,6 +14,7 @@ defmodule FinTex.Service.AccountBalance do
   alias FinTex.Service.AbstractService
   alias FinTex.Service.ServiceBehaviour
 
+  use AbstractCommand
   use AbstractService
   use Timex
 
@@ -19,8 +22,17 @@ defmodule FinTex.Service.AccountBalance do
   @behaviour ServiceBehaviour
 
 
-  def has_capability? %Account{supported_transactions: supported_transactions} do
-    supported_transactions |> Enum.member?("HKSAL")
+  def has_capability?(seq, %Account{supported_transactions: supported_transactions, iban: iban, bic: bic}) do
+    %Dialog{bpd: bpd} = seq |> Sequencer.dialog
+
+    params = bpd
+    |> Dict.get("HKSPA" |> control_structure_to_bpd)
+    |> Enum.at(0)
+    |> Enum.at(4)
+
+    sepa_allowed = params |> Enum.at(1) == "J" || iban != nil && bic != nil
+
+    sepa_allowed && supported_transactions |> Enum.member?("HKSAL")
   end
 
 

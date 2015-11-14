@@ -13,7 +13,7 @@ defmodule FinTex.Service.ScheduledPaymentParameters do
   @behaviour ServiceBehaviour
 
 
-  def has_capability? %Account{supported_transactions: supported_transactions} do
+  def has_capability?(_, %Account{supported_transactions: supported_transactions}) do
     supported_transactions |> Enum.member?("HKCSE")
   end
 

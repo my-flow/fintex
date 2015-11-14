@@ -5,6 +5,6 @@ defmodule FinTex.Service.ServiceBehaviour do
 
   use Behaviour
 
-  defcallback has_capability?(Account.t)
+  defcallback has_capability?(Sequencer.t, Account.t)
   defcallback update_accounts {any, [Account.t]} :: {any, [Account.t]}
 end 
