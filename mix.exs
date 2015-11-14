@@ -37,19 +37,19 @@ defmodule Fintex.Mixfile do
   defp deps do
     [
       {:decimal,               "~> 1.1.0"},
-      {:earmark,               "~> 0.1"},
-      {:ex_doc,                "~> 0.9.0",  override: true},
-      {:exactor,               "~> 2.1.0"},
-      {:excoveralls,           "~> 0.3.11", only: [:dev, :test]},
+      {:earmark,               "~> 0.1.19"},
+      {:ex_doc,                "~> 0.10.0",  override: true},
+      {:exactor,               "~> 2.2.0"},
+      {:excoveralls,           "~> 0.4.2", only: [:dev, :test]},
       {:httpotion,             "~> 2.1.0"},
       {:ibrowse,            tag: "v4.2",    github: "cmullaparthi/ibrowse"},
       {:inch_ex,               "~> 0.4.0",  only: :docs},
-      {:luhn,            branch: "master",  github: "my-flow/luhn_ex"},
-      {:mt940,           branch: "master",  github: "my-flow/mt940"},
-      {:ssl_verify_hostname,   "<= 1.0.3"},
+      {:luhn,               tag: "0.4.0",   github: "my-flow/luhn_ex"},
+      {:mt940,                 "~> 0.3.3"},
+      {:ssl_verify_hostname,   "<= 1.0.5"},
       {:timex,                 "~> 1.0.0-rc2"},
-      {:vex,                   "~> 0.5.3"},
-      {:xml_builder,   commit: "84c310903af9b80fc54829c88d2c4bc898a65233", github: "joshnuss/xml_builder"}
+      {:vex,                   "~> 0.5.4"},
+      {:xml_builder,   commit: "1e381db0b7d289ee18c2f7fd682d8e47215a141c", github: "joshnuss/xml_builder"}
     ]
   end
 

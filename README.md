@@ -18,7 +18,7 @@ Include a dependency in your `mix.exs`:
 deps: [
   {:fintex, "~> 0.0.1"}
   {:ibrowse, tag: "v4.1.1", github: "cmullaparthi/ibrowse"},
-  {:xml_builder, commit: "84c310903af9b80fc54829c88d2c4bc898a65233", github: "joshnuss/xml_builder"}
+  {:xml_builder, commit: "1e381db0b7d289ee18c2f7fd682d8e47215a141c", github: "joshnuss/xml_builder"}
 ]
 ```
 To use FinTex modules, add `use FinTex` to the top of each module you plan on referencing FinTex from.
