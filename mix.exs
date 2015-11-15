@@ -7,7 +7,7 @@ defmodule Fintex.Mixfile do
       version: "0.0.1",
       name: "FinTex",
       source_url: "https://github.com/my-flow/fintex",
-      homepage_url: "http://my-flow.github.io/fintex",
+      homepage_url: "http://hexdocs.pm/fintex",
       elixir: "~> 1.1",
       description: description,
       package: package,

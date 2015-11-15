@@ -17,7 +17,7 @@ Include a dependency in your `mix.exs`:
 ```elixir
 deps: [
   {:fintex, "~> 0.0.1"}
-  {:ibrowse, tag: "v4.1.1", github: "cmullaparthi/ibrowse"},
+  {:ibrowse, tag: "v4.2", github: "cmullaparthi/ibrowse"},
   {:xml_builder, commit: "1e381db0b7d289ee18c2f7fd682d8e47215a141c", github: "joshnuss/xml_builder"}
 ]
 ```
@@ -38,24 +38,31 @@ Feel free to instead implement the [Bank protocol](http://hexdocs.pm/fintex/FinT
 ## Ping
 Some, but not all, banks support the “anonymous login” feature, so you can send a ping request:
 ```elixir
-ping(bank)
+FinTex.ping(bank)
 ```
 
-## Retrieve all bank accounts
-In order to retrieve account-specific data (such as an account's balance), you need credentials for a real-life bank account (usually login and PIN). Note that repeated failed attempts to log in might cause the bank to block the bank account.
+## Initialize the dialog
+In order to authenticate , you need credentials to a real-life bank account (usually login and PIN). Note that repeated failed attempts to log in might cause the bank to block the bank account.
 ```elixir
 credentials = %FinTex.User.FinCredentials{
   login: "username",
   pin: "secret"
 }
-accounts(bank, credentials) |> Enum.to_list # retrieve a list of bank accounts
+f = FinTex.new(bank, credentials)
+# %FinTex{bank: %FinTex.User.FinBank{blz: "12345678", url: "https://example.org", version: "300"}, client_system_id: "321", tan_scheme_sec_func: "999"}
+```
+
+## Retrieve all bank accounts
+Retrieve account-specific data, such as an account's balance:
+```elixir
+FinTex.accounts(f, credentials) |> Enum.to_list # retrieve a list of bank accounts
 ```
 Feel free to instead implement the [Credentials protocol](http://hexdocs.pm/fintex/FinTex.User.Credentials.html) for your own struct.
 
 ## Retrieve all transactions of a bank account
 Request all transactions of one of the bank accounts:
 ```elixir
-transactions(bank, credentials, account) |> Enum.to_list # retrieve a list of transactions
+FinTex.transactions(f, credentials, account) |> Enum.to_list # retrieve a list of transactions
 ```
 
 ## Make a SEPA payment
@@ -81,7 +88,7 @@ payment = %FinTex.Model.Payment{
   }
 }
 
-initiate_payment(bank, credentials, payment)
+FinTex.initiate_payment(f, credentials, payment)
 ```
 
 

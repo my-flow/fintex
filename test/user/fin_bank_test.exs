@@ -5,7 +5,7 @@ defmodule FinTex.Model.FinBankTest do
   use FinTex
 
   @blz "10000000"
-  @url "https://google.com/"
+  @url "http://example.org/"
   @version "220"
 
 
