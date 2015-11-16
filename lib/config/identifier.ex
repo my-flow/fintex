@@ -5,6 +5,6 @@ defmodule FinTex.Config.Identifier do
 
   def user_agent_name, do:    "FinTex"
 
-  def user_agent_version, do: "0.0.1"
+  def user_agent_version, do: "0.1.0"
 
 end

@@ -4,7 +4,7 @@ defmodule Fintex.Mixfile do
   def project do
     [
       app: :fintex,
-      version: "0.0.1",
+      version: "0.1.0",
       name: "FinTex",
       source_url: "https://github.com/my-flow/fintex",
       homepage_url: "http://hexdocs.pm/fintex",
@@ -38,7 +38,7 @@ defmodule Fintex.Mixfile do
     [
       {:decimal,               "~> 1.1.0"},
       {:earmark,               "~> 0.1.19"},
-      {:ex_doc,                "~> 0.10.0",  override: true},
+      {:ex_doc,                git: "https://github.com/elixir-lang/ex_doc.git"},
       {:exactor,               "~> 2.2.0"},
       {:excoveralls,           "~> 0.4.2", only: [:dev, :test]},
       {:httpotion,             "~> 2.1.0"},
@@ -63,10 +63,10 @@ defmodule Fintex.Mixfile do
 
   defp package do
     [
-      files:        ["lib", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
-      contributors: ["Florian J. Breunig"],
-      licenses:     ["MIT"],
-      links:        %{"GitHub" => "https://github.com/my-flow/fintex"}
+      files:       ["lib", "priv", "mix.exs", "README*", "LICENSE*",],
+      maintainers: ["Florian J. Breunig"],
+      licenses:    ["MIT"],
+      links:       %{"GitHub" => "https://github.com/my-flow/fintex"}
     ]
   end
 end
