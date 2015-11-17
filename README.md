@@ -91,6 +91,13 @@ payment = %FinTex.Model.Payment{
 FinTex.initiate_payment(f, credentials, payment)
 ```
 
+## SSL hostname verification & path validation
+In order to prevent man-in-the-middle attachs it is recommended to enable **hostname verification** of the bank server's SSL certificate. This security feature verifies that the server's hostname matches the common name (CN) of the server's SSL certificate. 
+In addition the **path validation** feature checks the bank server's SSL certificate against a list of trusted Certificate Authorities (CAs). Where this list is located depends on the local operating system, e.g. on Ubuntu a concatenated single-file list of certificates is available at ``/etc/ssl/certs/ca-certificates.crt``.
+An example of how to set up both security features is included in [config/config.exs](config/config.exs).
+
+## Proxy Settings
+Find sample configurations in [config/config.exs](config/config.exs) that show how to set up proxy authentication and SOCKS5.
 
 # Documentation
 

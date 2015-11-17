@@ -16,7 +16,9 @@ defmodule FinTex.Connection.HTTPClient do
   defcall send_request(url, body, options), from: from, timeout: :infinity do
     debug("#{inspect self}: sending request to URL #{url}")
 
-    ssl_options = options |> Dict.get(:ssl_options, [])
+    ssl_options = Application.get_env(:fintex, :ssl_options, [])
+    |> Dict.merge Dict.get(options, :ssl_options, [])
+
     ssl_options = case ssl_options do
       [] ->
         []
@@ -35,7 +37,10 @@ defmodule FinTex.Connection.HTTPClient do
           ssl_options
         )
     end
-    ibrowse = Dict.merge [ssl_options: ssl_options], Dict.get(options, :ibrowse, [])
+
+    ibrowse = [ssl_options: ssl_options]
+    |> Dict.merge Application.get_env(:fintex, :ibrowse, [])
+    |> Dict.merge Dict.get(options, :ibrowse, [])
 
     options = [ignore_response: false] |> Dict.merge options
 
