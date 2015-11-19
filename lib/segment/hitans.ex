@@ -7,12 +7,13 @@ defmodule FinTex.Segment.HITANS do
 
   def new(segment) when is_list(segment) do
     [[_, _, v | _] | _] = segment
-    params_count = case v do
-      1 -> 11
-      2 -> 15
-      3 -> 18
-      4 -> 22
-      5 -> 22 # deviation from specification
+
+    {offset, params_count} = case v do
+      1 -> {4, 11}
+      2 -> {3, 15}
+      3 -> {3, 18}
+      4 -> {3, 22}
+      5 -> {3, 22}
     end
 
     %__MODULE__{
@@ -22,12 +23,8 @@ defmodule FinTex.Segment.HITANS do
           segment |> Enum.at(1),
           segment |> Enum.at(2),
           segment |> Enum.at(3),
-          [
-            segment |> Enum.at(4) |> Enum.at(0),
-            segment |> Enum.at(4) |> Enum.at(1),
-            segment |> Enum.at(4) |> Enum.at(2),
-            segment |> Enum.at(4) |> Enum.drop(3) |> Enum.chunk(params_count)
-          ]
+          (segment |> Enum.at(4) |> Enum.take(offset)) ++
+          [segment |> Enum.at(4) |> Enum.drop(offset) |> Enum.chunk(params_count)]
         ]
     }
   end
@@ -36,11 +33,12 @@ defmodule FinTex.Segment.HITANS do
   def to_tan_schemes(segment = [["HITANS", _, v = 1 | _] | _]) do
     segment
     |> Enum.at(4)
-    |> Enum.at(3)
+    |> Enum.at(4)
     |> Enum.map(fn method_params ->
         %TANScheme{
           sec_func: method_params |> Enum.at(0),
-          name:     method_params |> Enum.at(4),
+          format:   method_params |> Enum.at(2) |> to_format,
+          name:     method_params |> Enum.at(3),
           label:    method_params |> Enum.at(6),
           v:        v
         }
@@ -55,6 +53,7 @@ defmodule FinTex.Segment.HITANS do
     |> Enum.map(fn method_params ->
         %TANScheme{
           sec_func: method_params |> Enum.at(0),
+          format:   nil |> to_format,
           name:     method_params |> Enum.at(3),
           label:    method_params |> Enum.at(6),
           v:        v
@@ -124,7 +123,9 @@ defmodule FinTex.Segment.HITANS do
 
 
   defp to_format("HHD" <> _), do: :hhd
-  defp to_format("M" <> _), do: :matrix
+  defp to_format("SM@RTTAN" <> _), do: :hhd
+  defp to_format("MS" <> _), do: :matrix
+  defp to_format("MC" <> _), do: :matrix
   defp to_format(nil), do: :text
   defp to_format(_), do: :text
 end

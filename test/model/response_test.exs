@@ -38,6 +38,7 @@ defmodule FinTex.Model.ResponseTest do
 
   test "it should not contain unknown segments", context do
     assert 0 == context[:response][:unknown] |> Enum.count
+    assert {:ok, []} == context[:response] |> Response.fetch(:unknown)
   end
 
 

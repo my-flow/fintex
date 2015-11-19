@@ -46,10 +46,15 @@ defmodule FinTex.Parser.Serializer do
       nil ->
         segments = Regex.run(plain, raw, capture: :all_but_first)
 
-        messageHeader   = segments |> Enum.at(0) |> split
-        footer          = segments |> Enum.at(2) |> split
-        segments        = segments |> Enum.at(1) |> split
-        Stream.concat [messageHeader, segments, footer]
+        case segments do
+          [_|_] ->
+            messageHeader   = segments |> Enum.at(0) |> split
+            footer          = segments |> Enum.at(2) |> split
+            segments        = segments |> Enum.at(1) |> split
+            Stream.concat [messageHeader, segments, footer]
+          nil ->
+            raw |> split |> List.wrap
+        end
     end
   end
 
