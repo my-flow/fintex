@@ -41,10 +41,21 @@ defmodule FinTex do
     client_system_id: "0",
   ]
 
-  @spec ping(Bank.t, options) :: term
-  def ping(bank, options \\ []) when is_list(options) do
+
+  @spec ping!(Bank.t, options) :: binary | no_return
+  def ping!(bank, options \\ []) when is_list(options) do
     %{} = bank |> FinBank.from_bank |> validate!
     FinPing.ping(bank, options)
+  end
+
+
+  @spec ping(Bank.t, options) :: {:ok, binary} | {:error, term}
+  def ping(bank, options \\ []) when is_list(options) do
+    try do
+      {:ok, ping!(bank, options)}
+    rescue
+      e in FinTex.Error -> {:error, e.reason}
+    end
   end
 
 
@@ -61,8 +72,8 @@ defmodule FinTex do
   end
 
 
-  @spec accounts(t, Credentials.t, options) :: Enumerable.t
-  def accounts(fintex, credentials, options \\ [])
+  @spec accounts!(t, Credentials.t, options) :: Enumerable.t | no_return
+  def accounts!(fintex, credentials, options \\ [])
   when is_list(options) do
     %__MODULE__{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
     %{} = credentials = credentials |> FinCredentials.from_credentials |> validate!
@@ -70,8 +81,19 @@ defmodule FinTex do
   end
 
 
-  @spec transactions(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) :: Enumerable.t
-  def transactions(fintex, credentials, %Account{} = account, from \\ nil, to \\ nil, options \\ [])
+  @spec accounts(t, Credentials.t, options) :: {:ok, Enumerable.t} | {:error, binary}
+  def accounts(fintex, credentials, options \\ [])
+  when is_list(options) do
+    try do
+      {:ok, accounts!(fintex, credentials, options)}
+    rescue
+      e in FinTex.Error -> {:error, e.reason}
+    end
+  end
+
+
+  @spec transactions!(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) :: Enumerable.t | no_return
+  def transactions!(fintex, credentials, %Account{} = account, from \\ nil, to \\ nil, options \\ [])
   when is_list(options) do
     %__MODULE__{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
     credentials = credentials |> FinCredentials.from_credentials |> validate!
@@ -79,8 +101,19 @@ defmodule FinTex do
   end
 
 
-  @spec initiate_payment(t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary
-  def initiate_payment(fintex, credentials, %Payment{} = payment, challenge_responder \\ FinChallengeResponder, options \\ [])
+  @spec transactions(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) :: {:ok, Enumerable.t} | {:error, term}
+  def transactions(fintex, credentials, %Account{} = account, from \\ nil, to \\ nil, options \\ [])
+  when is_list(options) do
+    try do
+      {:ok, transactions!(fintex, credentials, account, from, to, options)}
+    rescue
+      e in FinTex.Error -> {:error, e.reason}
+    end
+  end
+
+
+  @spec initiate_payment!(t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary | no_return
+  def initiate_payment!(fintex, credentials, %Payment{} = payment, challenge_responder \\ FinChallengeResponder, options \\ [])
   when is_list(options) do
     %__MODULE__{bank: bank, client_system_id: client_system_id} = fintex
     credentials = credentials |> FinCredentials.from_credentials |> validate!
@@ -89,10 +122,21 @@ defmodule FinTex do
   end
 
 
+  @spec initiate_payment(t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: {:ok, binary} | {:error, term}
+  def initiate_payment(fintex, credentials, %Payment{} = payment, challenge_responder \\ FinChallengeResponder, options \\ [])
+  when is_list(options) do
+    try do
+      {:ok, initiate_payment!(fintex, credentials, payment, challenge_responder, options)}
+    rescue
+      e in FinTex.Error -> {:error, e.reason}
+    end
+  end
+
+
   defp validate!(valid_object) do
     case valid_object |> Vex.valid? do
       true  -> valid_object
-      false -> raise ArgumentError, valid_object
+      false -> raise FinTex.Error, reason: valid_object
       |> Vex.errors
       |> Enum.at(0)
       |> Tuple.to_list

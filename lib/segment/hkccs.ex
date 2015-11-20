@@ -43,7 +43,7 @@ defmodule FinTex.Segment.HKCCS do
     |> Enum.find(fn urn -> available_sepa_descriptor_urns |> Enum.any?(fn s -> String.contains?(urn, s) end) end)
 
     unless sepa_descriptor_urn do
-      raise ArgumentError,
+      raise FinTex.Error, reason:
         "could not find any supported descriptor URN: #{inspect available_sepa_descriptor_urns}"
     end
 

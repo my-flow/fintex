@@ -33,11 +33,11 @@ defmodule FinTex.User.FinChallengeResponder do
   defp save_matrix(data, title) do
     <<l1, l2>> <> data = data
     length = (l1 + l2) * 8 # bytes
-    <<mime_type :: size(length), _l1, _l2, data :: binary>> = data
+    <<_mime_type :: size(length), _l1, _l2, data :: binary>> = data
 
     file = [System.tmp_dir!, title] |> Path.join
     file |> File.write!(data)
-    IO.puts "Wrote challenge of type \"#{mime_type}\" to file #{file}"
+    IO.puts "Wrote challenge to file #{file}"
   end
 end
 

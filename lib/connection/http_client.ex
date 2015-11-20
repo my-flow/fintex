@@ -75,7 +75,7 @@ defmodule FinTex.Connection.HTTPClient do
     error msg
     if !options[:ignore_response] do
       GenServer.reply(from, {:error, msg})
-      raise RuntimeError, message: msg
+      raise FinTex.Error, reason: msg
     end
     noreply
   end

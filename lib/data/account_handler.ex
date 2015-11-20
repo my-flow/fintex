@@ -22,7 +22,7 @@ defmodule FinTex.Data.AccountHandler do
   end
 
 
-  @spec find_account(Dict.t, Account.t) :: Account.t
+  @spec find_account(Dict.t, Account.t) :: Account.t | nil
   def find_account(accounts, account = %Account{}) do
     result = accounts |> Dict.get(account |> Account.key)
     case result do

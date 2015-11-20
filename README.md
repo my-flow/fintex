@@ -55,14 +55,14 @@ f = FinTex.new(bank, credentials)
 ## Retrieve all bank accounts
 Retrieve account-specific data, such as an account's balance:
 ```elixir
-FinTex.accounts(f, credentials) |> Enum.to_list # retrieve a list of bank accounts
+FinTex.accounts!(f, credentials) |> Enum.to_list # retrieve a list of bank accounts
 ```
 Feel free to instead implement the [Credentials protocol](http://hexdocs.pm/fintex/FinTex.User.Credentials.html) for your own struct.
 
 ## Retrieve all transactions of a bank account
 Request all transactions of one of the bank accounts:
 ```elixir
-FinTex.transactions(f, credentials, account) |> Enum.to_list # retrieve a list of transactions
+FinTex.transactions!(f, credentials, account) |> Enum.to_list # retrieve a list of transactions
 ```
 
 ## Make a SEPA payment
@@ -91,8 +91,11 @@ payment = %FinTex.Model.Payment{
 FinTex.initiate_payment(f, credentials, payment)
 ```
 
+## Error handling
+Most of the functions in this module return `{:ok, result}` in case of success, `{:error, reason}` otherwise. Those functions are also followed by a variant that ends with `!` which takes the same arguments but which returns the result (without the `{:ok, result}` tuple) in case of success or raises an exception in case it fails.
+
 ## SSL hostname verification & path validation
-In order to prevent man-in-the-middle attachs it is recommended to enable **hostname verification** of the bank server's SSL certificate. This security feature verifies that the server's hostname matches the common name (CN) of the server's SSL certificate. 
+In order to prevent man-in-the-middle attacks it is recommended to enable **hostname verification** of the bank server's SSL certificate. This security feature verifies that the server's hostname matches the common name (CN) of the server's SSL certificate.
 In addition the **path validation** feature checks the bank server's SSL certificate against a list of trusted Certificate Authorities (CAs). Where this list is located depends on the local operating system, e.g. on Ubuntu a concatenated single-file list of certificates is available at ``/etc/ssl/certs/ca-certificates.crt``.
 An example of how to set up both security features is included in [config/config.exs](config/config.exs).
 

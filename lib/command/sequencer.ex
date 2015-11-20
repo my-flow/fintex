@@ -49,19 +49,21 @@ defmodule FinTex.Command.Sequencer do
         {:ok, response_body} ->
           response = HTTPBody.decode_body(response_body)
           response |> inspect(pretty: true, limit: :infinity) |> debug
-          Stream.concat(response[:HIRMG], response[:HIRMS]) |> messages |> format_messages
+          Stream.concat(response[:HIRMG], response[:HIRMS])
+          |> to_messages
+          |> check_messages_for_errors
           {:ok, response}
         :ok ->
           {:ok}
         {:error, msg} ->
           error msg
-          {:error, msg}
+          raise FinTex.Error, reason: msg
       end
     after
       :ok = Supervisor.terminate_child(sup, worker_pid)
     catch
       :exit, msg -> :ok = Supervisor.terminate_child(sup, worker_pid)
-      {:error, msg}
+      raise FinTex.Error, reason: msg
     end
   end
 
@@ -94,18 +96,5 @@ defmodule FinTex.Command.Sequencer do
   def reset(state = state(dialog: d), tan_scheme_sec_func) do
     d = d |> Dialog.reset(tan_scheme_sec_func)
     state(state, dialog: d)
-  end
-
-
-  defp format_messages(messages) do
-    messages
-    |> Stream.map(fn [code, _ref, text | params] -> "#{code} #{text} #{Enum.join(params, ", ")}" end)
-    |> Enum.each(&warn/1)
-
-    case messages |> Enum.at(0) do
-      [code, _ref, text | _params] when code >= 9000 ->
-        raise RuntimeError, message: "#{code} #{text}"
-      _ ->
-    end
   end
 end

@@ -22,8 +22,7 @@ defmodule FinTex.Connection.HTTPBody do
     |> Base.decode64
 
     case result do
-      :error -> raise ArgumentError,
-        message: "could not base 64 decode server response \"#{response_body}\""
+      :error -> raise FinTex.Error, reason: "could not base 64 decode server response \"#{response_body}\""
       {:ok, string} -> string
         |> Serializer.deserialize
         |> TypeConverter.string_to_type

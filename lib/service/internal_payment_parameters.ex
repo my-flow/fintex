@@ -58,7 +58,7 @@ defmodule FinTex.Service.InternalPaymentParameters do
     |> Stream.concat(response[:HICUB] |> Stream.map(fn s -> s |> to_account end))
 
     start_point = response[:HIRMS]
-    |> messages
+    |> to_messages
     |> Stream.filter_map(fn [code | _] -> code === 3040 end, fn [_code, _ref, _text, start_point] -> start_point end)
     |> Enum.at(0)
 

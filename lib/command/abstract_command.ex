@@ -3,6 +3,8 @@ defmodule FinTex.Command.AbstractCommand do
 
   alias FinTex.Model.Dialog
 
+  import Logger
+
   defmacro __using__(_) do
     quote do
       alias FinTex.Model.Dialog
@@ -36,11 +38,32 @@ defmodule FinTex.Command.AbstractCommand do
   end
 
 
-  def messages(feedback_segments) do
+  def to_messages(feedback_segments) do
     feedback_segments
     |> Stream.map(&Enum.at(&1, -1))
     |> Stream.concat
     |> Enum.sort(fn [code1 | _], [code2 | _] -> code1 >= code2 end)
+  end
+
+
+  def format_messages(messages) do
+    messages
+    |> Enum.map(fn [code, _ref, text | params] ->
+      "#{code} #{text} #{Enum.join(params, ", ")}"
+    end)
+  end
+
+
+  def check_messages_for_errors(messages) do
+    messages
+    |> format_messages
+    |> Enum.each(&warn/1)
+
+    case messages |> Enum.at(0) do
+      [code, _ref, text | _params] when code >= 9000 ->
+        raise FinTex.Error, reason: "#{code} #{text}"
+      _ -> messages
+    end
   end
 
 

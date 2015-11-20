@@ -38,12 +38,11 @@ defmodule FinTex.Command.InitiatePayment do
     if sender_account do
       payment = %Payment{payment | sender_account: sender_account}
     else
-      raise ArgumentError,
-        "could not find sender account: #{inspect payment.sender_account}"
+      raise FinTex.Error, reason: "could not find sender account: #{inspect payment.sender_account}"
     end
 
     unless sender_account.supported_transactions |> Enum.into(HashSet.new) |> Set.member?("HKCCS") do
-      raise ArgumentError,
+      raise FinTex.Error, reason:
         "could not find \"HKCCS\" in sender account's supported transactions: #{inspect sender_account.supported_transactions}"
     end
 
@@ -52,7 +51,7 @@ defmodule FinTex.Command.InitiatePayment do
     |> Enum.filter(fn %TANScheme{sec_func: sec_func} -> sec_func == tan_scheme.sec_func end)
 
     if valid_tan_schemes |> Enum.count == 0 do
-      raise ArgumentError,
+      raise FinTex.Error, reason:
         "could not find supported TAN scheme for sec_func: #{inspect tan_scheme.sec_func}"
     end
 
@@ -101,8 +100,8 @@ defmodule FinTex.Command.InitiatePayment do
     %{} = Task.async(fn -> seq |> Synchronization.terminate end)
 
     Stream.concat(response[:HIRMG], response[:HIRMS])
-    |> messages
-    |> Stream.map(fn [code, _ref, text | params] -> "#{code} #{text} #{Enum.join(params, ", ")}" end)
-    |> Enum.join(", ")
+    |> to_messages
+    |> format_messages
+    |> Enum.at(-1)
   end
 end

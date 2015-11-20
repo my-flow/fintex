@@ -38,7 +38,7 @@ defmodule FinTex.Command.Initialize do
     |> Enum.at(-1)
 
     tan_scheme_sec_func = response[:HIRMS]
-    |> messages
+    |> to_messages
     |> Stream.filter(fn [code | _] -> code === @allowed_methods end)
     |> Stream.map(fn [_, _, _ | params] -> params end)
     |> Enum.at(0)
