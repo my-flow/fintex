@@ -28,16 +28,23 @@ defmodule FinTex.Tan.FlickerCode do
     end
 
     {lc, c} = c |> String.split_at(len)
-    {lc, _} = Integer.parse(lc)
+    c_len = String.length(c)
 
-    case String.length(c) == lc do
-      true  -> c |> parse(lc)
-      false -> code |> new(:hhd13)
+    case Integer.parse(lc) do
+      :error -> :error
+      {lc, _} when c_len == lc -> c |> do_parse(lc)
+      _ -> code |> new(:hhd13)
     end
   end
 
 
-  def parse(code, lc) do
+  def render(%__MODULE__{} = m) do
+    payload = create_payload(m)
+    payload <> luhn(m) <> xor(payload)
+  end
+
+
+  defp do_parse(code, lc) do
     {start_code, code} = StartCode.new(code)
     {data_element1, code} = DataElement.new(code)
     {data_element2, code} = DataElement.new(code)
@@ -48,12 +55,6 @@ defmodule FinTex.Tan.FlickerCode do
       start_code: start_code,
       data_elements: [data_element1, data_element2, data_element3]
     }
-  end
-
-
-  def render(m) do
-    payload = create_payload(m)
-    payload <> luhn(m) <> xor(payload)
   end
 
 

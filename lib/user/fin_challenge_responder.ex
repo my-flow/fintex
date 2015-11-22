@@ -13,31 +13,46 @@ defmodule FinTex.User.FinChallengeResponder do
   def read_user_input(challenge = %Challenge{title: title, label: label, medium: medium, data: data, format: format}) do
     IO.puts title
     IO.puts medium
-    case format do
-      :matrix -> data |> save_matrix(title)
-      :hhd -> (data || label) |> FlickerCode.new |> FlickerCode.render |> IO.puts
-      _ -> data |> IO.puts
-    end
+    IO.puts handle_format(format, data, label, title)
     do_read_user_input(challenge, nil)
   end
 
-  defp do_read_user_input(_, response) when byte_size(response) == 6, do: response
 
-  defp do_read_user_input(challenge = %Challenge{label: label}, _) do
-    response = IO.gets("#{label}: ") |> String.strip
-    do_read_user_input(challenge, response)
+  defp handle_format(:hhd, data, label, _title) do
+    payload = data || label
+    case payload |> FlickerCode.new do
+      :error -> data
+      f -> f |> FlickerCode.render
+    end
   end
 
-  defp save_matrix(nil, _), do: nil
 
-  defp save_matrix(data, title) do
+  defp handle_format(:matrix, nil, _label, _title) do
+    ""
+  end
+
+
+  defp handle_format(:matrix, data, _label, title) do
     <<l1, l2>> <> data = data
     length = (l1 + l2) * 8 # bytes
     <<_mime_type :: size(length), _l1, _l2, data :: binary>> = data
 
     file = [System.tmp_dir!, title] |> Path.join
     file |> File.write!(data)
-    IO.puts "Wrote challenge to file #{file}"
+    "Wrote challenge to file #{file}"
+  end
+
+
+  defp handle_format(_format, data, _label, _title) do
+    data
+  end
+
+
+  defp do_read_user_input(_, response) when byte_size(response) == 6, do: response
+
+  defp do_read_user_input(challenge = %Challenge{label: label}, _) do
+    response = IO.gets("#{label}: ") |> String.strip
+    do_read_user_input(challenge, response)
   end
 end
 

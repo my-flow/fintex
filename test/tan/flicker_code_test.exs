@@ -75,4 +75,10 @@ defmodule FinTex.Tan.FlickerCodeTest do
     assert :hhd13 == f.start_code.version
     assert 0 == Enum.count(f.start_code.control_bytes)
   end
+
+
+  test "it should fail gracefully" do
+    f = FlickerCode.new("CHLGTEXT0588Sie haben eine \"Einzelüberweisung\" an die Empfänger-IBAN")
+    assert :error == f
+  end
 end
