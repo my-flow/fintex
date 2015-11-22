@@ -68,7 +68,7 @@ defmodule FinTex.Service.Accounts do
     |> Dict.get("HKTAN")
     |> Stream.flat_map(&HITANS.to_tan_schemes(&1))
     |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> Set.member?(sec_func) end)
-    |> Enum.uniq(fn %TANScheme{sec_func: sec_func} -> sec_func end)
+    |> Enum.uniq_by(fn %TANScheme{sec_func: sec_func} -> sec_func end)
 
     seq = seq
     |> Sequencer.inc

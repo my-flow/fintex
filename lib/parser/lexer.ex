@@ -12,8 +12,8 @@ defmodule FinTex.Parser.Lexer do
 
 
   def segment_end, do: "(?<!\\?)'"
-  def escaped_binary(length), do: Regex.compile!("\\A(.*)@#{length}@(.{#{length}})(.*)\\z", "msr")
-  def escaped_binary, do: Regex.compile!("\\A(.*)@\\d+@.*\\z", "msr")
+  def escaped_binary(length), do: Regex.compile!("\\A(.*)@#{length}@(.{#{length}})(.*)\\z", "mUs")
+  def escaped_binary, do: Regex.compile!("\\A(.*)@\\d+@.*\\z", "mUs")
 
 
   def encode_binary(raw) when is_binary(raw) do
@@ -41,7 +41,7 @@ defmodule FinTex.Parser.Lexer do
 
 
   defp extract_binaries(raw, dict) do
-    case Regex.run(~r/@(\d+)@.*/sr, raw, capture: :all_but_first) do
+    case Regex.run(~r/@(\d+)@.*/Us, raw, capture: :all_but_first) do
       [length] ->
         ref_counter = round(:random.uniform * 100_000_000)
         marker = "--#{ref_counter}--"
