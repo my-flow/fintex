@@ -27,13 +27,12 @@ To use FinTex modules, add `use FinTex` to the top of each module you plan on re
 First and foremost you need bank-specific connection data of the bank you try to connect to (payment industry jargon: *[FinBanks](https://subsembly.com/de/finbanks.html)*). A full list of connection data can be obtained from the [official DK website](http://www.hbci-zka.de/institute/institut_auswahl.htm). Please keep in mind that these connection details are subject to change.
 ```elixir
 use FinTex
-bank = %FinTex.User.FinBank{
+bank = %{
   blz: "12345678",            # 8 digits bank code
   url: "https://example.org", # URL of the bank server
   version: "300"              # API version
 }
 ```
-Feel free to instead implement the [Bank protocol](http://hexdocs.pm/fintex/FinTex.User.Bank.html) for your own struct, e.g., a custom data model.
 
 ## Ping
 Some, but not all, banks support the “anonymous login” feature, so you can send a ping request:
@@ -44,7 +43,7 @@ FinTex.ping(bank)
 ## Initialize the dialog
 In order to authenticate , you need credentials to a real-life bank account (usually login and PIN). Note that repeated failed attempts to log in might cause the bank to block the bank account.
 ```elixir
-credentials = %FinTex.User.FinCredentials{
+credentials = %{
   login: "username",
   pin: "secret"
 }
@@ -57,7 +56,6 @@ Retrieve account-specific data, such as an account's balance:
 ```elixir
 FinTex.accounts!(f, credentials) |> Enum.to_list # retrieve a list of bank accounts
 ```
-Feel free to instead implement the [Credentials protocol](http://hexdocs.pm/fintex/FinTex.User.Credentials.html) for your own struct.
 
 ## Retrieve all transactions of a bank account
 Request all transactions of one of the bank accounts:
@@ -103,7 +101,6 @@ An example of how to set up both security features is included in [config/config
 Find sample configurations in [config/config.exs](config/config.exs) that show how to set up proxy authentication and SOCKS5.
 
 # Documentation
-
 API documentation is available at [http://hexdocs.pm/fintex](http://hexdocs.pm/fintex).
 
 

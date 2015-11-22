@@ -44,7 +44,7 @@ defmodule FinTex do
 
   @spec ping!(Bank.t, options) :: binary | no_return
   def ping!(bank, options \\ []) when is_list(options) do
-    %{} = bank |> FinBank.from_bank |> validate!
+    %{} = bank = bank |> FinBank.from_bank |> validate!
     FinPing.ping(bank, options)
   end
 

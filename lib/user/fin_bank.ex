@@ -43,19 +43,37 @@ defmodule FinTex.User.FinBank do
 end
 
 
-defimpl FinTex.Model.Bank, for: FinTex.User.FinBank do
+defimpl FinTex.Model.Bank, for: [FinTex.User.FinBank, Map] do
 
   def blz(bank) do
-    bank.blz
+    bank |> Map.get(:blz)
   end
 
 
   def url(bank) do
-    bank.url
+    bank |> Map.get(:url)
   end
 
 
   def version(bank) do
-    bank.version
+    bank |> Map.get(:version)
+  end
+end
+
+
+defimpl FinTex.Model.Bank, for: List do
+
+  def blz(bank) do
+    bank |> Dict.get(:blz)
+  end
+
+
+  def url(bank) do
+    bank |> Dict.get(:url)
+  end
+
+
+  def version(bank) do
+    bank |> Dict.get(:version)
   end
 end

@@ -9,8 +9,26 @@ defmodule FinTex.User.FinCredentialsTest do
   @pin "123456"
 
 
-  test "it should create a new struct" do
+  test "it should accept a struct" do
     credentials = %FinCredentials{login: @login, client_id: @client_id, pin: @pin} |> FinCredentials.from_credentials
+    assert nil != credentials
+    assert @login == credentials |> Credentials.login
+    assert @client_id == credentials |> Credentials.client_id
+    assert @pin == credentials |> Credentials.pin
+  end
+
+
+  test "it should accept a map" do
+    credentials = %{login: @login, client_id: @client_id, pin: @pin} |> FinCredentials.from_credentials
+    assert nil != credentials
+    assert @login == credentials |> Credentials.login
+    assert @client_id == credentials |> Credentials.client_id
+    assert @pin == credentials |> Credentials.pin
+  end
+
+
+  test "it should accept a keyword" do
+    credentials = [login: @login, client_id: @client_id, pin: @pin] |> FinCredentials.from_credentials
     assert nil != credentials
     assert @login == credentials |> Credentials.login
     assert @client_id == credentials |> Credentials.client_id

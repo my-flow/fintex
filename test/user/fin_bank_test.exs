@@ -9,8 +9,26 @@ defmodule FinTex.Model.FinBankTest do
   @version "220"
 
 
-  test "it should create a new struct" do
+  test "it should accept a struct" do
     bank = %FinBank{blz: @blz, url: @url, version: @version}
+    assert nil != bank
+    assert @blz == bank |> Bank.blz
+    assert @url == bank |> Bank.url
+    assert @version == bank |> Bank.version
+  end
+
+
+  test "it should accept a map" do
+    bank = %{blz: @blz, url: @url, version: @version}
+    assert nil != bank
+    assert @blz == bank |> Bank.blz
+    assert @url == bank |> Bank.url
+    assert @version == bank |> Bank.version
+  end
+
+
+  test "it should accept a keyword" do
+    bank = [blz: @blz, url: @url, version: @version]
     assert nil != bank
     assert @blz == bank |> Bank.blz
     assert @url == bank |> Bank.url

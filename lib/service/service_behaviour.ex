@@ -2,6 +2,7 @@ defmodule FinTex.Service.ServiceBehaviour do
   @moduledoc false
 
   alias FinTex.Model.Account
+  alias FinTex.Command.Sequencer
 
   use Behaviour
 

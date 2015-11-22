@@ -49,19 +49,37 @@ defmodule FinTex.User.FinCredentials do
 end
 
 
-defimpl FinTex.Model.Credentials, for: FinTex.User.FinCredentials do
+defimpl FinTex.Model.Credentials, for: [FinTex.User.FinCredentials, Map] do
 
   def login(credentials) do
-    credentials.login
+    credentials |> Map.get(:login)
   end
 
 
   def client_id(credentials) do
-    credentials.client_id
+    credentials |> Map.get(:client_id)
   end
 
 
   def pin(credentials) do
-    credentials.pin
+    credentials |> Map.get(:pin)
+  end
+end
+
+
+defimpl FinTex.Model.Credentials, for: List do
+
+  def login(credentials) do
+    credentials |> Dict.get(:login)
+  end
+
+
+  def client_id(credentials) do
+    credentials |> Dict.get(:client_id)
+  end
+
+
+  def pin(credentials) do
+    credentials |> Dict.get(:pin)
   end
 end
