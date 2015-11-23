@@ -49,9 +49,7 @@ defmodule FinTex.Command.Sequencer do
         {:ok, response_body} ->
           response = HTTPBody.decode_body(response_body)
           response |> inspect(pretty: true, limit: :infinity) |> debug
-          Stream.concat(response[:HIRMG], response[:HIRMS])
-          |> to_messages
-          |> check_messages_for_errors
+          Stream.concat(response[:HIRMG], response[:HIRMS]) |> check_messages_for_errors
           {:ok, response}
         :ok ->
           {:ok}

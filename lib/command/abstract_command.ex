@@ -40,29 +40,28 @@ defmodule FinTex.Command.AbstractCommand do
 
   def to_messages(feedback_segments) do
     feedback_segments
-    |> Stream.map(&Enum.at(&1, -1))
-    |> Stream.concat
+    |> Stream.flat_map(&Enum.at(&1, -1))
     |> Enum.sort(fn [code1 | _], [code2 | _] -> code1 >= code2 end)
   end
 
 
-  def format_messages(messages) do
-    messages
-    |> Enum.map(fn [code, _ref, text | params] ->
-      "#{code} #{text} #{Enum.join(params, ", ")}"
+  def format_messages(feedback_segments) do
+    feedback_segments
+    |> to_messages
+    |> Enum.map(fn
+      [code, _ref, text] -> "#{code} #{text}"
+      [code, _ref, text | params] -> "#{code} #{text} #{Enum.join(params, ", ")}"
     end)
   end
 
 
-  def check_messages_for_errors(messages) do
-    messages
-    |> format_messages
-    |> Enum.each(&warn/1)
+  def check_messages_for_errors(feedback_segments) do
+    strings = feedback_segments |> format_messages
+    strings |> Enum.each(&warn/1)
 
-    case messages |> Enum.at(0) do
-      [code, _ref, text | _params] when code >= 9000 ->
-        raise FinTex.Error, reason: "#{code} #{text}"
-      _ -> messages
+    case feedback_segments |> to_messages |> Enum.at(0) do
+      [code | _] when code >= 9000 -> raise FinTex.Error, reason: strings |> Enum.join(" ")
+      _ -> feedback_segments
     end
   end
 

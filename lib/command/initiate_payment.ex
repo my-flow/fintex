@@ -100,8 +100,7 @@ defmodule FinTex.Command.InitiatePayment do
     %{} = Task.async(fn -> seq |> Synchronization.terminate end)
 
     Stream.concat(response[:HIRMG], response[:HIRMS])
-    |> to_messages
     |> format_messages
-    |> Enum.at(-1)
+    |> Enum.join(", ")
   end
 end
