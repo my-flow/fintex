@@ -45,7 +45,7 @@ defmodule FinTex.Model.Response do
   def get(container, key, default \\ nil)
 
   def get(%{index_by_segment_names: index_by_segment_names}, key, default) when is_atom(key) do
-    value = index_by_segment_names |> Access.get(key |> to_string) || default
+    value = index_by_segment_names |> Access.get(key |> Atom.to_string) || default
     case value do
       [_|_] -> value |> Stream.map(fn s -> s.segment end)
       _ -> value
@@ -53,7 +53,7 @@ defmodule FinTex.Model.Response do
   end
 
   def get(%{index_by_reference: index_by_reference}, ref, default) when is_integer(ref) and ref >= 0 do
-    value = index_by_reference |> Access.get(ref) || []
+    value = index_by_reference |> Access.get(ref) || default
     case value do
       [_|_] -> value |> Stream.map(fn s -> s.segment end)
       _ -> value

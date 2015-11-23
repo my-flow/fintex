@@ -43,7 +43,7 @@ defmodule Fintex.Mixfile do
       {:excoveralls,           "~> 0.4.2", only: [:dev, :test]},
       {:httpotion,             "~> 2.1.0"},
       {:ibrowse,            tag: "v4.2",    github: "cmullaparthi/ibrowse"},
-      {:inch_ex,               "~> 0.4.0",  only: :docs},
+      {:inch_ex,               "~> 0.4.0",  only: [:dev, :docs]},
       {:luhn,               tag: "0.4.0",   github: "my-flow/luhn_ex"},
       {:mt940,                 "~> 0.3.3"},
       {:ssl_verify_hostname,   "<= 1.0.5"},

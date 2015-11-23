@@ -4,6 +4,7 @@ defmodule FinTex.Parser.Lexer do
   alias FinTex.Helper.Amount
   require Record
 
+  @type t :: record(:tokenization, tokens: term, escape_sequences: Dict.t)
   Record.defrecordp :tokenization,
     tokens: nil,
     escape_sequences: nil
@@ -11,27 +12,36 @@ defmodule FinTex.Parser.Lexer do
   @control_chars ["?", "+", ":", "'", "@"]
 
 
+  @spec segment_end :: String.t
   def segment_end, do: "(?<!\\?)'"
+
+  @spec escaped_binary(String.t) :: Regex.t
   def escaped_binary(length), do: Regex.compile!("\\A(.*)@#{length}@(.{#{length}})(.*)\\z", "mUs")
+
+  @spec escaped_binary :: Regex.t
   def escaped_binary, do: Regex.compile!("\\A(.*)@\\d+@.*\\z", "mUs")
 
 
+  @spec encode_binary(String.t) :: String.t
   def encode_binary(raw) when is_binary(raw) do
-    "@#{String.length(raw)}@#{raw}"
+    "@#{inspect String.length(raw)}@#{raw}"
   end
 
 
+  @spec escaped_binary?(String.t) :: boolean
   def escaped_binary?(raw) do
     escaped_binary |> Regex.match?(raw)
   end
 
 
+  @spec remove_newline(String.t) :: String.t
   def remove_newline(string) when is_binary(string) do
     ~r(\R) |> Regex.replace(string, "")
   end
 
 
-  def split(raw) do
+  @spec split(String.t) :: [String.t]
+  def split(raw) when is_binary(raw) do
     raw
     |> extract_binaries(HashDict.new)
     |> latin1_to_utf8
@@ -40,11 +50,12 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec extract_binaries(String.t, Dict.t) :: t
   defp extract_binaries(raw, dict) do
     case Regex.run(~r/@(\d+)@.*/Us, raw, capture: :all_but_first) do
-      [length] ->
+      [length] when is_binary(length) ->
         ref_counter = round(:random.uniform * 100_000_000)
-        marker = "--#{ref_counter}--"
+        marker = "--#{inspect ref_counter}--"
 
         [_, binary_data, _] = length
         |> escaped_binary
@@ -62,17 +73,20 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec latin1_to_utf8(t | String.t) :: t | String.t
   def latin1_to_utf8(tokenization = tokenization(tokens: tokens)) do
     tokens = tokens
     |> String.codepoints
     |> Enum.map(&latin1_to_utf8/1)
-    |> to_string
+    |> :binary.list_to_bin
 
     tokenization(tokenization, tokens: tokens)
   end
 
 
-  # convert charset from ISO 8859-1 to UTF-8
+  @doc """
+  Convert charset from ISO 8859-1 to UTF-8
+  """
   def latin1_to_utf8(<<c>>) do
     cond do
       c >= 196 && c <= 252 -> <<195, c - 64>>
@@ -80,11 +94,12 @@ defmodule FinTex.Parser.Lexer do
     end
   end
 
-
   def latin1_to_utf8(c), do: c
 
-
-  # convert charset from UTF-8 to ISO 8859-1
+  @doc """
+  Convert charset from UTF-8 to ISO 8859-1
+  """
+  @spec to_latin1(String.t) :: String.t
   def to_latin1(string) when is_binary(string) do
     string
     |> String.codepoints
@@ -93,6 +108,7 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec utf8_to_latin1(String.t) :: String.t
   defp utf8_to_latin1(x = <<195, c>>) do
     cond do
       c >= 132 && c <= 188 -> <<c + 64>>
@@ -100,31 +116,31 @@ defmodule FinTex.Parser.Lexer do
     end
   end
 
-
   defp utf8_to_latin1(c), do: c
 
 
+  @spec replace_escape_sequences(t) :: term
   defp replace_escape_sequences(tokenization(tokens: tokens, escape_sequences: escape_sequences)) do
     escape_sequences
     |> Enum.reduce(tokens, fn ({k, v}, t) -> replace_escape_sequences(t, k, v) end) # replace only first occurence
   end
 
 
+  @spec replace_escape_sequences([String.t] | String.t, String.pattern | Regex.t, String.t) :: [String.t] | String.t
   defp replace_escape_sequences(tokens, k, v) when is_list(tokens) do
     tokens |> Enum.map(&replace_escape_sequences(&1, k, v))
   end
 
-
   defp replace_escape_sequences(token, k, v) when is_binary(token) do
     token |> String.replace(k, v, global: false) # replace only first occurence
   end
-
 
   defp replace_escape_sequences(token, _, _) do
     token
   end
 
 
+  @spec join_segments(Enumerable.t) :: String.t
   def join_segments(segments) do
     segments
     |> Stream.concat([""])
@@ -133,6 +149,7 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec split_segments(t) :: t
   defp split_segments(tokenization = tokenization(tokens: tokens)) do
     tokens = tokens
     |> String.split(Regex.compile!(segment_end), trim: false)
@@ -142,14 +159,17 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec join_group(list | any) :: String.t
+  defp join_group(group) when is_list(group) do
+    Stream.map(group, &join_elements(&1)) |> Enum.join("+")
+  end
+
   defp join_group(group) do
-    case group do
-      [_|_] -> Stream.map(group, &join_elements(&1)) |> Enum.join("+")
-      _     -> to_string(group)
-    end
+    to_string(group)
   end
 
 
+  @spec split_groups(String.t) :: [String.t]
   defp split_groups(raw) when is_binary(raw) do
     raw
     |> String.split(~r"(?<!\?)\+", trim: false)
@@ -157,14 +177,17 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec join_elements(list | any) :: String.t
+  defp join_elements(elements) when is_list(elements) do
+    Stream.map(elements, &join_elements(&1))|> Enum.join(":")
+  end
+
   defp join_elements(elements) do
-    case elements do
-      [_|_] -> Stream.map(elements, &join_elements(&1))|> Enum.join(":")
-      _     -> to_string(elements)
-    end
+    to_string(elements)
   end
 
 
+  @spec split_elements(String.t) :: String.t | nil
   defp split_elements(raw) when is_binary(raw) do
     case String.split(raw, ~r"(?<!\?)\:", trim: false) do
       [head] -> unescape(head) |> replace_empty_by_nil
@@ -173,26 +196,31 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec to_digit(String.t) :: integer
   def to_digit(string) when is_binary(string) do
     string |> String.to_integer
   end
 
 
+  @spec to_number(String.t) :: integer
   def to_number(string) when is_binary(string) do
     string |> String.to_integer
   end
 
 
+  @spec to_id(String.t) :: String.t
   def to_id(string) when is_binary(string) do
     string
   end
 
 
+  @spec to_amount(String.t) :: Decimal.t
   def to_amount(string) when is_binary(string) do
     string |> Amount.parse
   end
 
 
+  @spec escape(String.t) :: String.t
   def escape(raw) when is_binary(raw) do
     @control_chars
     |> Enum.reduce(
@@ -203,6 +231,7 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec unescape(String.t) :: String.t
   def unescape(raw) when is_binary(raw) do
     @control_chars
     |> Enum.reduce(
@@ -213,6 +242,7 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
+  @spec replace_empty_by_nil(String.t) :: String.t | nil
   defp replace_empty_by_nil("") do
     nil
   end

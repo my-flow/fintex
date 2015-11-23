@@ -7,16 +7,22 @@ defmodule FinTex.Tan.DataElement do
 
   @bit_encoding 6
 
+  @type t :: %__MODULE__{
+    length: Integer.t,
+    lde: Integer.t,
+    data: String.t
+  }
+
   defstruct [
     :length,
     :lde,
     :data
   ]
 
+
   def new(code) when is_binary(code) do
     case code do
       ""  -> {%__MODULE__{}, code}
-      nil -> {%__MODULE__{}, code}
       _   -> do_new(code)
     end
   end

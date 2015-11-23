@@ -8,7 +8,7 @@ defmodule FinTex.Connection.HTTPClient do
 
   defstart start_link(_) do
     debug "Starting #{inspect __MODULE__}"
-    HTTPotion.start
+    {:ok, HTTPotion.start}
     initial_state nil
   end
 
@@ -71,7 +71,7 @@ defmodule FinTex.Connection.HTTPClient do
 
   defhandleinfo %HTTPotion.AsyncHeaders{id: id, status_code: status_code},
   state: {from, async_id, options}, export: false, when: id == async_id do
-    msg = "#{__MODULE__}: Request failed with HTTP status code #{status_code}."
+    msg = "#{__MODULE__ |> Atom.to_string}: Request failed with HTTP status code #{status_code}."
     error msg
     if !options[:ignore_response] do
       GenServer.reply(from, {:error, msg})

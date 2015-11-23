@@ -27,5 +27,5 @@ defmodule FinTex.Validator.Uri do
   defp extract_message({:ok, message}, _, _), do: result(true, message)
 
 
-  defp extract_message({:error, term}, value, options), do: result(false, message(options, to_string(term), value: value))
+  defp extract_message({:error, term}, value, options), do: result(false, message(options, Atom.to_string(term), value: value))
 end

@@ -60,7 +60,7 @@ defmodule FinTex.Command.GetTransactions do
     raw
     |> String.codepoints
     |> Enum.map(&Lexer.latin1_to_utf8/1)
-    |> to_string
+    |> :binary.list_to_bin
     |> parse!
     |> Stream.flat_map(&MT940.CustomerStatementMessage.statement_lines/1)
     |> Stream.map(&Transaction.from_statement/1)

@@ -12,6 +12,12 @@ defmodule FinTex.Tan.FlickerCode do
   import Checksum
   import Conversion
 
+  @type t :: %__MODULE__{
+    lc: String.t,
+    start_code: StartCode.t,
+    data_elements: [DataElement.t]
+  }
+
   defstruct [
     :lc,
     :start_code,
@@ -38,9 +44,10 @@ defmodule FinTex.Tan.FlickerCode do
   end
 
 
-  def render(%__MODULE__{} = m) do
-    payload = create_payload(m)
-    payload <> luhn(m) <> xor(payload)
+  @spec render(t) :: String.t
+  def render(module) do
+    payload = create_payload(module)
+    payload <> luhn(module) <> xor(payload)
   end
 
 
@@ -70,14 +77,15 @@ defmodule FinTex.Tan.FlickerCode do
   end
 
 
-  defp create_payload(%__MODULE__{start_code: start_code, data_elements: data_elements}) do
+  @spec create_payload(t) :: String.t
+  defp create_payload(%{start_code: %{control_bytes: control_bytes} = start_code, data_elements: data_elements}) do
     payload = StartCode.render_length(start_code) <>
-    (start_code.control_bytes |> Enum.map(&to_hex/1) |> Enum.join) <>
+    (control_bytes |> Enum.map(&to_hex/1) |> Enum.join) <>
     StartCode.render_data(start_code)
 
     append = for data_element <- data_elements,
-                 length = DataElement.render_length(data_element, start_code.version),
-                 data = DataElement.render_data(data_element)
+                 length <- [DataElement.render_length(data_element, start_code.version)],
+                 data <- [DataElement.render_data(data_element)]
              do
               length <> data
     end |> Enum.join
@@ -88,9 +96,9 @@ defmodule FinTex.Tan.FlickerCode do
   end
 
 
-  defp luhn(%__MODULE__{start_code: start_code, data_elements: data_elements}) do
+  defp luhn(%{start_code: %{control_bytes: control_bytes} = start_code, data_elements: data_elements}) do
     luhnsum = (StartCode.render_data(start_code) <>
-    (start_code.control_bytes |> Enum.map(&to_hex/1) |> Enum.join) <>
+    (control_bytes |> Enum.map(&to_hex/1) |> Enum.join) <>
     (data_elements |> Enum.map(&DataElement.render_data/1) |> Enum.join))
     |> String.reverse
     |> luhn(16, 10)

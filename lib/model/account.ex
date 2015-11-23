@@ -22,20 +22,20 @@ defmodule FinTex.Model.Account do
   alias FinTex.Model.TANScheme
 
   @type t :: %__MODULE__{
-    type: binary,
-    account_number: binary,
-    subaccount_id: binary,
-    blz: binary,
-    bank_name: binary,
-    currency: binary,
-    iban: binary,
-    bic: binary,
-    name: binary,
-    owner: binary,
+    type: String.t,
+    account_number: String.t,
+    subaccount_id: String.t,
+    blz: String.t,
+    bank_name: String.t,
+    currency: String.t,
+    iban: String.t,
+    bic: String.t,
+    name: String.t,
+    owner: String.t,
     balance: Balance.t,
     supported_payments: Dict.t,
     supported_tan_schemes: [TANScheme.t],
-    preferred_tan_scheme: binary,
+    preferred_tan_scheme: String.t,
   }
 
   defstruct [

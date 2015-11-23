@@ -11,6 +11,14 @@ defmodule FinTex.Tan.StartCode do
 
   @bit_controlbyte 7
 
+  @type t :: %__MODULE__{
+    version: :hhd13 | :hhd14,
+    length: Integer.t,
+    lde: Integer.t,
+    control_bytes: [Integer.t],
+    data: String.t
+  }
+
   defstruct [
     :version,
     :length,

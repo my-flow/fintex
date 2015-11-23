@@ -16,8 +16,8 @@ defmodule FinTex.Model.Payment do
     sender_account: Account.t,
     receiver_account: Account.t,
     amount: %Decimal{},
-    currency: binary,
-    purpose: binary,
+    currency: String.t,
+    purpose: String.t,
     tan_scheme: TANScheme.t
   }
 
