@@ -1,16 +1,24 @@
 defmodule FinTex.Tan.FlickerCode do
   @moduledoc false
 
+  # Flicker code extraction for optic chipTAN challenges.
+  #
+  # Based on Olaf Willuhn's Java implementation of flicker codes for HHD 1.3 and HHD 1.4,
+  # available at https://github.com/willuhn/hbci4java/blob/master/src/org/kapott/hbci/manager/FlickerCode.java
+  #
+  # Based in parts on Lars-Dominik Braun's JavaScript implementation of HHD 1.3 flicker codes,
+  # available at http://6xq.net/media/00/20/flickercode.html
+
   alias FinTex.Helper.Checksum
   alias FinTex.Helper.Conversion
   alias FinTex.Tan.StartCode
   alias FinTex.Tan.DataElement
 
-  @lc_length_hhd14 3
-  @lc_length_hhd13 2
-
   import Checksum
   import Conversion
+
+  @lc_length_hhd14 3
+  @lc_length_hhd13 2
 
   @type t :: %__MODULE__{
     lc: String.t,
