@@ -1,4 +1,4 @@
-defmodule Fintex.Mixfile do
+defmodule FinTex.Mixfile do
   use Mix.Project
 
   def project do

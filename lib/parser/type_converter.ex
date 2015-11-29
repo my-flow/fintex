@@ -12,7 +12,7 @@ defmodule FinTex.Parser.TypeConverter do
       [[name, pos, v | t1] | t2] ->
         [[name, Lexer.to_number(pos), Lexer.to_number(v) | t1] | t2]
     end)
-    |> Enum.map fn s -> handle(s, :new) end
+    |> Enum.map(fn s -> handle(s, :new) end)
   end
 
 

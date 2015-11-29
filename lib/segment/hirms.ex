@@ -10,7 +10,7 @@ defmodule FinTex.Segment.HIRMS do
       segment:
       [
         segment |> Enum.at(0),
-        segment |> Stream.drop(1) |> Enum.map &to_feedback/1
+        segment |> Stream.drop(1) |> Enum.map(&to_feedback/1)
       ]
     }
   end

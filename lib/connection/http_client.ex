@@ -3,29 +3,40 @@ defmodule FinTex.Connection.HTTPClient do
 
   alias FinTex.Config.Identifier
 
-  use ExActor.GenServer
+  use ExActor.Strict
   import Logger
 
-  defstart start_link(_) do
+  defstruct [
+    async_id: nil,
+    from: nil,
+    response: nil
+  ]
+
+  defstart start_link(url, body, options) do
     debug "Starting #{inspect __MODULE__}"
-    {:ok, HTTPotion.start}
-    initial_state nil
+    state = send_request(url, body, options)
+    initial_state state
   end
 
 
-  defcall send_request(url, body, options), from: from, timeout: :infinity do
+  defcall fetch, from: from, state: state = %{response: response} do
+    case response do
+      nil -> new_state %{state | from: from}
+      _ -> reply response
+    end
+  end
+
+
+  defp send_request(url, body, options) do
     debug("#{inspect self}: sending request to URL #{url}")
 
-    ssl_options = Application.get_env(:fintex, :ssl_options, [])
-    |> Dict.merge Dict.get(options, :ssl_options, [])
-
-    ssl_options = case ssl_options do
+    ssl_options = case options |> Dict.get(:ssl_options, []) do
       [] ->
         []
       _ ->
         %URI{host: host} = URI.parse(url)
         hostname = to_char_list(host)
-        {verify_fun, initial_user_state} = Dict.get(ssl_options, :verify_fun)        
+        {verify_fun, initial_user_state} = options[:ssl_options][:verify_fun]
         Dict.merge(
           [
             verify_fun: {
@@ -34,76 +45,55 @@ defmodule FinTex.Connection.HTTPClient do
             },
             server_name_indication: hostname
           ],
-          ssl_options
+          options[:ssl_options]
         )
     end
 
     ibrowse = [ssl_options: ssl_options]
-    |> Dict.merge Application.get_env(:fintex, :ibrowse, [])
-    |> Dict.merge Dict.get(options, :ibrowse, [])
-
-    options = [ignore_response: false] |> Dict.merge options
+    |> Dict.merge(Dict.get(options, :ibrowse, []))
 
     %HTTPotion.AsyncResponse{id: async_id} = HTTPotion.post(
       url,
       body: body,
       headers: [
           "Content-Type": "text/plain",
-          "Connection":   "keep-alive",
-          "User-Agent":   Identifier.user_agent_name
+          "Connection":   "keep-alive"
       ],
       stream_to: self,
       ibrowse: ibrowse,
-      timeout: 10_000
+      timeout: options[:timeout]
     )
 
-    if options[:ignore_response], do: GenServer.reply(from, :ok)
-    new_state {from, async_id, options}
+    %__MODULE__{async_id: async_id}
   end
 
 
   defhandleinfo %HTTPotion.AsyncHeaders{id: id, status_code: status_code},
-  state: {_, async_id, _}, when: id == async_id and (status_code
-  in 200..299 or status_code in [302, 304]), export: false do
-    noreply
-  end
-
-
-  defhandleinfo %HTTPotion.AsyncHeaders{id: id, status_code: status_code},
-  state: {from, async_id, options}, export: false, when: id == async_id do
+  state: state = %{async_id: async_id}, export: false,
+  when: id == async_id and not status_code in 200..299 and not status_code in [302, 304] do
     msg = "#{__MODULE__ |> Atom.to_string}: Request failed with HTTP status code #{status_code}."
-    error msg
-    if !options[:ignore_response] do
-      GenServer.reply(from, {:error, msg})
-      raise FinTex.Error, reason: msg
-    end
-    noreply
+    new_state %__MODULE__{state | response: {:error, msg}}
   end
 
 
-  defhandleinfo %HTTPotion.AsyncChunk{id: id, chunk: {:error, msg}},
-  state: {from, async_id, options}, export: false, when: id == async_id do
-
-    if !options[:ignore_response], do: GenServer.reply(from, {:error, msg})
+  defhandleinfo %HTTPotion.AsyncHeaders{id: id}, state: %{async_id: async_id}, export: false,
+  when: id == async_id do
     noreply
   end
 
 
   defhandleinfo %HTTPotion.AsyncChunk{id: id, chunk: chunk},
-  state: {from, async_id, options}, export: false, when: id == async_id do
-
-    if !options[:ignore_response], do: GenServer.reply(from, {:ok, to_string(chunk)})
-    noreply
+  state: state = %{from: from, async_id: async_id, response: response},
+  export: false, when: id == async_id and is_binary(chunk) do
+    response = response || {:ok, to_string(chunk)}
+    if from, do: from |> GenServer.reply(response)
+    new_state %__MODULE__{state | response: response}
   end
 
 
   defhandleinfo %HTTPotion.AsyncEnd{id: id},
-  state: {_, async_id, _}, export: false, when: id == async_id do
-    new_state nil
+  state: %{async_id: async_id},
+  export: false, when: id == async_id do
+    noreply
   end
-
-
-  # Stops the server on timeout message
-  defhandleinfo :timeout, do: stop_server(:normal)
-  defhandleinfo _, do: noreply
 end

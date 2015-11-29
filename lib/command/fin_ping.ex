@@ -4,10 +4,10 @@ defmodule FinTex.Command.FinPing do
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
   alias FinTex.Segment.HKEND
-  alias FinTex.Segment.HNHBK
-  alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HKIDN
   alias FinTex.Segment.HKVVB
+  alias FinTex.Segment.HNHBK
+  alias FinTex.Segment.HNHBS
 
   use AbstractCommand
 
@@ -34,7 +34,7 @@ defmodule FinTex.Command.FinPing do
       %HNHBS{}
     ]
 
-    {:ok} = seq |> Sequencer.call_http(request_segments, ignore_response: true)
+    :ok = seq |> Sequencer.call_http(request_segments, ignore_response: true)
 
     Stream.concat(response[:HIRMG], response[:HIRMS])
     |> format_messages

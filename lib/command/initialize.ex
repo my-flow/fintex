@@ -58,7 +58,7 @@ defmodule FinTex.Command.Initialize do
       %HNHBS{}
     ]
 
-    {:ok} = seq |> Sequencer.call_http(request_segments, ignore_response: true)
+    :ok = seq |> Sequencer.call_http(request_segments, ignore_response: true)
 
     {seq, seq |> Sequencer.dialog}
   end
