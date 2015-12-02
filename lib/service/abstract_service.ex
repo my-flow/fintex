@@ -5,14 +5,14 @@ defmodule FinTex.Service.AbstractService do
     quote do
       def update_accounts {seq, accounts} do
         {acc, seq} = accounts
-        |> Dict.to_list
+        |> Map.to_list
         |> Stream.filter(fn {_, account} -> apply(__MODULE__, :has_capability?, [seq, account]) end)
         |> Enum.map_reduce(seq, fn({key, acc}, seq) ->
           {seq, account} = apply(__MODULE__, :update_account, [seq, acc])
           {{key, account}, seq}
         end)
 
-        {seq, Dict.merge(accounts, acc)}
+        {seq, Map.merge(accounts, acc |> Map.new)}
       end
     end
   end

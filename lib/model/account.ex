@@ -33,7 +33,7 @@ defmodule FinTex.Model.Account do
     name: String.t,
     owner: String.t,
     balance: Balance.t,
-    supported_payments: Dict.t,
+    supported_payments: Map.t,
     supported_tan_schemes: [TANScheme.t],
     preferred_tan_scheme: String.t,
   }
@@ -50,7 +50,7 @@ defmodule FinTex.Model.Account do
     :owner,
     type: :unknown,
     balance: nil,
-    supported_payments: HashDict.new,
+    supported_payments: Map.new,
     supported_tan_schemes: [],
     preferred_tan_scheme: nil,
     supported_transactions: []

@@ -19,7 +19,7 @@ defmodule FinTex.Connection.HTTPClient do
   end
 
 
-  defcall fetch, from: from, state: state = %{response: response} do
+  defcall fetch, from: from, state: state = %{response: response}, timeout: :infinity do
     case response do
       nil -> new_state %{state | from: from}
       _ -> reply response
@@ -30,14 +30,14 @@ defmodule FinTex.Connection.HTTPClient do
   defp send_request(url, body, options) do
     debug("#{inspect self}: sending request to URL #{url}")
 
-    ssl_options = case options |> Dict.get(:ssl_options, []) do
+    ssl_options = case options |> Keyword.get(:ssl_options, []) do
       [] ->
         []
       _ ->
         %URI{host: host} = URI.parse(url)
         hostname = to_char_list(host)
         {verify_fun, initial_user_state} = options[:ssl_options][:verify_fun]
-        Dict.merge(
+        Keyword.merge(
           [
             verify_fun: {
               verify_fun, 
@@ -50,7 +50,7 @@ defmodule FinTex.Connection.HTTPClient do
     end
 
     ibrowse = [ssl_options: ssl_options]
-    |> Dict.merge(Dict.get(options, :ibrowse, []))
+    |> Keyword.merge(Keyword.get(options, :ibrowse, []))
 
     %HTTPotion.AsyncResponse{id: async_id} = HTTPotion.post(
       url,

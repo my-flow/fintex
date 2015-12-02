@@ -64,16 +64,16 @@ end
 defimpl FinTex.Model.Bank, for: List do
 
   def blz(bank) do
-    bank |> Dict.get(:blz)
+    bank |> Keyword.get(:blz)
   end
 
 
   def url(bank) do
-    bank |> Dict.get(:url)
+    bank |> Keyword.get(:url)
   end
 
 
   def version(bank) do
-    bank |> Dict.get(:version)
+    bank |> Keyword.get(:version)
   end
 end

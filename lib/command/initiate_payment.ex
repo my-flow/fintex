@@ -63,7 +63,7 @@ defmodule FinTex.Command.InitiatePayment do
 
     if tan_medium_required do
       {seq, accounts} = TANMedia.update_accounts {seq, [{Account.key(sender_account), sender_account}]}
-      tan_scheme = (accounts |> Dict.values |> Enum.at(0)).supported_tan_schemes |> Enum.at(0)
+      tan_scheme = (accounts |> Map.values |> Enum.at(0)).supported_tan_schemes |> Enum.at(0)
     end
 
     request_segments = [

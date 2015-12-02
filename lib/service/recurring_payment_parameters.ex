@@ -19,7 +19,7 @@ defmodule FinTex.Service.RecurringPaymentParameters do
 
 
   def update_account(seq, account = %Account{supported_payments: supported_payments}) do
-    sepa_payment = supported_payments |> Dict.get(:SEPA, %PaymentType{})
+    sepa_payment = supported_payments |> Map.get(:SEPA, %PaymentType{})
 
     account = %Account{account |
       supported_payments: %{

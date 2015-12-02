@@ -3,18 +3,16 @@ defmodule FinTex.Data.AccountHandler do
 
   alias FinTex.Model.Account
 
-  @spec to_accounts_dict(Enumerable.t) :: Dict.t
-  def to_accounts_dict(accounts) do
-    accounts
-    |> Stream.map(fn account -> {Account.key(account), account} end)
-    |> Enum.into(HashDict.new)
+  @spec to_accounts_map(Enumerable.t) :: Map.t
+  def to_accounts_map(accounts) do
+    accounts |> Map.new(fn account -> {Account.key(account), account} end)
   end
 
 
-  @spec to_list(Dict.t) :: Enumerable.t
+  @spec to_list(Map.t) :: Enumerable.t
   def to_list(accounts) do
     accounts
-    |> Dict.values
+    |> Map.values
     |> Enum.sort(fn account1, account2 ->
         account1 |> Account.key |> String.length <= account2 |> Account.key |> String.length &&
         account1 |> Account.key <= account2 |> Account.key
@@ -22,9 +20,9 @@ defmodule FinTex.Data.AccountHandler do
   end
 
 
-  @spec find_account(Dict.t, Account.t) :: Account.t | nil
+  @spec find_account(Map.t, Account.t) :: Account.t | nil
   def find_account(accounts, account = %Account{}) do
-    result = accounts |> Dict.get(account |> Account.key)
+    result = accounts |> Map.get(account |> Account.key)
     case result do
       nil -> do_find_account(accounts, account)
       _ -> result

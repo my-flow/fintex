@@ -26,7 +26,7 @@ defmodule FinTex.Service.AccountBalance do
     %Dialog{bpd: bpd} = seq |> Sequencer.dialog
 
     params = bpd
-    |> Dict.get("HKSPA" |> control_structure_to_bpd)
+    |> Map.get("HKSPA" |> control_structure_to_bpd)
     |> Enum.at(0)
     |> Enum.at(4)
 

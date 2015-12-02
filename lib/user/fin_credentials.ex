@@ -70,16 +70,16 @@ end
 defimpl FinTex.Model.Credentials, for: List do
 
   def login(credentials) do
-    credentials |> Dict.get(:login)
+    credentials |> Keyword.get(:login)
   end
 
 
   def client_id(credentials) do
-    credentials |> Dict.get(:client_id)
+    credentials |> Keyword.get(:client_id)
   end
 
 
   def pin(credentials) do
-    credentials |> Dict.get(:pin)
+    credentials |> Keyword.get(:pin)
   end
 end

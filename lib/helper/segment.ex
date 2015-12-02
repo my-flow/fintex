@@ -15,7 +15,7 @@ defmodule FinTex.Helper.Segment do
     |> Enum.at(0)
 
     pintan
-    |> Dict.get(name)
+    |> Map.get(name)
     |> Stream.map(fn [[_name, _no, v | _] | _] -> v end)
   end
 end

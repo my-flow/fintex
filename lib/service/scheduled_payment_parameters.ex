@@ -20,11 +20,11 @@ defmodule FinTex.Service.ScheduledPaymentParameters do
 
   def update_account(seq, account = %Account{supported_payments: supported_payments}) do
     day_limits = (seq |> Sequencer.dialog).bpd
-    |> Dict.get("HICSES")
+    |> Map.get("HICSES")
     |> Enum.at(0)
     |> Enum.at(4)
 
-    sepa_payment = supported_payments |> Dict.get(:SEPA, %PaymentType{})
+    sepa_payment = supported_payments |> Map.get(:SEPA, %PaymentType{})
 
     account = %Account{account |
       supported_payments: %{

@@ -33,7 +33,7 @@ defmodule FinTex.Segment.HKCCS do
 
 
     available_sepa_descriptor_urns = bpd
-    |> Dict.get("HKSPA" |> control_structure_to_bpd)
+    |> Map.get("HKSPA" |> control_structure_to_bpd)
     |> Enum.at(0)
     |> Enum.at(-1)
     |> Enum.at(-1)

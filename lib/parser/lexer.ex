@@ -4,7 +4,7 @@ defmodule FinTex.Parser.Lexer do
   alias FinTex.Helper.Amount
   require Record
 
-  @type t :: record(:tokenization, tokens: term, escape_sequences: Dict.t)
+  @type t :: record(:tokenization, tokens: term, escape_sequences: Map.t)
   Record.defrecordp :tokenization,
     tokens: nil,
     escape_sequences: nil
@@ -43,15 +43,15 @@ defmodule FinTex.Parser.Lexer do
   @spec split(String.t) :: [String.t]
   def split(raw) when is_binary(raw) do
     raw
-    |> extract_binaries(HashDict.new)
+    |> extract_binaries(Map.new)
     |> latin1_to_utf8
     |> split_segments
     |> replace_escape_sequences
   end
 
 
-  @spec extract_binaries(String.t, Dict.t) :: t
-  defp extract_binaries(raw, dict) do
+  @spec extract_binaries(String.t, Map.t) :: t
+  defp extract_binaries(raw, map) do
     case Regex.run(~r/@(\d+)@.*/Us, raw, capture: :all_but_first) do
       [length] when is_binary(length) ->
         ref_counter = round(:random.uniform * 100_000_000)
@@ -65,10 +65,10 @@ defmodule FinTex.Parser.Lexer do
         |> escaped_binary
         |> Regex.replace(raw, "\\1#{marker}\\3", global: false) # replace only first occurence
 
-        dict = dict |> Dict.put(marker, binary_data)
-        extract_binaries(raw, dict)
+        map = map |> Map.put(marker, binary_data)
+        extract_binaries(raw, map)
       _ ->
-        tokenization(tokens: raw, escape_sequences: dict)
+        tokenization(tokens: raw, escape_sequences: map)
     end
   end
 

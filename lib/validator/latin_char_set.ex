@@ -9,7 +9,7 @@ defmodule FinTex.Validator.LatinCharSet do
   def validate(value, options) when is_list(options) do
     value
     |> to_string
-    |> Format.validate([with: @swift_latin_character_set] |> Dict.merge(options))
+    |> Format.validate([with: @swift_latin_character_set] |> Keyword.merge(options))
   end
 
 

@@ -30,7 +30,7 @@ defmodule FinTex.Service.InternalPaymentParameters do
   def update_account(seq, account = %Account{supported_payments: supported_payments}) do
     {seq, recipient_accounts} = seq |> check_recipient_accounts(account, [])
 
-    sepa_payment = supported_payments |> Dict.get(:SEPA, %PaymentType{})
+    sepa_payment = supported_payments |> Map.get(:SEPA, %PaymentType{})
 
     account = %Account{account |
       supported_payments: %{

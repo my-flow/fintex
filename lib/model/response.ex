@@ -9,13 +9,12 @@ defmodule FinTex.Model.Response do
   def new(segments) do
     index_by_segment_names = segments
     |> Enum.group_by(fn s -> s.segment |> Enum.at(0, []) |> Enum.at(0) end)
-    |> Stream.map(fn {k, v} -> {k, v |> Enum.sort(&sort_segments/2)} end)
-    |> Enum.into(HashDict.new)
+    |> Map.new(fn {k, v} -> {k, v |> Enum.sort(&sort_segments/2)} end)
 
     index_by_reference = segments
     |> Stream.filter(fn s -> s.segment |> Enum.at(0, []) |> Enum.count == 4 end)
     |> Enum.group_by(fn s -> s.segment |> Enum.at(0, []) |> Enum.at(3) end)
-    |> Enum.into(HashDict.new)
+    |> Map.new
 
     %__MODULE__{
       index_by_segment_names: index_by_segment_names,
@@ -37,7 +36,7 @@ defmodule FinTex.Model.Response do
     {:ok, container |> get(ref, [])}
   end
 
-  def fetch(_dict, _key) do
+  def fetch(_container, _key) do
     :error
   end
 
@@ -60,7 +59,7 @@ defmodule FinTex.Model.Response do
     end
   end
 
-  def get(_dict, _key, _default) do
+  def get(_container, _key, _default) do
     :error
   end
 end
@@ -69,7 +68,7 @@ end
 defimpl Inspect, for: FinTex.Model.Response do
   def inspect(%{index_by_segment_names: index_by_segment_names}, opts) do
     index_by_segment_names
-    |> Dict.values
+    |> Map.values
     |> Stream.concat
     |> Enum.sort(&FinTex.Model.Response.sort_segments/2)
     |> Inspect.inspect(opts)

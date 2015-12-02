@@ -31,17 +31,17 @@ defmodule FinTex.Command.Sequencer do
     end
 
     ssl_options = Application.get_env(:fintex, :ssl_options, [])
-    |> Dict.merge(Dict.get(options, :ssl_options, []))
+    |> Keyword.merge(Keyword.get(options, :ssl_options, []))
 
     ibrowse = Application.get_env(:fintex, :ibrowse, [])
-    |> Dict.merge(Dict.get(options, :ibrowse, []))
+    |> Keyword.merge(Keyword.get(options, :ibrowse, []))
 
     timeout = nil
-    || Dict.get(options, :http_options, []) |> Dict.get(:timeout)
-    || Application.get_env(:fintex, :http_options, []) |> Dict.get(:timeout)
+    || Keyword.get(options, :http_options, []) |> Keyword.get(:timeout)
+    || Application.get_env(:fintex, :http_options, []) |> Keyword.get(:timeout)
 
     options = options
-    |> Dict.merge([ssl_options: ssl_options, ibrowse: ibrowse, timeout: timeout])
+    |> Keyword.merge([ssl_options: ssl_options, ibrowse: ibrowse, timeout: timeout])
 
     %__MODULE__{dialog: d, options: options}
   end
@@ -51,7 +51,7 @@ defmodule FinTex.Command.Sequencer do
     request_segments = request_segments |> Enum.map(&create(&1, d))
     request_segments |> inspect(binaries: :as_strings, pretty: true, limit: :infinity) |> debug
     body = request_segments |> HTTPBody.encode_body(d)
-    options = Dict.merge(options, opts)
+    options = Keyword.merge(options, opts)
 
     children = [
       worker(HTTPClient, [bank.url, body, options], restart: :temporary)
@@ -63,7 +63,7 @@ defmodule FinTex.Command.Sequencer do
       {:ok, worker_pid} = Supervisor.start_child(supervisor_pid, [])
       case options[:ignore_response] do
         true -> :ok
-        _ -> worker_pid |> HTTPClient.fetch(timeout: options[:timeout])
+        _ -> worker_pid |> HTTPClient.fetch
       end
     catch type, error ->
       {:error, {type, error}}

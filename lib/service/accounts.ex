@@ -39,22 +39,20 @@ defmodule FinTex.Service.Accounts do
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
     bpd = response[4]
-    |> Enum.group_by(HashDict.new, fn [[name | _] | _] -> name end)
+    |> Enum.group_by(Map.new, fn [[name | _] | _] -> name end)
 
 
-    pintan = bpd |> Dict.get("HKPIN" |> control_structure_to_bpd)
+    pintan = bpd |> Map.get("HKPIN" |> control_structure_to_bpd)
 
     pintan = case pintan do
       nil -> bpd
-             |> Enum.map(fn {k, v} -> {k |> bpd_to_control_structure, v} end)
-             |> Enum.into(HashDict.new)
+             |> Map.new(fn {k, v} -> {k |> bpd_to_control_structure, v} end)
       _   -> pintan
              |> Enum.at(0)
              |> Enum.at(4)
              |> Enum.at(5)
              |> Stream.map(fn {k, _} -> k end)
-             |> Stream.map(fn name -> {name, bpd[name |> control_structure_to_bpd]} end)
-             |> Enum.into(HashDict.new)
+             |> Map.new(fn name -> {name, bpd[name |> control_structure_to_bpd]} end)
     end
 
     tan_scheme_sec_funcs = response[:HIRMS]
@@ -65,7 +63,7 @@ defmodule FinTex.Service.Accounts do
     |> Enum.into(HashSet.new)
 
     supported_tan_schemes = pintan
-    |> Dict.get("HKTAN")
+    |> Map.get("HKTAN")
     |> Stream.flat_map(&HITANS.to_tan_schemes(&1))
     |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> Set.member?(sec_func) end)
     |> Enum.uniq_by(fn %TANScheme{sec_func: sec_func} -> sec_func end)
@@ -77,7 +75,7 @@ defmodule FinTex.Service.Accounts do
     accounts = seq
     |> Sequencer.dialog
     |> accounts(response[:HIUPD])
-    |> to_accounts_dict
+    |> to_accounts_map
 
     {seq, accounts}
   end
@@ -113,7 +111,7 @@ defmodule FinTex.Service.Accounts do
                                    |> String.strip,
         name:                    u |> Enum.at(6 + offset),
         bank_name:               bpd
-                                 |> Dict.get("HIBPA")
+                                 |> Map.get("HIBPA")
                                  |> Enum.at(0)
                                  |> Enum.at(3)
                                  |> String.strip,
@@ -121,7 +119,7 @@ defmodule FinTex.Service.Accounts do
                                  |> Stream.drop(8 + offset)
                                  |> Stream.filter(fn l -> l |> is_list && !Enum.empty?(l) end)
                                  |> Stream.map(fn [transaction, _] -> transaction end)
-                                 |> Stream.filter(fn transaction -> pintan |> Dict.has_key?(transaction) end)
+                                 |> Stream.filter(fn transaction -> pintan |> Map.has_key?(transaction) end)
                                  |> Stream.uniq
                                  |> Enum.sort,
         supported_tan_schemes:  supported_tan_schemes,

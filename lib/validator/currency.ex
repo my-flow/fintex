@@ -10,7 +10,7 @@ defmodule FinTex.Validator.Currency do
   def validate(value, options) when is_list(options) do
     value
     |> to_string
-    |> Format.validate([with: @currency] |> Dict.merge(options))
+    |> Format.validate([with: @currency] |> Keyword.merge(options))
   end
 
 

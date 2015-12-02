@@ -19,8 +19,8 @@ defmodule FinTex.Model.Dialog do
     sec_ref: :random.uniform * @max_sec_ref |> round,
     client_system_id: "0",
     tan_scheme_sec_func: "999",
-    bpd: HashDict.new,
-    pintan: HashDict.new,
+    bpd: Map.new,
+    pintan: Map.new,
     supported_tan_schemes: []
   ]
 

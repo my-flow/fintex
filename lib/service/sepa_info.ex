@@ -43,8 +43,8 @@ defmodule FinTex.Service.SEPAInfo do
           bic:  Enum.at(info, 2)
         }
     end)
-    |> to_accounts_dict
+    |> to_accounts_map
 
-    {seq |> Sequencer.inc, Dict.merge(accounts, acc)}
+    {seq |> Sequencer.inc, Map.merge(accounts, acc)}
   end
 end
