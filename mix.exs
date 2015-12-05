@@ -38,18 +38,18 @@ defmodule FinTex.Mixfile do
     [
       {:decimal,               "~> 1.1.0"},
       {:earmark,               "~> 0.1.19"},
-      {:ex_doc,                git: "https://github.com/elixir-lang/ex_doc.git"},
+      {:ex_doc,                "~> 0.11.1", only: :dev},
       {:exactor,               "~> 2.2.0"},
-      {:excoveralls,           "~> 0.4.2", only: [:dev, :test]},
+      {:excoveralls,           "~> 0.4.3",  only: [:dev, :test]},
       {:httpotion,             "~> 2.1.0"},
-      {:ibrowse,            tag: "v4.2",    github: "cmullaparthi/ibrowse"},
+      {:ibrowse,               "~> 4.2.2"},
       {:inch_ex,               "~> 0.4.0",  only: [:dev, :docs]},
-      {:luhn,               tag: "0.4.0",   github: "my-flow/luhn_ex"},
-      {:mt940,                 "~> 0.3.3"},
-      {:ssl_verify_hostname,   "<= 1.0.5"},
-      {:timex,                 "~> 1.0.0-rc2"},
+      {:luhn,                tag: "0.4.0",  github: "my-flow/luhn_ex"},
+      {:mt940,                 "~> 0.4.0"},
+      {:ssl_verify_hostname,   "<= 1.0.5", manager: :rebar},
+      {:timex,                 "~> 0.19.5"},
       {:vex,                   "~> 0.5.4"},
-      {:xml_builder,   commit: "1e381db0b7d289ee18c2f7fd682d8e47215a141c", github: "joshnuss/xml_builder"}
+      {:xml_builder, commit: "7e35f9094d9de23d654e7b33c2e86dc0374d572d", github: "joshnuss/xml_builder"}
     ]
   end
 
