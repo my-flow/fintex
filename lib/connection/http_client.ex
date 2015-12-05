@@ -69,15 +69,8 @@ defmodule FinTex.Connection.HTTPClient do
 
 
   defhandleinfo %HTTPotion.AsyncHeaders{id: id, status_code: status_code},
-  state: state = %{async_id: async_id}, export: false,
-  when: id == async_id and not status_code in 200..299 and not status_code in [302, 304] do
-    msg = "#{__MODULE__ |> Atom.to_string}: Request failed with HTTP status code #{status_code}."
-    new_state %__MODULE__{state | response: {:error, msg}}
-  end
-
-
-  defhandleinfo %HTTPotion.AsyncHeaders{id: id}, state: %{async_id: async_id}, export: false,
-  when: id == async_id do
+  state: %{async_id: async_id}, export: false,
+  when: id == async_id and (status_code in 200..299 or status_code in [302, 304]) do
     noreply
   end
 
