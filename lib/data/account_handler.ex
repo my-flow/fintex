@@ -3,13 +3,13 @@ defmodule FinTex.Data.AccountHandler do
 
   alias FinTex.Model.Account
 
-  @spec to_accounts_map(Enumerable.t) :: Map.t
+  @spec to_accounts_map(Enumerable.t) :: map
   def to_accounts_map(accounts) do
     accounts |> Map.new(fn account -> {Account.key(account), account} end)
   end
 
 
-  @spec to_list(Map.t) :: Enumerable.t
+  @spec to_list(map) :: Enumerable.t
   def to_list(accounts) do
     accounts
     |> Map.values
@@ -20,7 +20,7 @@ defmodule FinTex.Data.AccountHandler do
   end
 
 
-  @spec find_account(Map.t, Account.t) :: Account.t | nil
+  @spec find_account(map, Account.t) :: Account.t | nil
   def find_account(accounts, account = %Account{}) do
     result = accounts |> Map.get(account |> Account.key)
     case result do

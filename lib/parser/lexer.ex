@@ -4,7 +4,7 @@ defmodule FinTex.Parser.Lexer do
   alias FinTex.Helper.Amount
   require Record
 
-  @type t :: record(:tokenization, tokens: term, escape_sequences: Map.t)
+  @type t :: record(:tokenization, tokens: [String.t] | String.t, escape_sequences: map)
   Record.defrecordp :tokenization,
     tokens: nil,
     escape_sequences: nil
@@ -50,7 +50,7 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
-  @spec extract_binaries(String.t, Map.t) :: t
+  @spec extract_binaries(String.t, map) :: t
   defp extract_binaries(raw, map) do
     case Regex.run(~r/@(\d+)@.*/Us, raw, capture: :all_but_first) do
       [length] when is_binary(length) ->
@@ -122,7 +122,7 @@ defmodule FinTex.Parser.Lexer do
   @spec replace_escape_sequences(t) :: term
   defp replace_escape_sequences(tokenization(tokens: tokens, escape_sequences: escape_sequences)) do
     escape_sequences
-    |> Enum.reduce(tokens, fn ({k, v}, t) -> replace_escape_sequences(t, k, v) end) # replace only first occurence
+    |> Enum.reduce(tokens, fn ({k, v}, t) -> replace_escape_sequences(t, k, v) end)
   end
 
 

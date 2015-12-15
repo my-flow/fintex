@@ -60,12 +60,12 @@ defmodule FinTex.Service.Accounts do
     |> Stream.filter(fn [code | _] -> code === @allowed_methods end)
     |> Stream.map(fn [_, _, _ | params] -> params end)
     |> Enum.at(0)
-    |> Enum.into(HashSet.new)
+    |> Enum.into(MapSet.new)
 
     supported_tan_schemes = pintan
     |> Map.get("HKTAN")
     |> Stream.flat_map(&HITANS.to_tan_schemes(&1))
-    |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> Set.member?(sec_func) end)
+    |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> MapSet.member?(sec_func) end)
     |> Enum.uniq_by(fn %TANScheme{sec_func: sec_func} -> sec_func end)
 
     seq = seq

@@ -32,6 +32,7 @@ defmodule FinTex.Service.TANMedia do
 
       accounts = accounts
       |> Enum.map(fn {key, account} -> {key, account |> update(response[:HITAB] |> Enum.map(&HITAB.to_medium_name/1))} end)
+      |> Map.new
 
       {seq |> Sequencer.inc, accounts}
   end

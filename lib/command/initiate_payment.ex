@@ -41,7 +41,7 @@ defmodule FinTex.Command.InitiatePayment do
       raise FinTex.Error, reason: "could not find sender account: #{inspect payment.sender_account}"
     end
 
-    unless sender_account.supported_transactions |> Enum.into(HashSet.new) |> Set.member?("HKCCS") do
+    unless sender_account.supported_transactions |> Enum.into(MapSet.new) |> MapSet.member?("HKCCS") do
       raise FinTex.Error, reason:
         "could not find \"HKCCS\" in sender account's supported transactions: #{inspect sender_account.supported_transactions}"
     end

@@ -33,7 +33,7 @@ defmodule FinTex.Model.Account do
     name: String.t,
     owner: String.t,
     balance: Balance.t,
-    supported_payments: Map.t,
+    supported_payments: map,
     supported_tan_schemes: [TANScheme.t],
     preferred_tan_scheme: String.t,
   }

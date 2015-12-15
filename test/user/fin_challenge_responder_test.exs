@@ -18,9 +18,9 @@ defmodule FinTex.User.FinChallengeResponderTest do
     }
 
     assert ~r/^title\nmedium$/m
-    |> Regex.match? capture_io([input: "123456", capture_prompt: false], fn ->
+    |> Regex.match?(capture_io([input: "123456", capture_prompt: false], fn ->
       challenge |> FinChallengeResponder.read_user_input
-    end)
+    end))
   end
 
 
@@ -34,8 +34,8 @@ defmodule FinTex.User.FinChallengeResponderTest do
     }
 
     assert ~r/1784011049063F059876543210041234567844312C303019/m
-    |> Regex.match? capture_io([input: "123456", capture_prompt: false], fn ->
+    |> Regex.match?(capture_io([input: "123456", capture_prompt: false], fn ->
       challenge |> FinChallengeResponder.read_user_input
-    end)
+    end))
   end
 end
