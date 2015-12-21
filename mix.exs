@@ -38,7 +38,7 @@ defmodule FinTex.Mixfile do
     [
       {:decimal,               "~> 1.1.0"},
       {:earmark,               "~> 0.1.19"},
-      {:ex_doc,                "~> 0.11.1", only: :dev},
+      {:ex_doc,                "~> 0.11.2", only: :dev},
       {:exactor,               "~> 2.2.0"},
       {:excoveralls,           "~> 0.4.3",  only: [:dev, :test]},
       {:httpotion,             "~> 2.1.0"},
@@ -46,10 +46,10 @@ defmodule FinTex.Mixfile do
       {:inch_ex,               "~> 0.4.0",  only: [:dev, :docs]},
       {:luhn,                tag: "0.4.0",  github: "my-flow/luhn_ex"},
       {:mt940,                 "~> 0.4.0"},
-      {:ssl_verify_hostname,   "<= 1.0.5", manager: :rebar},
+      {:ssl_verify_hostname,   "<= 1.0.6", manager: :rebar},
       {:timex,                 "~> 0.19.5"},
       {:vex,                   "~> 0.5.4"},
-      {:xml_builder, commit: "7e35f9094d9de23d654e7b33c2e86dc0374d572d", github: "joshnuss/xml_builder"}
+      {:xml_builder,           "~> 0.0.8"}
     ]
   end
 

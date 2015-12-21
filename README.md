@@ -17,8 +17,7 @@ Include a dependency in your `mix.exs`:
 ```elixir
 deps: [
   {:fintex, "~> 0.2.0"},
-  {:luhn, tag: "0.4.0", github: "my-flow/luhn_ex"},
-  {:xml_builder, commit: "7e35f9094d9de23d654e7b33c2e86dc0374d572d", github: "joshnuss/xml_builder"}
+  {:luhn, tag: "0.4.0", github: "my-flow/luhn_ex"}
 ]
 ```
 To use FinTex modules, add `use FinTex` to the top of each module you plan on referencing FinTex from.
