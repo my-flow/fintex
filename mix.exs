@@ -4,11 +4,11 @@ defmodule FinTex.Mixfile do
   def project do
     [
       app: :fintex,
-      version: "0.1.0",
+      version: "0.2.0",
       name: "FinTex",
       source_url: "https://github.com/my-flow/fintex",
       homepage_url: "http://hexdocs.pm/fintex",
-      elixir: "~> 1.1",
+      elixir: "~> 1.2.0-rc.0",
       description: description,
       package: package,
       build_embedded: Mix.env == :prod,

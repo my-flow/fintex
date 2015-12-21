@@ -16,9 +16,9 @@ This client library supports both APIs, HBCI 2.2 and FinTS 3.0. It can be used t
 Include a dependency in your `mix.exs`:
 ```elixir
 deps: [
-  {:fintex, "~> 0.1.0"}
-  {:ibrowse, tag: "v4.2", github: "cmullaparthi/ibrowse"},
-  {:xml_builder, commit: "1e381db0b7d289ee18c2f7fd682d8e47215a141c", github: "joshnuss/xml_builder"}
+  {:fintex, "~> 0.2.0"}
+  {:luhn, tag: "0.4.0", github: "my-flow/luhn_ex"},
+  {:xml_builder, commit: "7e35f9094d9de23d654e7b33c2e86dc0374d572d", github: "joshnuss/xml_builder"}
 ]
 ```
 To use FinTex modules, add `use FinTex` to the top of each module you plan on referencing FinTex from.

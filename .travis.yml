@@ -1,8 +1,16 @@
-language: elixir
-elixir:
-    - 1.1.1
+language: erlang
 otp_release:
-    - 18.1
+  - 18.1
+sudo: false
+before_install:
+  - wget http://s3.hex.pm/builds/elixir/master.zip
+  - unzip -d elixir master.zip
+before_script:
+  - export PATH=`pwd`/elixir/bin:$PATH
+  - mix local.hex --force
+  - mix deps.get
+script:
+  - mix test
 after_success:
   - mix do compile, coveralls.travis
 after_script:
