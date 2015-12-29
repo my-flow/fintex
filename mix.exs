@@ -44,7 +44,7 @@ defmodule FinTex.Mixfile do
       {:httpotion,             "~> 2.1.0"},
       {:ibrowse,               "~> 4.2.2"},
       {:inch_ex,               "~> 0.4.0",  only: [:dev, :docs]},
-      {:luhn,                tag: "0.4.0",  github: "my-flow/luhn_ex"},
+      {:luhnatex,              "~> 0.5.0"},
       {:mt940,                 "~> 0.4.0"},
       {:ssl_verify_hostname,   "<= 1.0.6", manager: :rebar},
       {:timex,                 "~> 0.19.5"},
