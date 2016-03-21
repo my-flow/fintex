@@ -39,6 +39,7 @@ defmodule FinTex.Command.Sequencer do
     timeout = nil
     || Keyword.get(options, :http_options, []) |> Keyword.get(:timeout)
     || Application.get_env(:fintex, :http_options, []) |> Keyword.get(:timeout)
+    || 10_000
 
     options = options
     |> Keyword.merge([ssl_options: ssl_options, ibrowse: ibrowse, timeout: timeout])
