@@ -95,8 +95,8 @@ defmodule FinTex.Segment.HKCCS do
       [
         CstmrCdtTrfInitn: [
           GrpHdr: [
-            MsgId: "M" <> DateFormat.format!(Date.now, "%Y%m%d%H%M%S", :strftime),
-            CreDtTm: DateFormat.format!(Date.now, "{ISOz}"),
+            MsgId: "M" <> Timex.format!(DateTime.now, "%Y%m%d%H%M%S", :strftime),
+            CreDtTm: Timex.format!(DateTime.now, "{ISOz}"),
             NbOfTxs: 1,
             CtrlSum: amount,
             InitgPty: [
@@ -104,7 +104,7 @@ defmodule FinTex.Segment.HKCCS do
             ]
           ],
           PmtInf: [
-            PmtInfId: "P" <> DateFormat.format!(Date.now, "%Y%m%d%H%M%S", :strftime),
+            PmtInfId: "P" <> Timex.format!(DateTime.now, "%Y%m%d%H%M%S", :strftime),
             PmtMtd: "TRF",
             NbOfTxs: 1,
             CtrlSum: amount,

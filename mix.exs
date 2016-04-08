@@ -44,10 +44,10 @@ defmodule FinTex.Mixfile do
       {:httpotion,             "~> 2.2.2"},
       {:ibrowse,               "~> 4.2.2"},
       {:inch_ex,               "~> 0.5.1",  only: [:dev, :docs]},
-      {:luhnatex,              "~> 0.5.0"},
-      {:mt940,                 "~> 0.4.0"},
+      {:luhnatex,              "~> 0.5.1"},
+      {:mt940,                 "~> 0.4.1"},
       {:ssl_verify_hostname,   "<= 1.0.6", manager: :rebar},
-      {:timex,                 "~> 0.19.5"},
+      {:timex,                 "~> 2.1.4"},
       {:vex,                   "~> 0.5.5"},
       {:xml_builder,           "~> 0.0.8"}
     ]

@@ -43,11 +43,11 @@ defmodule FinTex.Segment.HKKAZ do
           "N",
           case from do
             nil -> ""
-            _   -> from |> DateFormat.format!("%Y%m%d", :strftime)
+            _   -> from |> Timex.format!("%Y%m%d", :strftime)
           end,
           case to do
             nil -> ""
-            _   -> to |> DateFormat.format!("%Y%m%d", :strftime)
+            _   -> to |> Timex.format!("%Y%m%d", :strftime)
           end,
           "",
           start_point
