@@ -98,10 +98,17 @@ defmodule FinTex.Service.Accounts do
     user_params
 
     |> Stream.map(fn u ->
+
+      account_number = with [account_number |_] <- u |> Enum.at(1), do: account_number
+
+      subaccount_id = with [_, subaccount_id |_] <- u |> Enum.at(1), do: subaccount_id
+
+      blz = with [_, _, _, blz |_] <- u |> Enum.at(1), do: blz
+
       account = %Account{
-        account_number:          u |> Enum.at(1) |> Enum.at(0),
-        subaccount_id:           u |> Enum.at(1) |> Enum.at(1),
-        blz:                     u |> Enum.at(1) |> Enum.at(3),
+        account_number:          account_number,
+        subaccount_id:           subaccount_id,
+        blz:                     blz,
         currency:                u |> Enum.at(3 + offset),
         owner:                  [u |> Enum.at(4 + offset), u |> Enum.at(5 + offset)]
                                    |> Enum.join(" ")
@@ -129,10 +136,7 @@ defmodule FinTex.Service.Accounts do
       }
 
       # add IBAN if available
-      iban = case Enum.at(u, 2) do
-        ""  -> nil
-        els -> els
-      end
+      iban = with "" <- u |> Enum.at(2), do: nil
 
       case bank.version do
         "300" -> %Account{account | iban: iban}
