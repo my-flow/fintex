@@ -12,4 +12,10 @@ defmodule FinTex.Connection.HTTPBodyTest do
     response_body = File.read!(Path.join([System.cwd!, "test", "fixtures", "accounts.txt"]))
     HTTPBody.decode_body(response_body)
   end
+
+
+  test "read maintenance from file" do
+    response_body = File.read!(Path.join([System.cwd!, "test", "fixtures", "maintenance.txt"]))
+    HTTPBody.decode_body(response_body)
+  end
 end
