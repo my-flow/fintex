@@ -29,10 +29,10 @@ defmodule FinTex.Segment.HKKAZ do
   ) do
 
     v = max_version(d, __MODULE__)
-    ktv = case v do
-      6 when iban != nil and bic != nil -> [iban, bic]
-      7 when iban != nil and bic != nil -> [iban, bic]
-      _                                 -> [account_number, subaccount_id, country_code, blz]
+
+    ktv = cond do
+      v >= 7 -> [iban, bic]
+      true -> [account_number, subaccount_id, country_code, blz]
     end
 
     %__MODULE__{
