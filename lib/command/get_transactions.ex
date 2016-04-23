@@ -15,6 +15,7 @@ defmodule FinTex.Command.GetTransactions do
   use AbstractCommand
   use MT940
 
+  import Logger
 
   def get_transactions(bank, client_system_id, tan_scheme_sec_func, credentials, account, from, to, options) do
 
@@ -40,7 +41,9 @@ defmodule FinTex.Command.GetTransactions do
 
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
-    transactions = transactions |> Stream.concat(response[:HIKAZ] |> Stream.flat_map(fn s -> s |> Enum.at(1) |> transform end))
+    transactions = transactions
+    |> Stream.concat(response[:HIKAZ] |> Stream.flat_map(fn s -> s |> Enum.at(1) |> transform(true)  end))
+    |> Stream.concat(response[:HIKAZ] |> Stream.flat_map(fn s -> s |> Enum.at(2) |> transform(false) end))
 
     start_point = response[:HIRMS]
     |> to_messages
@@ -56,13 +59,19 @@ defmodule FinTex.Command.GetTransactions do
   end
 
 
-  defp transform(raw) when is_binary(raw) do
+  defp transform(raw, booked) when is_binary(raw) and is_boolean(booked) do
     raw
     |> String.codepoints
     |> Enum.map(&Lexer.latin1_to_utf8/1)
     |> :binary.list_to_bin
     |> parse!
     |> Stream.flat_map(&MT940.CustomerStatementMessage.statement_lines/1)
-    |> Stream.map(&Transaction.from_statement/1)
+    |> Stream.map(fn s -> %{Transaction.from_statement(s) | booked: booked} end)
   end
+
+
+  defp transform(nil, _) do
+    []
+  end
+
 end

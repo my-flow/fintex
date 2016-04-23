@@ -10,6 +10,7 @@ defmodule FinTex.Model.Transaction do
     * `purpose`         - Purpose text. This field might be empty if the transaction has no purpose
     * `code`            - Business transaction code
     * `booking_text`    - Booking text. This field might be empty if the transaction has no booking text
+    * `booked`          - This flag indicates whether the transaction is booked or pending
   """
 
   use Timex
@@ -23,7 +24,8 @@ defmodule FinTex.Model.Transaction do
     value_date: %DateTime{},
     purpose: binary,
     code: non_neg_integer,
-    booking_text: binary
+    booking_text: binary,
+    booked: boolean
   }
 
   defstruct [
@@ -35,7 +37,8 @@ defmodule FinTex.Model.Transaction do
     :value_date,
     :purpose,
     :code,
-    :booking_text
+    :booking_text,
+    :booked
   ]
 
   @doc false
