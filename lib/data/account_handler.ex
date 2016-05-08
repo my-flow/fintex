@@ -1,15 +1,39 @@
 defmodule FinTex.Data.AccountHandler do
   @moduledoc false
 
+  alias FinTex.Command.Sequencer
   alias FinTex.Model.Account
 
-  @spec to_accounts_map(Enumerable.t) :: map
+
+  @spec update_accounts({Sequencer.t, %{String.t => Account.t}}, module) :: {Sequencer.t, %{String.t => Account.t}}
+  def update_accounts {seq, accounts}, module do
+    {:module, module} = Code.ensure_loaded(module)
+    cond do
+      function_exported?(module, :update_account,  2) ->
+        {acc, seq} = accounts
+        |> Map.to_list
+        |> Stream.filter(fn entry -> apply(module, :has_capability?, [{seq, [entry] |> Map.new}]) end)
+        |> Enum.map_reduce(seq, fn({key, acc}, seq) ->
+          {seq, account} = apply(module, :update_account, [seq, acc])
+          {{key, account}, seq}
+        end)
+        {seq, Map.merge(accounts, acc |> Map.new)}
+      function_exported?(module, :update_accounts, 1) ->
+        case apply(module, :has_capability?, [{seq, accounts}]) do
+          true  -> apply(module, :update_accounts, [{seq, accounts}])
+          false -> {seq, accounts}
+        end
+    end
+  end
+
+
+  @spec to_accounts_map(Enumerable.t) :: %{String.t => Account.t}
   def to_accounts_map(accounts) do
     accounts |> Map.new(fn account -> {Account.key(account), account} end)
   end
 
 
-  @spec to_list(map) :: Enumerable.t
+  @spec to_list(%{String.t => Account.t}) :: Enumerable.t
   def to_list(accounts) do
     accounts
     |> Map.values
@@ -20,17 +44,8 @@ defmodule FinTex.Data.AccountHandler do
   end
 
 
-  @spec find_account(map, Account.t) :: Account.t | nil
+  @spec find_account(%{String.t => Account.t}, Account.t) :: Account.t | nil
   def find_account(accounts, account = %Account{}) do
-    result = accounts |> Map.get(account |> Account.key)
-    case result do
-      nil -> do_find_account(accounts, account)
-      _ -> result
-    end
-  end
-
-
-  defp do_find_account(accounts, account) do
     accounts
     |> Enum.reduce(nil, fn({_, value}, acc) -> find(value, account, acc) end)
   end

@@ -1,9 +1,11 @@
 defmodule FinTex.Service.SEPAInfo do
   @moduledoc false
 
+  alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
   alias FinTex.Data.AccountHandler
   alias FinTex.Model.Account
+  alias FinTex.Model.Dialog
   alias FinTex.Segment.HNHBK
   alias FinTex.Segment.HNSHK
   alias FinTex.Segment.HKSPA
@@ -11,12 +13,24 @@ defmodule FinTex.Service.SEPAInfo do
   alias FinTex.Segment.HNHBS
   alias FinTex.Service.ServiceBehaviour
 
+  use AbstractCommand
+
   @behaviour ServiceBehaviour
   import AccountHandler
 
 
-  def has_capability?(_, %Account{supported_transactions: supported_transactions}) do
-    supported_transactions |> Enum.member?("HKSPA")
+  def has_capability? {seq, accounts} do
+    %Dialog{bpd: bpd} = seq
+    |> Sequencer.dialog
+
+    bpd
+    |> Map.has_key?("HKSPA" |> control_structure_to_bpd)
+    &&
+    accounts
+    |> Map.values
+    |> Enum.all?(fn %Account{supported_transactions: supported_transactions} ->
+       supported_transactions |> Enum.member?("HKSPA")
+    end)
   end
 
 

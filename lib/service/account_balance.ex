@@ -12,6 +12,7 @@ defmodule FinTex.Service.AccountBalance do
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNHBS
   alias FinTex.Service.AbstractService
+  alias FinTex.Service.SEPAInfo
   alias FinTex.Service.ServiceBehaviour
 
   use AbstractCommand
@@ -22,8 +23,17 @@ defmodule FinTex.Service.AccountBalance do
   @behaviour ServiceBehaviour
 
 
-  def has_capability?(seq, %Account{supported_transactions: supported_transactions, iban: iban, bic: bic}) do
-    %Dialog{bpd: bpd} = seq |> Sequencer.dialog
+  def has_capability? {seq, accounts} do
+    SEPAInfo.has_capability?({seq, accounts})
+    && accounts
+    |> Map.values
+    |> Enum.all?(&do_has_capability?(seq, &1))
+  end
+
+
+  defp do_has_capability?(seq, %Account{supported_transactions: supported_transactions, iban: iban, bic: bic}) do
+    %Dialog{bpd: bpd} = seq
+    |> Sequencer.dialog
 
     params = bpd
     |> Map.get("HKSPA" |> control_structure_to_bpd)

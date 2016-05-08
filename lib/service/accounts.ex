@@ -23,7 +23,7 @@ defmodule FinTex.Service.Accounts do
   @allowed_methods 3920
 
 
-  def has_capability?(_, _), do: true
+  def has_capability?(_), do: true
 
 
   def update_accounts {seq, _} do

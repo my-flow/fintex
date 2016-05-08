@@ -20,10 +20,14 @@ defmodule FinTex.Service.InternalPaymentParameters do
   @behaviour ServiceBehaviour
 
 
-  def has_capability?(seq, account = %Account{supported_transactions: supported_transactions}) do
-    !SEPAPaymentParameters.has_capability?(seq, account) &&
-    supported_transactions |>  Enum.member?("HKCUM") &&
-    supported_transactions |>  Enum.member?("HKCUB")
+  def has_capability? {seq, accounts} do
+    !SEPAPaymentParameters.has_capability?({seq, accounts})
+    && accounts
+    |> Map.values
+    |> Enum.all?(fn %Account{supported_transactions: supported_transactions} ->
+        supported_transactions |>  Enum.member?("HKCUM") &&
+        supported_transactions |>  Enum.member?("HKCUB")
+    end)
   end
 
 

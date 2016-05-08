@@ -8,6 +8,7 @@ defmodule FinTex.Service.AggregatedService do
   alias FinTex.Service.ScheduledPaymentParameters
   alias FinTex.Service.SEPAPaymentParameters
   alias FinTex.Service.ServiceBehaviour
+  alias FinTex.Service.TANMedia
 
   @behaviour ServiceBehaviour
   @services [
@@ -16,15 +17,21 @@ defmodule FinTex.Service.AggregatedService do
     SEPAPaymentParameters,
     RecurringPaymentParameters,
     ScheduledPaymentParameters,
-    AccountBalance
+    AccountBalance,
+    TANMedia
   ]
 
 
-  def has_capability?(_, _), do: true
+  def has_capability?(_), do: true
 
 
   def update_accounts {seq, accounts} do
     @services
-    |> Enum.reduce({seq, accounts}, fn(service, acc) -> service.update_accounts(acc) end)
+    |> Enum.reduce({seq, accounts}, fn(service, acc) ->
+      case apply(service, :has_capability?, [{seq, accounts}]) do
+        true  -> apply(service, :update_accounts, [acc])
+        false -> acc
+      end
+    end)
   end
 end

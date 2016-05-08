@@ -3,6 +3,7 @@ defmodule FinTex.Command.Synchronization do
 
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
+  alias FinTex.Data.AccountHandler
   alias FinTex.Model.Dialog
   alias FinTex.Segment.HKEND
   alias FinTex.Segment.HNHBK
@@ -11,7 +12,7 @@ defmodule FinTex.Command.Synchronization do
   alias FinTex.Segment.HNSHK
   alias FinTex.Service.Accounts
   alias FinTex.Service.SEPAInfo
-
+  alias FinTex.Service.TANMedia
 
   use AbstractCommand
 
@@ -22,11 +23,10 @@ defmodule FinTex.Command.Synchronization do
       seq = seq |> Sequencer.reset(tan_scheme_sec_func)
     end
 
-    {seq, accounts} = {seq, %{}}
-    |> Accounts.update_accounts
-    |> SEPAInfo.update_accounts
-
-    {seq, accounts}
+    {seq, %{}}
+    |> AccountHandler.update_accounts(Accounts)
+    |> AccountHandler.update_accounts(SEPAInfo)
+    |> AccountHandler.update_accounts(TANMedia)
   end
 
 

@@ -15,8 +15,6 @@ defmodule FinTex.Command.GetTransactions do
   use AbstractCommand
   use MT940
 
-  import Logger
-
   def get_transactions(bank, client_system_id, tan_scheme_sec_func, credentials, account, from, to, options) do
 
     {seq, _} = Synchronization.synchronize(bank, client_system_id, tan_scheme_sec_func, credentials, options)
@@ -61,9 +59,7 @@ defmodule FinTex.Command.GetTransactions do
 
   defp transform(raw, booked) when is_binary(raw) and is_boolean(booked) do
     raw
-    |> String.codepoints
-    |> Enum.map(&Lexer.latin1_to_utf8/1)
-    |> :binary.list_to_bin
+    |> Lexer.latin1_to_utf8
     |> parse!
     |> Stream.flat_map(&MT940.CustomerStatementMessage.statement_lines/1)
     |> Stream.map(fn s -> %{Transaction.from_statement(s) | booked: booked} end)

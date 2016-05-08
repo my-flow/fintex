@@ -5,7 +5,6 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Command.Synchronization
   alias FinTex.Command.Sequencer
   alias FinTex.Data.AccountHandler
-  alias FinTex.Model.Account
   alias FinTex.Model.Bank
   alias FinTex.Model.Challenge
   alias FinTex.Model.ChallengeResponder
@@ -19,7 +18,6 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
-  alias FinTex.Service.TANMedia
 
   use AbstractCommand
   import AccountHandler
@@ -46,25 +44,7 @@ defmodule FinTex.Command.InitiatePayment do
         "could not find \"HKCCS\" in sender account's supported transactions: #{inspect sender_account.supported_transactions}"
     end
 
-    # filter out valid HKTAN/HITANS segment version based on given sec_func
-    valid_tan_schemes = (seq |> Sequencer.dialog).supported_tan_schemes
-    |> Enum.filter(fn %TANScheme{sec_func: sec_func} -> sec_func == tan_scheme.sec_func end)
-
-    if valid_tan_schemes |> Enum.count == 0 do
-      raise FinTex.Error, reason:
-        "could not find supported TAN scheme for sec_func: #{inspect tan_scheme.sec_func}"
-    end
-
-    # find maximum version of supported TAN schemes
-    tan_scheme = valid_tan_schemes
-    |> Enum.max_by(fn %TANScheme{v: v} -> v end)
-
-    tan_medium_required = tan_scheme.medium_name == :required && TANMedia.has_capability?(seq, sender_account)
-
-    if tan_medium_required do
-      {seq, accounts} = TANMedia.update_accounts {seq, [{Account.key(sender_account), sender_account}]}
-      tan_scheme = (accounts |> Map.values |> Enum.at(0)).supported_tan_schemes |> Enum.at(0)
-    end
+    tan_scheme = sender_account.supported_tan_schemes |> find_tan_scheme!(tan_scheme.sec_func, tan_scheme.medium_name)
 
     request_segments = [
       %HNHBK{},
@@ -81,7 +61,7 @@ defmodule FinTex.Command.InitiatePayment do
     |> Enum.at(0)
     |> HITAN.to_challenge(tan_scheme)
 
-    response_string = apply(challenge_responder, :read_user_input, [challenge])
+    response_string = challenge_responder |> apply(:read_user_input, [challenge])
 
     request_segments = [
       %HNHBK{},
@@ -102,5 +82,24 @@ defmodule FinTex.Command.InitiatePayment do
     Stream.concat(response[:HIRMG], response[:HIRMS])
     |> format_messages
     |> Enum.join(", ")
+  end
+
+
+  # filter out valid HKTAN/HITANS segment version based on given sec_func
+  defp find_tan_scheme!(supported_tan_schemes, sec_func, medium_name) do
+    supported_tan_schemes = supported_tan_schemes
+    |> Enum.filter(fn
+      %TANScheme{sec_func: ^sec_func, medium_name: ^medium_name} -> true
+      _ -> false
+    end)
+
+    if supported_tan_schemes |> Enum.empty? do
+      raise FinTex.Error, reason:
+        "could not find supported TAN scheme for sec_func: #{inspect sec_func}, medium_name: #{inspect medium_name}"
+    end
+
+    # find maximum version of supported TAN schemes
+    supported_tan_schemes
+    |> Enum.max_by(fn %TANScheme{v: v} -> v end)
   end
 end

@@ -72,9 +72,10 @@ defmodule FinTex.Segment.HITANS do
           format:   method_params |> Enum.at(2) |> to_format,
           name:     method_params |> Enum.at(3),
           label:    method_params |> Enum.at(6),
-          medium_name: case method_params |> Enum.at(16) do
-            "2" -> :required
-            _   -> nil
+          medium_name_required: case method_params |> Enum.at(16) do
+            "0" -> false
+            "1" -> false
+            "2" -> true
           end,
           v:        v
         }
@@ -92,9 +93,10 @@ defmodule FinTex.Segment.HITANS do
           format:   method_params |> Enum.at(3) |> to_format,
           name:     method_params |> Enum.at(5),
           label:    method_params |> Enum.at(8),
-          medium_name: case method_params |> Enum.at(20) do
-            "2" -> :required
-            _   -> nil
+          medium_name_required: case method_params |> Enum.at(20) do
+            "0" -> false
+            "1" -> false
+            "2" -> true
           end,
           v:        v
         }
@@ -112,9 +114,10 @@ defmodule FinTex.Segment.HITANS do
           format:   method_params |> Enum.at(2) |> to_format,
           name:     method_params |> Enum.at(5),
           label:    method_params |> Enum.at(8),
-          medium_name: case method_params |> Enum.at(19) do
-            "2" -> :required
-            _   -> nil
+          medium_name_required: case method_params |> Enum.at(20) do
+            "0" -> false
+            "1" -> false
+            "2" -> true
           end,
           v:        v
         }
