@@ -28,7 +28,8 @@ defmodule FinTex.Mixfile do
         :ibrowse,
         :logger,
         :ssl_verify_hostname,
-        :timex
+        :timex,
+        :xml_builder
       ]
     ]
   end
