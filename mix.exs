@@ -47,7 +47,7 @@ defmodule FinTex.Mixfile do
       {:inch_ex,               "~> 0.5.1",  only: [:dev, :docs]},
       {:luhnatex,              "~> 0.5.1"},
       {:mt940,                 "~> 1.0.0"},
-      {:ssl_verify_hostname,   "<= 1.0.6", manager: :rebar},
+      {:ssl_verify_hostname,   "<= 1.0.6"},
       {:timex,                 "~> 2.1.4"},
       {:vex,                   "~> 0.5.5"},
       {:xml_builder,           "~> 0.0.8"}
