@@ -11,7 +11,6 @@ defmodule FinTex.Model.Payment do
 
   alias FinTex.Model.Account
   alias FinTex.Model.TANScheme
-  alias FinTex.Parser.Lexer
 
   import XmlBuilder
   use Timex

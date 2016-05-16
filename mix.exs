@@ -8,7 +8,7 @@ defmodule FinTex.Mixfile do
       name: "FinTex",
       source_url: "https://github.com/my-flow/fintex",
       homepage_url: "http://hexdocs.pm/fintex",
-      elixir: "~> 1.2.4",
+      elixir: "~> 1.2.5",
       description: description,
       package: package,
       build_embedded: Mix.env == :prod,
@@ -37,11 +37,11 @@ defmodule FinTex.Mixfile do
 
   defp deps do
     [
-      {:decimal,               "~> 1.1.1"},
+      {:decimal,               "~> 1.1.2"},
       {:earmark,               "~> 0.2.1"},
-      {:ex_doc,                "~> 0.11.4", only: :dev},
+      {:ex_doc,                "~> 0.11.5", only: :dev},
       {:exactor,               "~> 2.2.0"},
-      {:excoveralls,           "~> 0.5.1",  only: [:dev, :test]},
+      {:excoveralls,           "~> 0.5.4",  only: [:dev, :test]},
       {:httpotion,             "~> 2.2.2"},
       {:ibrowse,               "~> 4.2.2"},
       {:inch_ex,               "~> 0.5.1",  only: [:dev, :docs]},
