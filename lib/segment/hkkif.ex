@@ -27,9 +27,10 @@ defmodule FinTex.Segment.HKKIF do
   ) do
 
     v = max_version(d, __MODULE__)
-    ktv = cond do
-      iban != nil and bic != nil -> [iban, bic]
-      :else                      -> [account_number, subaccount_id, country_code, blz]
+    ktv = if iban != nil and bic != nil do
+      [iban, bic]
+    else
+      [account_number, subaccount_id, country_code, blz]
     end
 
     %__MODULE__{

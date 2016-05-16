@@ -6,7 +6,7 @@ defmodule FinTex.Segment.HNVSD do
   defstruct [:tail, segment: nil]
 
   def new(s = %__MODULE__{tail: tail}, _) do
-    %__MODULE__{ s |
+    %__MODULE__{s |
       segment:
         [
           ["HNVSD", 999, 1],

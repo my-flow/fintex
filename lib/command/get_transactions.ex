@@ -11,6 +11,7 @@ defmodule FinTex.Command.GetTransactions do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
+  alias MT940.CustomerStatementMessage
 
   use AbstractCommand
   use MT940
@@ -61,7 +62,7 @@ defmodule FinTex.Command.GetTransactions do
     raw
     |> Lexer.latin1_to_utf8
     |> parse!
-    |> Stream.flat_map(&MT940.CustomerStatementMessage.statement_lines/1)
+    |> Stream.flat_map(&CustomerStatementMessage.statement_lines/1)
     |> Stream.map(fn s -> %{Transaction.from_statement(s) | booked: booked} end)
   end
 

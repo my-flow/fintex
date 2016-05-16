@@ -74,14 +74,14 @@ defmodule FinTex.Service.Accounts do
 
     accounts = seq
     |> Sequencer.dialog
-    |> accounts(response[:HIUPD])
+    |> to_accounts(response[:HIUPD])
     |> to_accounts_map
 
     {seq, accounts}
   end
 
 
-  defp accounts(
+  defp to_accounts(
     %Dialog{
       bank: bank,
       supported_tan_schemes: supported_tan_schemes,

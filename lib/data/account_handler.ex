@@ -8,8 +8,7 @@ defmodule FinTex.Data.AccountHandler do
   @spec update_accounts({Sequencer.t, %{String.t => Account.t}}, module) :: {Sequencer.t, %{String.t => Account.t}}
   def update_accounts {seq, accounts}, module do
     {:module, module} = Code.ensure_loaded(module)
-    cond do
-      function_exported?(module, :update_account,  2) ->
+    if function_exported?(module, :update_account,  2) do
         {acc, seq} = accounts
         |> Map.to_list
         |> Stream.filter(fn entry -> apply(module, :has_capability?, [{seq, [entry] |> Map.new}]) end)
@@ -18,11 +17,14 @@ defmodule FinTex.Data.AccountHandler do
           {{key, account}, seq}
         end)
         {seq, Map.merge(accounts, acc |> Map.new)}
-      function_exported?(module, :update_accounts, 1) ->
-        case apply(module, :has_capability?, [{seq, accounts}]) do
-          true  -> apply(module, :update_accounts, [{seq, accounts}])
-          false -> {seq, accounts}
+    else
+      if function_exported?(module, :update_accounts, 1) do
+        if apply(module, :has_capability?, [{seq, accounts}]) do
+          apply(module, :update_accounts, [{seq, accounts}])
+        else
+          {seq, accounts}
         end
+      end
     end
   end
 

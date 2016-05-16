@@ -13,7 +13,7 @@ defmodule FinTex.Segment.HNHBK do
       message_no: message_no
     } = d
 
-    %__MODULE__{ s |
+    %__MODULE__{s |
       segment:
         [
           ["HNHBK", "?", 3],

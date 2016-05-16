@@ -16,7 +16,7 @@ defmodule FinTex.Parser.Lexer do
   def segment_end, do: "(?<!\\?)'"
 
   @spec escaped_binary(String.t) :: Regex.t
-  def escaped_binary(length), do: Regex.compile!("\\A(.*)@#{length}@(.{#{length}})(.*)\\z", "mUs")
+  def escaped_binary(len), do: Regex.compile!("\\A(.*)@#{len}@(.{#{len}})(.*)\\z", "mUs")
 
   @spec escaped_binary :: Regex.t
   def escaped_binary, do: Regex.compile!("\\A(.*)@\\d+@.*\\z", "mUs")
@@ -138,7 +138,9 @@ defmodule FinTex.Parser.Lexer do
 
   @spec join_group(list | any) :: String.t
   defp join_group(group) when is_list(group) do
-    Stream.map(group, &join_elements(&1)) |> Enum.join("+")
+    group
+    |> Stream.map(&join_elements(&1))
+    |> Enum.join("+")
   end
 
   defp join_group(group) do
@@ -156,7 +158,9 @@ defmodule FinTex.Parser.Lexer do
 
   @spec join_elements(list | any) :: String.t
   defp join_elements(elements) when is_list(elements) do
-    Stream.map(elements, &join_elements(&1))|> Enum.join(":")
+    elements
+    |> Stream.map(&join_elements(&1))
+    |> Enum.join(":")
   end
 
   defp join_elements(elements) do
@@ -167,7 +171,7 @@ defmodule FinTex.Parser.Lexer do
   @spec split_elements(String.t) :: String.t | nil
   defp split_elements(raw) when is_binary(raw) do
     case String.split(raw, ~r"(?<!\?)\:", trim: false) do
-      [head] -> unescape(head) |> replace_empty_by_nil
+      [head] -> head |> unescape |> replace_empty_by_nil
       list   -> list |> Enum.map(fn s -> s |> unescape |> replace_empty_by_nil end)
     end
   end

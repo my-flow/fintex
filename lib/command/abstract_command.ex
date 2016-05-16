@@ -15,8 +15,8 @@ defmodule FinTex.Command.AbstractCommand do
   end
 
 
-  def create(struct, d = %Dialog{}) do
-    struct.__struct__.new(struct, d)
+  def create(module, d = %Dialog{}) do
+    module.__struct__.new(module, d)
   end
 
 

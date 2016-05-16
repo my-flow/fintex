@@ -12,9 +12,10 @@ defmodule FinTex.Segment.HKIDN do
     client_system_id: client_system_id}
   ) do
 
-    client_system_status = case Dialog.anonymous?(d) do
-      true  -> "0" # do not require a new client system ID
-      false -> "1" # require a new client system ID
+    client_system_status = if Dialog.anonymous?(d) do
+      "0" # do not require a new client system ID
+    else
+      "1" # require a new client system ID
     end
 
     %__MODULE__{

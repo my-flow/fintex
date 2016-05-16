@@ -36,15 +36,15 @@ defmodule FinTex.User.FinCredentials do
   def from_credentials(credentials) do
     %__MODULE__{
       login:     credentials |> Credentials.login,
-      client_id: client_id(credentials |> Credentials.login, credentials |> Credentials.client_id),
+      client_id: pick_if_set(credentials |> Credentials.login, credentials |> Credentials.client_id),
       pin:       credentials |> Credentials.pin
     }
   end
 
 
-  defp client_id(login, nil), do: login
+  defp pick_if_set(login, nil), do: login
 
-  defp client_id(_, client_id), do: client_id
+  defp pick_if_set(_, client_id), do: client_id
 
 end
 

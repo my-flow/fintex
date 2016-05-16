@@ -18,14 +18,22 @@ defmodule FinTex.Parser.Serializer do
     |> Stream.with_index
     |> Stream.map(fn {[[h, _ | t] | tail], index} -> [[h |> to_string |> String.upcase, index + 1 | t] | tail] end)
 
-    segments = cond do
-      d |> Dialog.anonymous? -> segments # anonymous access is not encrypted
-      true                   -> segments |> encrypt(d)
+    segments = if d |> Dialog.anonymous? do
+      segments # anonymous access is not encrypted
+    else
+      segments |> encrypt(d)
     end
 
     string = segments |> Lexer.join_segments
+    size = string
+    |> String.length
+    |> -String.length("$SIZE")
+    |> +12
+    |> Integer.to_string
+    |> String.rjust(12, ?0)
 
-    Regex.replace(~r/\$SIZE/, string, "#{String.length(string) - String.length("$SIZE") + 12 |> Integer.to_string |> String.rjust(12, ?0)}")
+    ~r/\$SIZE/
+    |> Regex.replace(string, "#{size}")
   end
 
 
@@ -38,20 +46,20 @@ defmodule FinTex.Parser.Serializer do
 
     case segments do
       [_|_] ->
-        messageHeader   = segments |> Enum.at(0) |> split
-        signatureHeader = segments |> Enum.at(1) |> split
-        footer          = segments |> Enum.at(3) |> split
-        segments        = segments |> Enum.at(2) |> split
-        Stream.concat [messageHeader, signatureHeader, segments, footer]
+        message_header   = segments |> Enum.at(0) |> split
+        signature_header = segments |> Enum.at(1) |> split
+        footer           = segments |> Enum.at(3) |> split
+        segments         = segments |> Enum.at(2) |> split
+        Stream.concat [message_header, signature_header, segments, footer]
       nil ->
         segments = Regex.run(plain, raw, capture: :all_but_first)
 
         case segments do
           [_|_] ->
-            messageHeader   = segments |> Enum.at(0) |> split
+            message_header  = segments |> Enum.at(0) |> split
             footer          = segments |> Enum.at(2) |> split
             segments        = segments |> Enum.at(1) |> split
-            Stream.concat [messageHeader, segments, footer]
+            Stream.concat [message_header, segments, footer]
           nil ->
             raw |> split |> List.wrap
         end
@@ -82,7 +90,8 @@ defmodule FinTex.Parser.Serializer do
 
 
   defp split(raw = "HNVSD" <> _) do
-    Regex.compile!("^HNVSD:.+@\\d+@(.*)#{Lexer.segment_end}$", "sr")
+    "^HNVSD:.+@\\d+@(.*)#{Lexer.segment_end}$"
+    |> Regex.compile!("sr")
     |> Regex.replace(raw, "\\1")
     |> split
   end

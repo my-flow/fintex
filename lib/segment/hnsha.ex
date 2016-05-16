@@ -24,7 +24,7 @@ defmodule FinTex.Segment.HNSHA do
       _   -> [pin, response]
     end
 
-    %__MODULE__{ s |
+    %__MODULE__{s |
       segment:
         [
         	["HNSHA", "?", v],

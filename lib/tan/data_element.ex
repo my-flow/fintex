@@ -31,10 +31,10 @@ defmodule FinTex.Tan.DataElement do
   defp do_new(code) when is_binary(code) do
     {lde, code} = code |> String.split_at(2)
     {lde, _} = lde |> Integer.parse
-    length = lde
-    {data, code} = code |> String.split_at(length)
+    len = lde
+    {data, code} = code |> String.split_at(len)
     m = %__MODULE__{
-      length: length,
+      length: len,
       lde: lde,
       data: data
     }
@@ -59,9 +59,10 @@ defmodule FinTex.Tan.DataElement do
   def encoding(%{data: nil}), do: :bcd
 
   def encoding(%{data: data}) do
-    case data |> String.match?(~r/^[0-9]{1,}$/u) do
-      true  -> :bcd
-      false -> :ascii
+    if data |> String.match?(~r/^[0-9]{1,}$/u) do
+      :bcd
+    else
+      :ascii
     end
   end
 

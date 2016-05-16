@@ -26,9 +26,10 @@ defmodule FinTex.Segment.HKSAL do
 
     v = max_version(d, __MODULE__)
 
-    ktv = cond do
-      v >= 7 -> [iban, bic]
-      true -> [account_number, subaccount_id, country_code, blz]
+    ktv = if v >= 7 do
+      [iban, bic]
+    else
+      [account_number, subaccount_id, country_code, blz]
     end
 
     %__MODULE__{

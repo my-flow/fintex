@@ -30,16 +30,17 @@ defmodule FinTex.Tan.StartCode do
   def new(code) when is_binary(code) do
     {lde, code} = code |> String.split_at(2)
     {lde, _} = lde |> Integer.parse(16)
-    length = lde |> bitsum(5)
-    {{control_bytes, code}, version} = case lde |> bit?(@bit_controlbyte) do
-      true  -> {parse_control_bytes(code), :hhd14}
-      false -> {{[], code}, :hhd13}
+    len = lde |> bitsum(5)
+    {{control_bytes, code}, version} = if lde |> bit?(@bit_controlbyte) do
+      {parse_control_bytes(code), :hhd14}
+    else
+      {{[], code}, :hhd13}
     end
 
-    {data, code} = code |> String.split_at(length)
+    {data, code} = code |> String.split_at(len)
     m = %__MODULE__{
       version: version,
-      length: length,
+      length: len,
       lde: lde,
       control_bytes: control_bytes,
       data: data
@@ -50,9 +51,10 @@ defmodule FinTex.Tan.StartCode do
 
   def render_length(m = %{version: version, control_bytes: control_bytes}) do
     s = DataElement.render_length(m, version)
-    cond do
-      version == :hhd13 || control_bytes |> Enum.empty? -> s
-      true -> reincode(m, s)
+    if version == :hhd13 || control_bytes |> Enum.empty? do
+      s
+    else
+      reincode(m, s)
     end
   end
 
@@ -60,9 +62,10 @@ defmodule FinTex.Tan.StartCode do
   defp reincode(%{control_bytes: control_bytes}, s) do
     use Bitwise
     {len, _} = s |> Integer.parse(16)
-    len = case control_bytes |> Enum.count > 0 do
-      true -> len + (1 <<< @bit_controlbyte)
-      false -> len
+    len = if control_bytes |> Enum.count > 0 do
+      len + (1 <<< @bit_controlbyte)
+    else
+      len
     end
     len |> to_hex(2)
   end
@@ -86,9 +89,10 @@ defmodule FinTex.Tan.StartCode do
 
     bytes = bytes ++ [control_byte]
 
-    case control_byte |> bit?(@bit_controlbyte) do
-      true  -> parse_control_bytes(bytes, code, counter + 1)
-      false -> {bytes, code}
+    if control_byte |> bit?(@bit_controlbyte) do
+      parse_control_bytes(bytes, code, counter + 1)
+    else
+      {bytes, code}
     end
   end
 end

@@ -34,8 +34,8 @@ defmodule FinTex.User.FinChallengeResponder do
 
   defp handle_format(:matrix, data, _label, title) do
     <<l1, l2>> <> data = data
-    length = (l1 + l2) * 8 # bytes
-    <<_mime_type :: size(length), _l1, _l2, data :: binary>> = data
+    len = (l1 + l2) * 8 # bytes
+    <<_mime_type :: size(len), _l1, _l2, data :: binary>> = data
 
     file = [System.tmp_dir!, title] |> Path.join
     file |> File.write!(data)
@@ -51,7 +51,9 @@ defmodule FinTex.User.FinChallengeResponder do
   defp do_read_user_input(_, response) when byte_size(response) == 6, do: response
 
   defp do_read_user_input(challenge = %Challenge{label: label}, _) do
-    response = IO.gets("#{label}: ") |> String.strip
+    response = "#{label}: "
+    |> IO.gets
+    |> String.strip
     do_read_user_input(challenge, response)
   end
 end

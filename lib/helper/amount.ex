@@ -1,4 +1,5 @@
 defmodule FinTex.Helper.Amount do
+  @moduledoc false
 
   def parse(string, sign) when is_binary(string) and (sign == -1 or sign == 1) do
     string

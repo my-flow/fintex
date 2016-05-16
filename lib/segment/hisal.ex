@@ -43,8 +43,8 @@ defmodule FinTex.Segment.HISAL do
     []
   end
 
-  defp to_amount elem do
-    elem
+  defp to_amount element do
+    element
   end
 end
 

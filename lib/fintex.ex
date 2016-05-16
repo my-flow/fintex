@@ -92,16 +92,19 @@ defmodule FinTex do
   end
 
 
-  @spec transactions!(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) :: Enumerable.t | no_return
+  @spec transactions!(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) ::
+    Enumerable.t | no_return
   def transactions!(fintex, credentials, %Account{} = account, from \\ nil, to \\ nil, options \\ [])
   when is_list(options) do
     %__MODULE__{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
     credentials = credentials |> FinCredentials.from_credentials |> validate!
-    GetTransactions.get_transactions(bank, client_system_id, tan_scheme_sec_func, credentials, account, from, to, options)
+    GetTransactions.get_transactions(bank, client_system_id, tan_scheme_sec_func, credentials, account,
+      from, to, options)
   end
 
 
-  @spec transactions(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) :: {:ok, Enumerable.t} | {:error, term}
+  @spec transactions(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) ::
+    {:ok, Enumerable.t} | {:error, term}
   def transactions(fintex, credentials, %Account{} = account, from \\ nil, to \\ nil, options \\ [])
   when is_list(options) do
     try do
@@ -134,9 +137,10 @@ defmodule FinTex do
 
 
   defp validate!(valid_object) do
-    case valid_object |> Vex.valid? do
-      true  -> valid_object
-      false -> raise FinTex.Error, reason: valid_object
+    if valid_object |> Vex.valid? do
+      valid_object
+    else
+      raise FinTex.Error, reason: valid_object
       |> Vex.errors
       |> Enum.at(0)
       |> Tuple.to_list

@@ -18,7 +18,7 @@ defmodule FinTex.Segment.HKVVB do
       _     -> 2
     end
 
-    %__MODULE__{ s |
+    %__MODULE__{s |
       segment:
         [
           ["HKVVB", "?", v],

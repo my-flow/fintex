@@ -28,9 +28,10 @@ defmodule FinTex.Service.AggregatedService do
   def update_accounts {seq, accounts} do
     @services
     |> Enum.reduce({seq, accounts}, fn(service, acc) ->
-      case apply(service, :has_capability?, [{seq, accounts}]) do
-        true  -> apply(service, :update_accounts, [acc])
-        false -> acc
+      if apply(service, :has_capability?, [{seq, accounts}]) do
+        apply(service, :update_accounts, [acc])
+      else
+        acc
       end
     end)
   end

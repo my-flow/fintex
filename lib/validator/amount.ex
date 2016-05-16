@@ -8,15 +8,26 @@ defmodule FinTex.Validator.Amount do
 
 
   def validate(%Decimal{} = value, options) when is_list(options) do
-    cond do 
+    cond do
       value |> Decimal.nan? || value |> Decimal.inf?
-        -> result(false, message(options, "must be a finite decimal number", value: value))
+        -> result(
+            false,
+            message(options, "must be a finite decimal number", value: value)
+          )
       Decimal.compare(value, @min) == Decimal.new(-1)
-        -> result(false, message(options, "must be greater than or equal to #{@min |> Decimal.to_string}", value: value))
+        -> result(
+            false,
+            message(options, "must be greater than or equal to #{@min |> Decimal.to_string}", value: value)
+          )
       Decimal.compare(@max, value) == Decimal.new(-1)
-        -> result(false, message(options, "must be smaller than or equal to #{@max |> Decimal.to_string}", value: value))
+        -> result(
+            false, message(options, "must be smaller than or equal to #{@max |> Decimal.to_string}", value: value)
+          )
       true
-        -> result(true, true)
+        -> result(
+            true,
+            true
+          )
     end
   end
 

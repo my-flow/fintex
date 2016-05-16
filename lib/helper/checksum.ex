@@ -1,4 +1,5 @@
 defmodule FinTex.Helper.Checksum do
+  @moduledoc false
 
   def luhn(input, base, mod), do: Luhn.checksum(input, base, mod)
 

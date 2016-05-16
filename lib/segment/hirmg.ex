@@ -7,7 +7,7 @@ defmodule FinTex.Segment.HIRMG do
 
   def new(segment) when is_list(segment) do
     %__MODULE__{
-      segment: 
+      segment:
         [
           segment |> Enum.at(0),
           segment |> Stream.drop(1) |> Enum.map(&to_feedback/1)

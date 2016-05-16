@@ -1,4 +1,5 @@
 defmodule FinTex.Helper.Conversion do
+  @moduledoc false
 
   def to_hex(s) when is_binary(s) do
     s

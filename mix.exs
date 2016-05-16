@@ -37,6 +37,7 @@ defmodule FinTex.Mixfile do
 
   defp deps do
     [
+      {:credo,                 "~> 0.3.13", only: [:dev, :test]},
       {:decimal,               "~> 1.1.2"},
       {:earmark,               "~> 0.2.1"},
       {:ex_doc,                "~> 0.11.5", only: :dev},

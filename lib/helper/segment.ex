@@ -11,7 +11,8 @@ defmodule FinTex.Helper.Segment do
 
 
   defp all_versions(%Dialog{pintan: pintan}, full_module_name) do
-    name = Regex.run(~r/\.([^\.]+)$/, full_module_name |> to_string, capture: :all_but_first)
+    name = ~r/\.([^\.]+)$/
+    |> Regex.run(full_module_name |> to_string, capture: :all_but_first)
     |> Enum.at(0)
 
     pintan

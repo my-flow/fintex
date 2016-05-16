@@ -3,7 +3,7 @@ defmodule FinTex.Model.PaymentType do
 
   # @moduledoc """
   # The following fields are public:
-  #   * `allowed_recipients`  - List of account IDs. The payment recipient must be one of these accounts. No restriction applies if this field is omitted
+  #   * `allowed_recipients`  - List of account IDs. Payment recipient must be one of these accounts.
   #   * `max_purpose_length`  - Maximum string length of purpose text
   #   * `supported_text_keys` - List of supported DTA text keys
   #   * `min_scheduled_date`  - Earliest scheduled date

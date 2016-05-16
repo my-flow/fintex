@@ -76,8 +76,8 @@ defmodule FinTex.Model.Payment do
     receiver_bic = sanitize(receiver_bic)
     receiver_owner = sanitize(receiver_owner)
 
-    doc(
-      :Document,
+    :Document
+    |> doc(
       %{
         "xmlns":              schema,
         "xsi:schemaLocation": schema |> schema_to_location,

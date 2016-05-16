@@ -2,8 +2,8 @@ defmodule FinTex.Model.Transaction do
   @moduledoc """
   The following fields are public:
     * `name`            - Name of originator or recipient
-    * `account_number`  - Account number of originator or recipient. This field might be empty if the transaction has no account number, e.g. interest transactions.
-    * `bank_code`       - Bank code of originator or recipient. This field might be empty if the transaction has no bank code, e.g. interest transactions.
+    * `account_number`  - Account number of originator or recipient. Empty if transaction has no account number.
+    * `bank_code`       - Bank code of originator or recipient. Empty if transaction has no bank code.
     * `amount`          - Transaction amount
     * `booking_date`    - Booking date
     * `value_date`      - Value date

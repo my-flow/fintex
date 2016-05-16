@@ -36,7 +36,8 @@ defmodule FinTex.Command.FinPing do
 
     :ok = seq |> Sequencer.call_http(request_segments, ignore_response: true)
 
-    Stream.concat(response[:HIRMG], response[:HIRMS])
+    response[:HIRMG]
+    |> Stream.concat(response[:HIRMS])
     |> format_messages
     |> Enum.join(", ")
   end

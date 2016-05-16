@@ -41,7 +41,8 @@ defmodule FinTex.Command.InitiatePayment do
 
     unless sender_account.supported_transactions |> Enum.into(MapSet.new) |> MapSet.member?("HKCCS") do
       raise FinTex.Error, reason:
-        "could not find \"HKCCS\" in sender account's supported transactions: #{inspect sender_account.supported_transactions}"
+        "could not find \"HKCCS\" in sender account's supported transactions: " <>
+        "#{inspect sender_account.supported_transactions}"
     end
 
     tan_scheme = sender_account.supported_tan_schemes |> find_tan_scheme!(tan_scheme.sec_func, tan_scheme.medium_name)
@@ -79,7 +80,7 @@ defmodule FinTex.Command.InitiatePayment do
 
     %{} = Task.async(fn -> seq |> Synchronization.terminate end)
 
-    Stream.concat(response[:HIRMG], response[:HIRMS])
+    response[:HIRMG] |> Stream.concat(response[:HIRMS])
     |> format_messages
     |> Enum.join(", ")
   end

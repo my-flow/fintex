@@ -96,21 +96,28 @@ defmodule FinTex.Tan.FlickerCode do
                  data <- [DataElement.render_data(data_element)]
              do
               length <> data
-    end |> Enum.join
+    end
+    append = append |> Enum.join
 
     payload = payload <> append
-    lc = (String.length(payload) + 2) |> div(2) |> to_hex(2)
+    lc = payload |> String.length |> +2 |> div(2) |> to_hex(2)
     lc <> payload
   end
 
 
   defp luhn(%{start_code: %{control_bytes: control_bytes} = start_code, data_elements: data_elements}) do
-    luhnsum = (StartCode.render_data(start_code) <>
-    (control_bytes |> Enum.map(&to_hex/1) |> Enum.join) <>
-    (data_elements |> Enum.map(&DataElement.render_data/1) |> Enum.join))
+    luhnsum = [
+      StartCode.render_data(start_code),
+      control_bytes |> Enum.map(&to_hex/1),
+      data_elements |> Enum.map(&DataElement.render_data/1)
+    ]
+    |> Enum.join
     |> String.reverse
     |> luhn(16, 10)
 
-    10 - luhnsum |> rem(10) |> to_hex(1)
+    10
+    |> -luhnsum
+    |> rem(10)
+    |> to_hex(1)
   end
 end
