@@ -28,7 +28,7 @@ defmodule FinTex.Service.SEPAInfo do
     &&
     accounts
     |> Map.values
-    |> Enum.all?(fn %Account{supported_transactions: supported_transactions} ->
+    |> Enum.any?(fn %Account{supported_transactions: supported_transactions} ->
        supported_transactions |> Enum.member?("HKSPA")
     end)
   end

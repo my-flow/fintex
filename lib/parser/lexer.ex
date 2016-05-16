@@ -73,16 +73,13 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
-  @spec latin1_to_utf8(t | String.t) :: t | String.t
+  @spec latin1_to_utf8(t) :: t
   def latin1_to_utf8(tokenization = tokenization(tokens: tokens)) do
-    tokens = tokens
-    |> :unicode.characters_to_binary(:latin1, :utf8)
-
-    tokenization(tokenization, tokens: tokens)
+    tokenization(tokenization, tokens: latin1_to_utf8(tokens))
   end
 
 
-  @spec latin1_to_utf8(t | String.t) :: t | String.t
+  @spec latin1_to_utf8(String.t) :: String.t
   def latin1_to_utf8(string) do
     string
     |> :unicode.characters_to_binary(:latin1, :utf8)
