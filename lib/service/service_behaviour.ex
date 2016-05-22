@@ -3,6 +3,6 @@ defmodule FinTex.Service.ServiceBehaviour do
 
   alias FinTex.Command.Sequencer
 
-  @callback has_capability?({Sequencer.t, %{String.t => Account.t}}) :: boolean
-  @callback update_accounts({Sequencer.t, %{String.t => Account.t}}) :: {Sequencer.t, %{String.t => Account.t}}
+  @callback has_capability?({Sequencer.t, %{String.t => FinAccount.t}}) :: boolean
+  @callback update_accounts({Sequencer.t, %{String.t => FinAccount.t}}) :: {Sequencer.t, %{String.t => FinAccount.t}}
 end

@@ -1,7 +1,7 @@
 defmodule FinTex.Segment.HITANS do
   @moduledoc false
 
-  alias FinTex.Model.TANScheme
+  alias FinTex.User.FinTANScheme
 
   defstruct [segment: nil]
 
@@ -35,7 +35,7 @@ defmodule FinTex.Segment.HITANS do
     |> Enum.at(4)
     |> Enum.at(4)
     |> Enum.map(fn method_params ->
-        %TANScheme{
+        %FinTANScheme{
           sec_func: method_params |> Enum.at(0),
           format:   method_params |> Enum.at(2) |> to_format,
           name:     method_params |> Enum.at(3),
@@ -51,7 +51,7 @@ defmodule FinTex.Segment.HITANS do
     |> Enum.at(4)
     |> Enum.at(3)
     |> Enum.map(fn method_params ->
-        %TANScheme{
+        %FinTANScheme{
           sec_func: method_params |> Enum.at(0),
           format:   nil |> to_format,
           name:     method_params |> Enum.at(3),
@@ -67,7 +67,7 @@ defmodule FinTex.Segment.HITANS do
     |> Enum.at(4)
     |> Enum.at(3)
     |> Enum.map(fn method_params ->
-        %TANScheme{
+        %FinTANScheme{
           sec_func: method_params |> Enum.at(0),
           format:   method_params |> Enum.at(2) |> to_format,
           name:     method_params |> Enum.at(3),
@@ -88,7 +88,7 @@ defmodule FinTex.Segment.HITANS do
     |> Enum.at(4)
     |> Enum.at(3)
     |> Enum.map(fn method_params ->
-        %TANScheme{
+        %FinTANScheme{
           sec_func: method_params |> Enum.at(0),
           format:   method_params |> Enum.at(3) |> to_format,
           name:     method_params |> Enum.at(5),
@@ -109,7 +109,7 @@ defmodule FinTex.Segment.HITANS do
     |> Enum.at(4)
     |> Enum.at(3)
     |> Enum.map(fn method_params ->
-        %TANScheme{
+        %FinTANScheme{
           sec_func: method_params |> Enum.at(0),
           format:   method_params |> Enum.at(2) |> to_format,
           name:     method_params |> Enum.at(5),

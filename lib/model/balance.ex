@@ -7,12 +7,10 @@ defmodule FinTex.Model.Balance do
     * `amount_available`  - Amount available for withdrawal
   """
 
-  alias FinTex.Model.Balance
-
   use Timex
 
   @type t :: %__MODULE__{
-    balance: Balance.t,
+    balance: %Decimal{},
     balance_date: %Timex.DateTime{},
     credit_line: %Decimal{},
     amount_available: %Decimal{}

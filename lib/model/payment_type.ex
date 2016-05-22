@@ -23,5 +23,4 @@ defmodule FinTex.Model.PaymentType do
   ]
 
   @type t :: %__MODULE__{}
-
 end

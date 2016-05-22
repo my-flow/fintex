@@ -3,7 +3,6 @@ defmodule FinTex.Service.InternalPaymentParameters do
 
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
-  alias FinTex.Model.Account
   alias FinTex.Model.PaymentType
   alias FinTex.Segment.HKCUB
   alias FinTex.Segment.HNHBK
@@ -13,6 +12,7 @@ defmodule FinTex.Service.InternalPaymentParameters do
   alias FinTex.Service.AbstractService
   alias FinTex.Service.SEPAPaymentParameters
   alias FinTex.Service.ServiceBehaviour
+  alias FinTex.User.FinAccount
 
   use AbstractCommand
   use AbstractService
@@ -22,19 +22,19 @@ defmodule FinTex.Service.InternalPaymentParameters do
     !SEPAPaymentParameters.has_capability?({seq, accounts})
     && accounts
     |> Map.values
-    |> Enum.all?(fn %Account{supported_transactions: supported_transactions} ->
+    |> Enum.all?(fn %FinAccount{supported_transactions: supported_transactions} ->
         supported_transactions |>  Enum.member?("HKCUM") &&
         supported_transactions |>  Enum.member?("HKCUB")
     end)
   end
 
 
-  def update_account(seq, account = %Account{supported_payments: supported_payments}) do
+  def update_account(seq, account = %FinAccount{supported_payments: supported_payments}) do
     {seq, recipient_accounts} = seq |> check_recipient_accounts(account, [])
 
     sepa_payment = supported_payments |> Map.get(:SEPA, %PaymentType{})
 
-    account = %Account{account |
+    account = %FinAccount{account |
       supported_payments: %{
         SEPA: %PaymentType{sepa_payment | allowed_recipients: recipient_accounts |> Enum.to_list}
       }
@@ -75,6 +75,6 @@ defmodule FinTex.Service.InternalPaymentParameters do
 
   defp to_account(raw) do
     [iban, bic | _] = raw |> Enum.at(2)
-    %Account{iban: iban, bic: bic}
+    %FinAccount{iban: iban, bic: bic}
   end
 end

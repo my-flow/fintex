@@ -2,10 +2,10 @@ defmodule FinTex.Segment.HKCCS do
   @moduledoc false
 
   alias FinTex.Command.AbstractCommand
-  alias FinTex.Model.Account
   alias FinTex.Model.Dialog
-  alias FinTex.Model.Payment
   alias FinTex.Parser.Lexer
+  alias FinTex.User.FinAccount
+  alias FinTex.User.FinPayment
 
   use AbstractCommand
 
@@ -18,8 +18,8 @@ defmodule FinTex.Segment.HKCCS do
 
   def new(
     %__MODULE__{
-      payment: %Payment{
-        sender_account: %Account{
+      payment: %FinPayment{
+        sender_account: %FinAccount{
           iban:  sender_iban,
           bic:   sender_bic
         }
@@ -49,7 +49,7 @@ defmodule FinTex.Segment.HKCCS do
     |> Regex.replace(sepa_descriptor_urn, "")
 
     sepa_pain_message = payment
-    |> Payment.to_sepa_pain_message(sepa_descriptor)
+    |> FinPayment.to_sepa_pain_message(sepa_descriptor)
     |> Lexer.encode_binary
 
     %__MODULE__{

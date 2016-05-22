@@ -4,8 +4,6 @@ defmodule FinTex.Service.Accounts do
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
   alias FinTex.Data.AccountHandler
-  alias FinTex.Model.Account
-  alias FinTex.Model.TANScheme
   alias FinTex.Model.Dialog
   alias FinTex.Segment.HITANS
   alias FinTex.Segment.HKIDN
@@ -15,6 +13,8 @@ defmodule FinTex.Service.Accounts do
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
   alias FinTex.Service.AbstractService
+  alias FinTex.User.FinAccount
+  alias FinTex.User.FinTANScheme
 
   use AbstractCommand
   use AbstractService
@@ -64,8 +64,8 @@ defmodule FinTex.Service.Accounts do
     supported_tan_schemes = pintan
     |> Map.get("HKTAN")
     |> Stream.flat_map(&HITANS.to_tan_schemes(&1))
-    |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> MapSet.member?(sec_func) end)
-    |> Enum.uniq_by(fn %TANScheme{sec_func: sec_func} -> sec_func end)
+    |> Stream.filter(fn %FinTANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> MapSet.member?(sec_func) end)
+    |> Enum.uniq_by(fn %FinTANScheme{sec_func: sec_func} -> sec_func end)
 
     seq = seq
     |> Sequencer.inc
@@ -104,7 +104,7 @@ defmodule FinTex.Service.Accounts do
 
       blz = with [_, _, _, blz |_] <- u |> Enum.at(1), do: blz
 
-      account = %Account{
+      account = %FinAccount{
         account_number:          account_number,
         subaccount_id:           subaccount_id,
         blz:                     blz,
@@ -130,7 +130,7 @@ defmodule FinTex.Service.Accounts do
                                  |> Enum.sort,
         supported_tan_schemes:  supported_tan_schemes,
         preferred_tan_scheme:   supported_tan_schemes
-                                 |> Stream.map(fn %TANScheme{sec_func: sec_func} -> sec_func end)
+                                 |> Stream.map(fn %FinTANScheme{sec_func: sec_func} -> sec_func end)
                                  |> Enum.at(0)
       }
 
@@ -138,7 +138,7 @@ defmodule FinTex.Service.Accounts do
       iban = with "" <- u |> Enum.at(2), do: nil
 
       case bank.version do
-        "300" -> %Account{account | iban: iban}
+        "300" -> %FinAccount{account | iban: iban}
         _ -> account
       end
 

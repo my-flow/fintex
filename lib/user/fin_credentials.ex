@@ -21,6 +21,7 @@ defmodule FinTex.User.FinCredentials do
     :client_id,
     :pin
   ]
+
   use Vex.Struct
 
   validates :login, presence: true,

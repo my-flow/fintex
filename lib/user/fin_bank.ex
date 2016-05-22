@@ -21,10 +21,10 @@ defmodule FinTex.User.FinBank do
     :url,
     :version
   ]
+
   use Vex.Struct
 
-  validates :blz, presence: true,
-                  format: [with: ~r/^\d{8}$/, message: "must be an 8 digits number"]
+  validates :blz, presence: true, blz: true
 
   validates :url, uri: true
 

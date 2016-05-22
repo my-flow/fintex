@@ -65,13 +65,13 @@ FinTex.transactions!(f, credentials, account) |> Enum.to_list # retrieve a list 
 A bank account contains a list of supported TAN schemes each of which can be used to make a SEPA payment. Pick a sender bank account (see above), add the receiver bank account (IBAN/BIC) and define the details:
 
 ```elixir
-payment = %FinTex.Model.Payment{
-  sender_account: %FinTex.Model.Account{
+payment = %{
+  sender_account: %{
     iban:  "DE89370400440532013000",
     bic:   "COBADEFFXXX",
     owner: "John Doe"
   },
-  receiver_account: %FinTex.Model.Account{
+  receiver_account: %{
     iban:  "FR1420041010050500013M02606",
     bic:   "ABNAFRPPXXX",
     owner: "Jane Doe"
@@ -79,7 +79,7 @@ payment = %FinTex.Model.Payment{
   amount: "1.00",
   currency: "EUR",
   purpose: "A new test payment",
-  tan_scheme: %FinTex.Model.TANScheme{
+  tan_scheme: %{
     sec_func: "921"
   }
 }
@@ -109,6 +109,6 @@ For exact information please refer to the [German version of the specification](
 
 # Copyright & License
 
-Copyright (c) 2015 [Florian J. Breunig](http://www.my-flow.com)
+Copyright (c) 2015-2016 [Florian J. Breunig](http://www.my-flow.com)
 
 Licensed under MIT, see LICENSE file.

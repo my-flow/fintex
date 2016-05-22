@@ -9,8 +9,6 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Model.Challenge
   alias FinTex.Model.ChallengeResponder
   alias FinTex.Model.Credentials
-  alias FinTex.Model.Payment
-  alias FinTex.Model.TANScheme
   alias FinTex.Segment.HITAN
   alias FinTex.Segment.HKCCS
   alias FinTex.Segment.HKTAN
@@ -18,6 +16,8 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
+  alias FinTex.User.FinPayment
+  alias FinTex.User.FinTANScheme
 
   use AbstractCommand
 
@@ -25,15 +25,15 @@ defmodule FinTex.Command.InitiatePayment do
   @type client_system_id :: binary
 
 
-  @spec initiate_payment(Bank.t, client_system_id, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary
-  def initiate_payment(bank, client_system_id, credentials, %Payment{tan_scheme: tan_scheme} = payment, challenge_responder, options) do
+  @spec initiate_payment(Bank.t, client_system_id, Credentials.t, FinPayment.t, ChallengeResponder.t, options) :: binary
+  def initiate_payment(bank, client_system_id, credentials, %FinPayment{tan_scheme: tan_scheme} = payment, challenge_responder, options) do
 
     {seq, accounts} = Synchronization.synchronize(bank, client_system_id, tan_scheme.sec_func, credentials, options)
 
     sender_account = accounts |> AccountHandler.find_account(payment.sender_account)
 
     if sender_account do
-      payment = %Payment{payment | sender_account: sender_account}
+      payment = %FinPayment{payment | sender_account: sender_account}
     else
       raise FinTex.Error, reason: "could not find sender account: #{inspect payment.sender_account}"
     end
@@ -89,7 +89,8 @@ defmodule FinTex.Command.InitiatePayment do
   defp find_tan_scheme!(supported_tan_schemes, sec_func, medium_name) do
     supported_tan_schemes = supported_tan_schemes
     |> Enum.filter(fn
-      %TANScheme{sec_func: ^sec_func, medium_name: ^medium_name} -> true
+      %FinTANScheme{sec_func: ^sec_func, medium_name_required: true, medium_name: ^medium_name} -> true
+      %FinTANScheme{sec_func: ^sec_func, medium_name_required: false} -> true
       _ -> false
     end)
 
@@ -100,6 +101,6 @@ defmodule FinTex.Command.InitiatePayment do
 
     # find maximum version of supported TAN schemes
     supported_tan_schemes
-    |> Enum.max_by(fn %TANScheme{v: v} -> v end)
+    |> Enum.max_by(fn %FinTANScheme{v: v} -> v end)
   end
 end

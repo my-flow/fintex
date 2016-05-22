@@ -1,65 +1,26 @@
-defmodule FinTex.Model.Account do
-  @moduledoc """
-  The following fields are public:
-    * `account_number`          - Account number
-    * `subaccount_id`           - Subaccount ID
-    * `blz`                     - Bank code
-    * `bank_name`               - Bank name
-    * `currency`                - Three-character currency code (ISO 4217)
-    * `iban`                    - IBAN
-    * `bic`                     - BIC
-    * `name`                    - Account name
-    * `owner`                   - Account owner
-    * `type`                    - Account type. Possible values are `:giro_account`, `:savings_account`,
-                                  `:credit_card` or `:loan_account`, `:cash_book`, `:depot` or `:unknown`.
-    * `balance`                 - Account balance
-    * `supported_payments`      - List of payment types with payment parameters
-    * `supported_tan_schemes`   - List of TAN schemes
-    * `preferred_tan_scheme`    - Security function of the TAN scheme preferred by the user
-  """
+defprotocol FinTex.Model.Account do
 
-  alias FinTex.Model.Balance
-  alias FinTex.Model.TANScheme
+  @doc "Account number"
+  @spec account_number(t) :: String.t
+  def account_number(account)
 
-  @type t :: %__MODULE__{
-    type: String.t,
-    account_number: String.t,
-    subaccount_id: String.t,
-    blz: String.t,
-    bank_name: String.t,
-    currency: String.t,
-    iban: String.t,
-    bic: String.t,
-    name: String.t,
-    owner: String.t,
-    balance: Balance.t,
-    supported_payments: map,
-    supported_tan_schemes: [TANScheme.t],
-    preferred_tan_scheme: String.t,
-  }
+  @doc "Subaccount ID"
+  @spec subaccount_id(t) :: String.t
+  def subaccount_id(account)
 
-  defstruct [
-    :account_number,
-    :subaccount_id,
-    :blz,
-    :bank_name,
-    :currency,
-    :iban,
-    :bic,
-    :name,
-    :owner,
-    type: :unknown,
-    balance: nil,
-    supported_payments: Map.new,
-    supported_tan_schemes: [],
-    preferred_tan_scheme: nil,
-    supported_transactions: []
-  ]
+  @doc "Bank code"
+  @spec blz(t) :: String.t
+  def blz(account)
 
-  def key(%__MODULE__{
-    account_number: account_number,
-    subaccount_id: subaccount_id
-  }) do
-    "#{account_number}#{subaccount_id}"
-  end
+  @doc "IBAN"
+  @spec iban(t) :: String.t
+  def iban(account)
+
+  @doc "BIC"
+  @spec bic(t) :: String.t
+  def bic(account)
+
+  @doc "Name of the account holder"
+  @spec owner(t) :: String.t
+  def owner(account)
 end

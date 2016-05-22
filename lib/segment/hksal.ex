@@ -1,7 +1,6 @@
 defmodule FinTex.Segment.HKSAL do
   @moduledoc false
 
-  alias FinTex.Model.Account
   alias FinTex.Model.Dialog
   alias FinTex.Helper.Segment
 
@@ -11,7 +10,7 @@ defmodule FinTex.Segment.HKSAL do
 
   def new(
     %__MODULE__{
-      account: %Account{
+      account: %{
         iban:           iban,
         bic:            bic,
         blz:            blz,

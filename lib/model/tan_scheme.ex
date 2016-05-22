@@ -1,31 +1,11 @@
-defmodule FinTex.Model.TANScheme do
-  @moduledoc """
-  The following fields are public:
-    * `name`        - TAN scheme name
-    * `medium_name` - TAN medium name
-    * `sec_func`    - encoded security function
-    * `format`      - Challenge data format. Possible values are `:text`, `:html`, `:hhd` or `:matrix`.
-    * `label`       - response label
-  """
+defprotocol FinTex.Model.TANScheme do
 
-  @type t :: %__MODULE__{
-    name: binary,
-    medium_name: binary,
-    medium_name_required: boolean,
-    sec_func: pos_integer,
-    format: atom,
-    label: binary,
-    v: pos_integer
-  }
+  @doc "encoded security function"
+  @spec sec_func(t) :: String.t
+  def sec_func(credentials)
 
-  defstruct [
-    :name,
-    :medium_name,
-    :medium_name_required,
-    :sec_func,
-    :format,
-    :label,
-    :v
-  ]
 
+  @doc "TAN medium name"
+  @spec medium_name(t) :: binary | nil
+  def medium_name(credentials)
 end

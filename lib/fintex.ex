@@ -17,9 +17,11 @@ defmodule FinTex do
   alias FinTex.Model.ChallengeResponder
   alias FinTex.Model.Credentials
   alias FinTex.Model.Payment
+  alias FinTex.User.FinAccount
   alias FinTex.User.FinChallengeResponder
   alias FinTex.User.FinBank
   alias FinTex.User.FinCredentials
+  alias FinTex.User.FinPayment
 
   use Timex
 
@@ -75,7 +77,7 @@ defmodule FinTex do
   @spec accounts!(t, Credentials.t, options) :: Enumerable.t | no_return
   def accounts!(fintex, credentials, options \\ [])
   when is_list(options) do
-    %__MODULE__{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
+    %{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
     %{} = credentials = credentials |> FinCredentials.from_credentials |> validate!
     GetAccountsInfo.get_account_info(bank, client_system_id, tan_scheme_sec_func, credentials, options)
   end
@@ -94,18 +96,19 @@ defmodule FinTex do
 
   @spec transactions!(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) ::
     Enumerable.t | no_return
-  def transactions!(fintex, credentials, %Account{} = account, from \\ nil, to \\ nil, options \\ [])
+  def transactions!(fintex, credentials, account, from \\ nil, to \\ nil, options \\ [])
   when is_list(options) do
-    %__MODULE__{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
+    %{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
     credentials = credentials |> FinCredentials.from_credentials |> validate!
+    account = account |> FinAccount.from_account |> validate!
     GetTransactions.get_transactions(bank, client_system_id, tan_scheme_sec_func, credentials, account,
       from, to, options)
   end
 
 
-  @spec transactions(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options) ::
-    {:ok, Enumerable.t} | {:error, term}
-  def transactions(fintex, credentials, %Account{} = account, from \\ nil, to \\ nil, options \\ [])
+  @spec transactions(t, Credentials.t, Account.t, date_time | nil, date_time | nil, options)
+    :: {:ok, Enumerable.t} | {:error, term}
+  def transactions(fintex, credentials, account, from \\ nil, to \\ nil, options \\ [])
   when is_list(options) do
     try do
       {:ok, transactions!(fintex, credentials, account, from, to, options)}
@@ -116,17 +119,18 @@ defmodule FinTex do
 
 
   @spec initiate_payment!(t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary | no_return
-  def initiate_payment!(fintex, credentials, %Payment{} = payment, challenge_responder \\ FinChallengeResponder, options \\ [])
+  def initiate_payment!(fintex, credentials, payment, challenge_responder \\ FinChallengeResponder, options \\ [])
   when is_list(options) do
-    %__MODULE__{bank: bank, client_system_id: client_system_id} = fintex
+    %{bank: bank, client_system_id: client_system_id} = fintex
     credentials = credentials |> FinCredentials.from_credentials |> validate!
-    %{} = payment |> validate!
+    payment = payment |> FinPayment.from_payment |> validate!
     InitiatePayment.initiate_payment(bank, client_system_id, credentials, payment, challenge_responder, options)
   end
 
 
-  @spec initiate_payment(t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: {:ok, binary} | {:error, term}
-  def initiate_payment(fintex, credentials, %Payment{} = payment, challenge_responder \\ FinChallengeResponder, options \\ [])
+  @spec initiate_payment(t, Credentials.t, Payment.t, ChallengeResponder.t, options)
+    :: {:ok, binary} | {:error, term}
+  def initiate_payment(fintex, credentials, payment, challenge_responder \\ FinChallengeResponder, options \\ [])
   when is_list(options) do
     try do
       {:ok, initiate_payment!(fintex, credentials, payment, challenge_responder, options)}
