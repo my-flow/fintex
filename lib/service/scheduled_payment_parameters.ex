@@ -5,12 +5,9 @@ defmodule FinTex.Service.ScheduledPaymentParameters do
   alias FinTex.Model.Account
   alias FinTex.Model.PaymentType
   alias FinTex.Service.AbstractService
-  alias FinTex.Service.ServiceBehaviour
 
   use AbstractService
   use Timex
-
-  @behaviour ServiceBehaviour
 
 
   def has_capability? {_, accounts} do

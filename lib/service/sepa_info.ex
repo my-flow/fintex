@@ -11,12 +11,10 @@ defmodule FinTex.Service.SEPAInfo do
   alias FinTex.Segment.HKSPA
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNHBS
-  alias FinTex.Service.ServiceBehaviour
+  alias FinTex.Service.AbstractService
 
   use AbstractCommand
-
-  @behaviour ServiceBehaviour
-  import AccountHandler
+  use AbstractService
 
 
   def has_capability? {seq, accounts} do
@@ -51,13 +49,13 @@ defmodule FinTex.Service.SEPAInfo do
     |> Stream.filter(fn info -> Enum.at(info, 0) === "J" end)
     |> Enum.map(fn info ->
         account = accounts
-        |> find_account(%Account{account_number: Enum.at(info, 3), subaccount_id: Enum.at(info, 4)})
+        |> AccountHandler.find_account(%Account{account_number: Enum.at(info, 3), subaccount_id: Enum.at(info, 4)})
         %Account{account |
           iban: Enum.at(info, 1),
           bic:  Enum.at(info, 2)
         }
     end)
-    |> to_accounts_map
+    |> AccountHandler.to_accounts_map
 
     {seq |> Sequencer.inc, Map.merge(accounts, acc)}
   end

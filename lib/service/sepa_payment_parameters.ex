@@ -4,12 +4,10 @@ defmodule FinTex.Service.SEPAPaymentParameters do
   alias FinTex.Model.Account
   alias FinTex.Model.PaymentType
   alias FinTex.Service.AbstractService
-  alias FinTex.Service.ServiceBehaviour
 
   use AbstractService
 
 
-  @behaviour ServiceBehaviour
   @max_purpose_length 140
 
 

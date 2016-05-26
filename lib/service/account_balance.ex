@@ -13,14 +13,10 @@ defmodule FinTex.Service.AccountBalance do
   alias FinTex.Segment.HNHBS
   alias FinTex.Service.AbstractService
   alias FinTex.Service.SEPAInfo
-  alias FinTex.Service.ServiceBehaviour
 
   use AbstractCommand
   use AbstractService
   use Timex
-
-
-  @behaviour ServiceBehaviour
 
 
   def has_capability? {seq, accounts} do

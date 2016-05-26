@@ -14,12 +14,11 @@ defmodule FinTex.Service.Accounts do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
-  alias FinTex.Service.ServiceBehaviour
+  alias FinTex.Service.AbstractService
 
   use AbstractCommand
-  import AccountHandler
+  use AbstractService
 
-  @behaviour ServiceBehaviour
   @allowed_methods 3920
 
 
@@ -75,7 +74,7 @@ defmodule FinTex.Service.Accounts do
     accounts = seq
     |> Sequencer.dialog
     |> to_accounts(response[:HIUPD])
-    |> to_accounts_map
+    |> AccountHandler.to_accounts_map
 
     {seq, accounts}
   end

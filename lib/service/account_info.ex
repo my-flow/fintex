@@ -10,12 +10,9 @@ defmodule FinTex.Service.AccountInfo do
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
   alias FinTex.Service.AbstractService
-  alias FinTex.Service.ServiceBehaviour
 
   use AbstractCommand
   use AbstractService
-
-  @behaviour ServiceBehaviour
 
 
   def has_capability? {_, accounts} do

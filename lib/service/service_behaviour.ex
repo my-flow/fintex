@@ -1,7 +1,6 @@
 defmodule FinTex.Service.ServiceBehaviour do
   @moduledoc false
 
-  alias FinTex.Model.Account
   alias FinTex.Command.Sequencer
 
   @callback has_capability?({Sequencer.t, %{String.t => Account.t}}) :: boolean

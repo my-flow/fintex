@@ -12,11 +12,10 @@ defmodule FinTex.Service.TANMedia do
   alias FinTex.Segment.HKTAB
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNHBS
-  alias FinTex.Service.ServiceBehaviour
+  alias FinTex.Service.AbstractService
 
   use AbstractCommand
-
-  @behaviour ServiceBehaviour
+  use AbstractService
 
 
   def has_capability? {seq, accounts} do

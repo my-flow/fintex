@@ -20,7 +20,6 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Segment.HNSHK
 
   use AbstractCommand
-  import AccountHandler
 
   @type options :: []
   @type client_system_id :: binary
@@ -31,7 +30,7 @@ defmodule FinTex.Command.InitiatePayment do
 
     {seq, accounts} = Synchronization.synchronize(bank, client_system_id, tan_scheme.sec_func, credentials, options)
 
-    sender_account = accounts |> find_account(payment.sender_account)
+    sender_account = accounts |> AccountHandler.find_account(payment.sender_account)
 
     if sender_account do
       payment = %Payment{payment | sender_account: sender_account}

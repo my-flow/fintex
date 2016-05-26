@@ -17,8 +17,6 @@ defmodule FinTex.Service.InternalPaymentParameters do
   use AbstractCommand
   use AbstractService
 
-  @behaviour ServiceBehaviour
-
 
   def has_capability? {seq, accounts} do
     !SEPAPaymentParameters.has_capability?({seq, accounts})

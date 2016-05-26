@@ -1,32 +1,7 @@
 defmodule FinTex.Data.AccountHandler do
   @moduledoc false
 
-  alias FinTex.Command.Sequencer
   alias FinTex.Model.Account
-
-
-  @spec update_accounts({Sequencer.t, %{String.t => Account.t}}, module) :: {Sequencer.t, %{String.t => Account.t}}
-  def update_accounts {seq, accounts}, module do
-    {:module, module} = Code.ensure_loaded(module)
-    if function_exported?(module, :update_account,  2) do
-        {acc, seq} = accounts
-        |> Map.to_list
-        |> Stream.filter(fn entry -> apply(module, :has_capability?, [{seq, [entry] |> Map.new}]) end)
-        |> Enum.map_reduce(seq, fn({key, acc}, seq) ->
-          {seq, account} = apply(module, :update_account, [seq, acc])
-          {{key, account}, seq}
-        end)
-        {seq, Map.merge(accounts, acc |> Map.new)}
-    else
-      if function_exported?(module, :update_accounts, 1) do
-        if apply(module, :has_capability?, [{seq, accounts}]) do
-          apply(module, :update_accounts, [{seq, accounts}])
-        else
-          {seq, accounts}
-        end
-      end
-    end
-  end
 
 
   @spec to_accounts_map(Enumerable.t) :: %{String.t => Account.t}
