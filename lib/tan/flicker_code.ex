@@ -100,7 +100,7 @@ defmodule FinTex.Tan.FlickerCode do
     append = append |> Enum.join
 
     payload = payload <> append
-    lc = payload |> String.length |> +2 |> div(2) |> to_hex(2)
+    lc = payload |> String.length |> Kernel.+(2) |> div(2) |> to_hex(2)
     lc <> payload
   end
 
@@ -116,7 +116,7 @@ defmodule FinTex.Tan.FlickerCode do
     |> luhn(16, 10)
 
     10
-    |> -luhnsum
+    |> Kernel.-(luhnsum)
     |> rem(10)
     |> to_hex(1)
   end

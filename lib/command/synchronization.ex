@@ -24,9 +24,7 @@ defmodule FinTex.Command.Synchronization do
   def synchronize(bank, client_system_id, tan_scheme_sec_func, credentials, options) when is_list(options) do
     seq = Sequencer.new(client_system_id, bank, credentials, options)
 
-    if tan_scheme_sec_func != nil do
-      seq = seq |> Sequencer.reset(tan_scheme_sec_func)
-    end
+    seq = if tan_scheme_sec_func != nil, do: seq |> Sequencer.reset(tan_scheme_sec_func), else: seq
 
     @services
     |> Enum.reduce({seq, %{}}, fn(service, acc) ->

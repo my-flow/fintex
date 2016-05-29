@@ -27,8 +27,8 @@ defmodule FinTex.Parser.Serializer do
     string = segments |> Lexer.join_segments
     size = string
     |> byte_size
-    |> -byte_size("$SIZE")
-    |> +12
+    |> Kernel.-(byte_size("$SIZE"))
+    |> Kernel.+(12)
     |> Integer.to_string
     |> String.rjust(12, ?0)
 

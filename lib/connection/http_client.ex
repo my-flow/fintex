@@ -1,8 +1,6 @@
 defmodule FinTex.Connection.HTTPClient do
   @moduledoc false
 
-  alias FinTex.Config.Identifier
-
   use ExActor.Strict
   import Logger
 

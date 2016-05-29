@@ -16,6 +16,7 @@ defmodule FinTex.Segment.HKCCS do
 
   defstruct [:payment, segment: nil]
 
+  @spec new(FinPayment.t, term) :: %__MODULE__{}
   def new(
     %__MODULE__{
       payment: %FinPayment{

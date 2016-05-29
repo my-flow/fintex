@@ -30,8 +30,10 @@ defmodule FinTex.Parser.TypeConverter do
     [[name | _] | _] = segment
 
     module = Module.concat [Elixir, FinTex, Segment, String.upcase name]
-    unless Code.ensure_loaded?(module) && function_exported?(module, function, 1) do
-      module = Elixir.FinTex.Segment.Unknown
+    module = if Code.ensure_loaded?(module) && function_exported?(module, function, 1) do
+      module
+    else
+      Elixir.FinTex.Segment.Unknown
     end
 
     apply(module, function, [segment])

@@ -32,8 +32,8 @@ defmodule FinTex.Command.InitiatePayment do
 
     sender_account = accounts |> AccountHandler.find_account(payment.sender_account)
 
-    if sender_account do
-      payment = %FinPayment{payment | sender_account: sender_account}
+    payment = if sender_account do
+       %FinPayment{payment | sender_account: sender_account}
     else
       raise FinTex.Error, reason: "could not find sender account: #{inspect payment.sender_account}"
     end
