@@ -38,19 +38,19 @@ defmodule FinTex.Mixfile do
   defp deps do
     [
       {:bankster,              "~> 0.2.2"},
-      {:credo,                 "~> 0.3.13", only: [:dev, :test]},
+      {:credo,                 "~> 0.4.3", only: [:dev, :test]},
       {:decimal,               "~> 1.1.2"},
       {:earmark,               "~> 0.2.1"},
       {:ex_doc,                "~> 0.11.5", only: :dev},
       {:exactor,               "~> 2.2.0"},
       {:excoveralls,           "~> 0.5.4",  only: [:dev, :test]},
-      {:httpotion,             "~> 2.2.2"},
+      {:httpotion,             "~> 3.0.0"},
       {:ibrowse,               "~> 4.2.2"},
-      {:inch_ex,               "~> 0.5.1",  only: [:dev, :docs]},
+      {:inch_ex,               "~> 0.5.3",  only: [:dev, :docs]},
       {:luhnatex,              "~> 0.5.1"},
       {:mt940,                 "~> 1.0.0"},
       {:ssl_verify_hostname,   "<= 1.0.6"},
-      {:timex,                 "~> 2.1.4"},
+      {:timex,                 "~> 2.1.6"},
       {:vex,                   "~> 0.5.5"},
       {:xml_builder,           "~> 0.0.8"}
     ]

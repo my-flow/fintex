@@ -4,7 +4,7 @@ defmodule FinTex.Model.Dialog do
   alias FinTex.Config.Identifier
 
   @anonymous_login "9999999999"
-  @max_sec_ref 99999999
+  @max_sec_ref 99_999_999
 
   defstruct [
     :bank,
