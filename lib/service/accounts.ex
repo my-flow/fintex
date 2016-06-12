@@ -38,7 +38,7 @@ defmodule FinTex.Service.Accounts do
     {:ok, response} = seq |> Sequencer.call_http(request_segments)
 
     bpd = response[4]
-    |> Enum.group_by(Map.new, fn [[name | _] | _] -> name end)
+    |> Enum.group_by(fn [[name | _] | _] -> name end)
 
 
     pintan = bpd |> Map.get("HKPIN" |> control_structure_to_bpd)

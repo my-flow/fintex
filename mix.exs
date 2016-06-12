@@ -9,11 +9,11 @@ defmodule FinTex.Mixfile do
       source_url: "https://github.com/my-flow/fintex",
       homepage_url: "http://hexdocs.pm/fintex",
       elixir: "~> 1.2.5",
-      description: description,
-      package: package,
+      description: description(),
+      package: package(),
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
-      deps: deps,
+      deps: deps(),
       dialyzer: [plt_add_deps: true],
       test_coverage: [tool: ExCoveralls]
     ]

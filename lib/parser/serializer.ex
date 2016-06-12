@@ -91,7 +91,7 @@ defmodule FinTex.Parser.Serializer do
 
   defp split(raw = "HNVSD" <> _) do
     "^HNVSD:.+@\\d+@(.*)#{Lexer.segment_end}$"
-    |> Regex.compile!("sr")
+    |> Regex.compile!("sU")
     |> Regex.replace(raw, "\\1")
     |> split
   end
