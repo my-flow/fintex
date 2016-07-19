@@ -42,6 +42,27 @@ defmodule FinTex.Segment.HISPAS do
         ]
     }
   end
+
+  def new(segment = [["HISPAS", _, 3, _] | _]) do
+    %__MODULE__{
+      segment:
+      [
+        segment |> Enum.at(0),
+        segment |> Enum.at(1),
+        segment |> Enum.at(2),
+        segment |> Enum.at(3),
+        [
+          segment |> Enum.at(4) |> Enum.at(0),
+          segment |> Enum.at(4) |> Enum.at(1),
+          segment |> Enum.at(4) |> Enum.at(2),
+          segment |> Enum.at(4) |> Enum.at(3),
+          segment |> Enum.at(4) |> Enum.at(4),
+
+          segment |> Enum.at(4) |> Enum.drop(5)
+        ]
+      ]
+    }
+  end
 end
 
 
