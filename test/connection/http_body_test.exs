@@ -18,4 +18,9 @@ defmodule FinTex.Connection.HTTPBodyTest do
     response_body = File.read!(Path.join([System.cwd!, "test", "fixtures", "maintenance.txt"]))
     HTTPBody.decode_body(response_body)
   end
+
+  test "read accounts with HISPAS segment version 3 from file" do
+    response_body = File.read!(Path.join([System.cwd!, "test", "fixtures", "accounts_hispas_3.txt"]))
+    HTTPBody.decode_body(response_body)
+  end
 end
