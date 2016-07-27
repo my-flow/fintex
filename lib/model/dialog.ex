@@ -16,7 +16,7 @@ defmodule FinTex.Model.Dialog do
     client_id: @anonymous_login,
     dialog_id: 0,
     message_no: 1,
-    sec_ref: :random.uniform |> (&(&1 * @max_sec_ref)).() |> round,
+    sec_ref: :rand.uniform |> (&(&1 * @max_sec_ref)).() |> round,
     client_system_id: "0",
     tan_scheme_sec_func: "999",
     bpd: Map.new,

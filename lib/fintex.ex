@@ -29,7 +29,7 @@ defmodule FinTex do
   @type client_id :: binary
   @type pin :: binary
   @type options :: []
-  @type date_time :: %DateTime{}
+  @type date_time :: DateTime.t
 
   @type t :: %__MODULE__{
     bank: Bank.t,

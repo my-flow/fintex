@@ -11,7 +11,7 @@ defmodule FinTex.Model.Balance do
 
   @type t :: %__MODULE__{
     balance: %Decimal{},
-    balance_date: %Timex.DateTime{},
+    balance_date: DateTime.t,
     credit_line: %Decimal{},
     amount_available: %Decimal{}
   }

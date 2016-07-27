@@ -23,7 +23,7 @@ defmodule FinTex.Command.Sequencer do
 
   def new(client_system_id \\ "0", bank = %{}, credentials \\ nil, options)
   when is_list(options) do
-    {_, _, _} = :random.seed
+    {_, _} = :rand.seed(:exsplus)
 
     d = if credentials do
       Dialog.new(client_system_id, bank, credentials.login, credentials.client_id, credentials.pin)

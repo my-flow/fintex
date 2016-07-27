@@ -82,7 +82,7 @@ defmodule FinTex.Service.AccountBalance do
     date = ~r"(\d{4})(\d{2})(\d{2})" |> Regex.run(date, capture: :all_but_first) |> Enum.map(&String.to_integer/1)
     time = ~r"(\d{2})(\d{2})(\d{2})" |> Regex.run(time, capture: :all_but_first) |> Enum.map(&String.to_integer/1)
 
-    DateTime.from(
+    Timex.to_datetime(
       {
         {Enum.at(date, 0), Enum.at(date, 1), Enum.at(date, 2)},
         {Enum.at(time, 0), Enum.at(time, 1), Enum.at(time, 2)},

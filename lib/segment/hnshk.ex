@@ -24,7 +24,7 @@ defmodule FinTex.Segment.HNSHK do
       _     -> 3
     end
 
-    now = DateTime.local
+    now = Timex.local
     date = [1, Timex.format!(now, "%Y%m%d", :strftime), Timex.format!(now, "%H%M%S", :strftime)]
 
     segment = [

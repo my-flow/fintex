@@ -54,7 +54,7 @@ defmodule FinTex.Parser.Lexer do
   defp extract_binaries(raw, map) do
     case Regex.run(~r/@(\d+)@.*/Us, raw, capture: :all_but_first) do
       [length] when is_binary(length) ->
-        ref_counter = round(:random.uniform * 100_000_000)
+        ref_counter = round(:rand.uniform * 100_000_000)
         marker = "--#{inspect ref_counter}--"
 
         [_, binary_data, _] = length

@@ -101,8 +101,8 @@ defmodule FinTex.User.FinPayment do
       [
         CstmrCdtTrfInitn: [
           GrpHdr: [
-            MsgId: "M" <> Timex.format!(DateTime.now, "%Y%m%d%H%M%S", :strftime),
-            CreDtTm: Timex.format!(DateTime.now, "{ISOz}"),
+            MsgId: "M" <> Timex.format!(Timex.now, "%Y%m%d%H%M%S", :strftime),
+            CreDtTm: Timex.format!(Timex.now, "{ISOz}"),
             NbOfTxs: 1,
             CtrlSum: amount,
             InitgPty: [
@@ -110,7 +110,7 @@ defmodule FinTex.User.FinPayment do
             ]
           ],
           PmtInf: [
-            PmtInfId: "P" <> Timex.format!(DateTime.now, "%Y%m%d%H%M%S", :strftime),
+            PmtInfId: "P" <> Timex.format!(Timex.now, "%Y%m%d%H%M%S", :strftime),
             PmtMtd: "TRF",
             NbOfTxs: 1,
             CtrlSum: amount,

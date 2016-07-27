@@ -31,8 +31,8 @@ defmodule FinTex.Service.ScheduledPaymentParameters do
       supported_payments: %{
         SEPA: %PaymentType{sepa_payment |
           can_be_scheduled:   true,
-          min_scheduled_date: Date.now |> Timex.shift(days: day_limits |> Enum.at(0)),
-          max_scheduled_date: Date.now |> Timex.shift(days: day_limits |> Enum.at(1)),
+          min_scheduled_date: Timex.today |> Timex.shift(days: day_limits |> Enum.at(0)),
+          max_scheduled_date: Timex.today |> Timex.shift(days: day_limits |> Enum.at(1)),
         }
       }
     }

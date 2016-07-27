@@ -22,7 +22,7 @@ defmodule FinTex.Segment.HNVSK do
       _     -> 2
     end
 
-    now = DateTime.local
+    now = Timex.local
     date = [1, Timex.format!(now, "%Y%m%d", :strftime), Timex.format!(now, "%H%M%S", :strftime)]
 
     segment = [
