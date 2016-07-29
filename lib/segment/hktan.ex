@@ -33,6 +33,21 @@ defmodule FinTex.Segment.HKTAN do
   end
 
 
+  def new(s = %__MODULE__{v: 4, process: 2, ref: ref}, _) do
+    %__MODULE__{s |
+      segment:
+        [
+          ["HKTAN", "?", 4],
+          2,
+          "",
+          ref,
+          "",
+          "N"
+        ]
+    }
+  end
+
+
   def new(s = %__MODULE__{v: 5, process: 2, ref: ref}, _) do
     %__MODULE__{s |
       segment:
