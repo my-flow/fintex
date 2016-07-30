@@ -169,6 +169,30 @@ defmodule FinTex.Segment.HITANSTest do
     assert "972" == sec_func
   end
 
+  test "it should recognize iTAN, mobileTAN and photoTAN" do
+    tan_schemes = "HITANS:9:4:4+1+1+1+N:N:1:900:2:ITAN:::Indizierte-TAN:6:1:TAN-Index:256:1:J:1:0:N:N:N:N:N:00:0:1:901:2:MTAN:::Mobile-TAN:6:1:mobileTAN:256:1:J:1:0:N:N:N:N:N:00:0:1:902:2:MS1.0.0:::photoTAN-Verfahren:7:1:Freigabe durch photoTAN:1::J:1:0:N:N:N:N:N:00:0"
+    |> resolve(:HITANS)
+    |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
+
+    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    assert "Indizierte-TAN" == name
+    assert "TAN-Index" == label
+    assert :text == format
+    assert "900" == sec_func
+
+    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
+    assert "Mobile-TAN" == name
+    assert "mobileTAN" == label
+    assert :text == format
+    assert "901" == sec_func
+
+    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
+    assert "photoTAN-Verfahren" == name
+    assert "Freigabe durch photoTAN" == label
+    assert :text == format
+    assert "902" == sec_func
+  end
+
 
   defp resolve(raw, key) when is_binary(raw) and is_atom(key) do
     raw

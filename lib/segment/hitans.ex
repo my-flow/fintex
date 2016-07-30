@@ -24,7 +24,10 @@ defmodule FinTex.Segment.HITANS do
           segment |> Enum.at(2),
           segment |> Enum.at(3),
           (segment |> Enum.at(4) |> Enum.take(offset)) ++
-          [segment |> Enum.at(4) |> Enum.drop(offset) |> Enum.chunk(params_count)]
+          [segment |> Enum.at(4)
+                   |> Enum.drop(offset)
+                   # The last element is optional in some element versions, hence fill up with a nil
+                   |> Enum.chunk(params_count, params_count, [nil])]
         ]
     }
   end
