@@ -102,7 +102,7 @@ defmodule FinTex.User.FinPayment do
         CstmrCdtTrfInitn: [
           GrpHdr: [
             MsgId: "M" <> Timex.format!(Timex.now, "%Y%m%d%H%M%S", :strftime),
-            CreDtTm: Timex.format!(Timex.now, "{ISOz}"),
+            CreDtTm: Timex.format!(Timex.now, "{ISO:Extended:Z}"),
             NbOfTxs: 1,
             CtrlSum: amount,
             InitgPty: [
