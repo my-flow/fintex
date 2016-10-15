@@ -11,17 +11,17 @@ defmodule FinTex do
   alias FinTex.Command.GetAccountsInfo
   alias FinTex.Command.GetTransactions
   alias FinTex.Command.Initialize
-  alias FinTex.Command.InitiatePayment
+  alias FinTex.Command.InitiateSEPACreditTransfer
   alias FinTex.Model.Account
   alias FinTex.Model.Bank
   alias FinTex.Model.ChallengeResponder
   alias FinTex.Model.Credentials
-  alias FinTex.Model.Payment
+  alias FinTex.Model.SEPACreditTransfer
   alias FinTex.User.FinAccount
   alias FinTex.User.FinChallengeResponder
   alias FinTex.User.FinBank
   alias FinTex.User.FinCredentials
-  alias FinTex.User.FinPayment
+  alias FinTex.User.FinSEPACreditTransfer
 
   use Timex
 
@@ -118,22 +118,24 @@ defmodule FinTex do
   end
 
 
-  @spec initiate_payment!(t, Credentials.t, Payment.t, ChallengeResponder.t, options) :: binary | no_return
-  def initiate_payment!(fintex, credentials, payment, challenge_responder \\ FinChallengeResponder, options \\ [])
+  @spec initiate_sepa_credit_transfer!(t, Credentials.t, SEPACreditTransfer.t, ChallengeResponder.t, options)
+    :: binary | no_return
+  def initiate_sepa_credit_transfer!(fintex, credentials, sepa_credit_transfer, challenge_responder \\ FinChallengeResponder, options \\ [])
   when is_list(options) do
     %{bank: bank, client_system_id: client_system_id} = fintex
     credentials = credentials |> FinCredentials.from_credentials |> validate!
-    payment = payment |> FinPayment.from_payment |> validate!
-    InitiatePayment.initiate_payment(bank, client_system_id, credentials, payment, challenge_responder, options)
+    sepa_credit_transfer = sepa_credit_transfer |> FinSEPACreditTransfer.from_sepa_credit_transfer |> validate!
+    InitiateSEPACreditTransfer.initiate_sepa_credit_transfer(bank, client_system_id, credentials, sepa_credit_transfer,
+      challenge_responder, options)
   end
 
 
-  @spec initiate_payment(t, Credentials.t, Payment.t, ChallengeResponder.t, options)
+  @spec initiate_sepa_credit_transfer(t, Credentials.t, SEPACreditTransfer.t, ChallengeResponder.t, options)
     :: {:ok, binary} | {:error, term}
-  def initiate_payment(fintex, credentials, payment, challenge_responder \\ FinChallengeResponder, options \\ [])
+  def initiate_sepa_credit_transfer(fintex, credentials, sepa_credit_transfer, challenge_responder \\ FinChallengeResponder, options \\ [])
   when is_list(options) do
     try do
-      {:ok, initiate_payment!(fintex, credentials, payment, challenge_responder, options)}
+      {:ok, initiate_sepa_credit_transfer!(fintex, credentials, sepa_credit_transfer, challenge_responder, options)}
     rescue
       e in FinTex.Error -> {:error, e.reason}
     end

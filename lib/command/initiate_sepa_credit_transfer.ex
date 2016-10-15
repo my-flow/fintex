@@ -1,4 +1,4 @@
-defmodule FinTex.Command.InitiatePayment do
+defmodule FinTex.Command.InitiateSEPACreditTransfer do
   @moduledoc false
 
   alias FinTex.Command.AbstractCommand
@@ -16,7 +16,7 @@ defmodule FinTex.Command.InitiatePayment do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
-  alias FinTex.User.FinPayment
+  alias FinTex.User.FinSEPACreditTransfer
   alias FinTex.User.FinTANScheme
 
   use AbstractCommand
@@ -25,17 +25,19 @@ defmodule FinTex.Command.InitiatePayment do
   @type client_system_id :: binary
 
 
-  @spec initiate_payment(Bank.t, client_system_id, Credentials.t, FinPayment.t, ChallengeResponder.t, options) :: binary
-  def initiate_payment(bank, client_system_id, credentials, %FinPayment{tan_scheme: tan_scheme} = payment, challenge_responder, options) do
+  @spec initiate_sepa_credit_transfer(Bank.t, client_system_id, Credentials.t, FinSEPACreditTransfer.t,
+    ChallengeResponder.t, options) :: binary
+  def initiate_sepa_credit_transfer(bank, client_system_id, credentials, %FinSEPACreditTransfer{tan_scheme: tan_scheme}
+    = sepa_credit_transfer, challenge_responder, options) do
 
     {seq, accounts} = Synchronization.synchronize(bank, client_system_id, tan_scheme.sec_func, credentials, options)
 
-    sender_account = accounts |> AccountHandler.find_account(payment.sender_account)
+    sender_account = accounts |> AccountHandler.find_account(sepa_credit_transfer.sender_account)
 
-    payment = if sender_account do
-       %FinPayment{payment | sender_account: sender_account}
+    sepa_credit_transfer = if sender_account do
+       %FinSEPACreditTransfer{sepa_credit_transfer | sender_account: sender_account}
     else
-      raise FinTex.Error, reason: "could not find sender account: #{inspect payment.sender_account}"
+      raise FinTex.Error, reason: "could not find sender account: #{inspect sepa_credit_transfer.sender_account}"
     end
 
     unless sender_account.supported_transactions |> Enum.into(MapSet.new) |> MapSet.member?("HKCCS") do
@@ -49,7 +51,7 @@ defmodule FinTex.Command.InitiatePayment do
     request_segments = [
       %HNHBK{},
       %HNSHK{},
-      %HKCCS{payment: payment},
+      %HKCCS{sepa_credit_transfer: sepa_credit_transfer},
       %HKTAN{v: tan_scheme.v, process: 4, medium_name: tan_scheme.medium_name},
       %HNSHA{},
       %HNHBS{}

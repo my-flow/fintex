@@ -1,15 +1,15 @@
-defmodule FinTex.User.FinPayment do
+defmodule FinTex.User.FinSEPACreditTransfer do
   @moduledoc """
   The following fields are public:
     * `sender_account`    - Bank account of the sender
-    * `receiver_account`  - Bank account of the receiver
+    * `recipient_account` - Bank account of the recipient
     * `amount`            - Order amount
     * `currency`          - Three-character currency code (ISO 4217)
     * `purpose`           - Purpose text
     * `tan_scheme`        - TAN scheme
   """
 
-  alias FinTex.Model.Payment
+  alias FinTex.Model.SEPACreditTransfer
   alias FinTex.User.FinAccount
   alias FinTex.User.FinTANScheme
 
@@ -18,7 +18,7 @@ defmodule FinTex.User.FinPayment do
 
   @type t :: %__MODULE__{
     sender_account: Account.t,
-    receiver_account: Account.t,
+    recipient_account: Account.t,
     amount: %Decimal{},
     currency: String.t,
     purpose: String.t,
@@ -27,7 +27,7 @@ defmodule FinTex.User.FinPayment do
 
   defstruct [
     :sender_account,
-    :receiver_account,
+    :recipient_account,
     :amount,
     :currency,
     :purpose,
@@ -38,7 +38,7 @@ defmodule FinTex.User.FinPayment do
 
   validates :sender_account, presence: true, by: &FinAccount.valid?(&1)
 
-  validates :receiver_account, presence: true, by: &FinAccount.valid?(&1)
+  validates :recipient_account, presence: true, by: &FinAccount.valid?(&1)
 
   validates :amount, amount: true
 
@@ -50,35 +50,35 @@ defmodule FinTex.User.FinPayment do
 
 
   @doc false
-  @spec from_payment(Payment.t) :: t
-  def from_payment(payment) do
+  @spec from_sepa_credit_transfer(SEPACreditTransfer.t) :: t
+  def from_sepa_credit_transfer(sepa_credit_transfer) do
     %__MODULE__{
-      sender_account:   payment |> Payment.sender_account |> FinAccount.from_account,
-      receiver_account: payment |> Payment.receiver_account |> FinAccount.from_account,
-      amount:           payment |> Payment.amount,
-      currency:         payment |> Payment.currency,
-      purpose:          payment |> Payment.purpose,
-      tan_scheme:       payment |> Payment.tan_scheme |> FinTANScheme.from_tan_scheme
+      sender_account:    sepa_credit_transfer |> SEPACreditTransfer.sender_account |> FinAccount.from_account,
+      recipient_account: sepa_credit_transfer |> SEPACreditTransfer.recipient_account |> FinAccount.from_account,
+      amount:            sepa_credit_transfer |> SEPACreditTransfer.amount,
+      currency:          sepa_credit_transfer |> SEPACreditTransfer.currency,
+      purpose:           sepa_credit_transfer |> SEPACreditTransfer.purpose,
+      tan_scheme:        sepa_credit_transfer |> SEPACreditTransfer.tan_scheme |> FinTANScheme.from_tan_scheme
     }
   end
 
 
-  def to_sepa_pain_message(%__MODULE__{} = payment, schema) when is_binary(schema) do
+  def to_sepa_pain_message(%__MODULE__{} = sepa_credit_transfer, schema) when is_binary(schema) do
     %__MODULE__{
       sender_account: %FinAccount{
         iban:  sender_iban,
         bic:   sender_bic,
         owner: sender_owner
       },
-      receiver_account: %FinAccount{
-        iban:  receiver_iban,
-        bic:   receiver_bic,
-        owner: receiver_owner
+      recipient_account: %FinAccount{
+        iban:  recipient_iban,
+        bic:   recipient_bic,
+        owner: recipient_owner
       },
       amount: amount,
       currency: currency,
       purpose: purpose
-    } = payment
+    } = sepa_credit_transfer
 
     amount = sanitize(amount)
     purpose = sanitize(purpose)
@@ -87,9 +87,9 @@ defmodule FinTex.User.FinPayment do
     sender_bic = sanitize(sender_bic)
     sender_owner = sanitize(sender_owner)
 
-    receiver_iban = sanitize(receiver_iban)
-    receiver_bic = sanitize(receiver_bic)
-    receiver_owner = sanitize(receiver_owner)
+    recipient_iban = sanitize(recipient_iban)
+    recipient_bic = sanitize(recipient_bic)
+    recipient_owner = sanitize(recipient_owner)
 
     :Document
     |> doc(
@@ -144,15 +144,15 @@ defmodule FinTex.User.FinPayment do
               ],
               CdtrAgt: [
                 FinInstnId: [
-                  BIC: receiver_bic
+                  BIC: recipient_bic
                 ]
               ],
               Cdtr: [
-                Nm: receiver_owner
+                Nm: recipient_owner
               ],
               CdtrAcct: [
                 Id: [
-                  IBAN: receiver_iban
+                  IBAN: recipient_iban
                 ]
               ],
               RmtInf: [
@@ -181,57 +181,57 @@ defmodule FinTex.User.FinPayment do
 end
 
 
-defimpl FinTex.Model.Payment, for: [FinTex.User.FinPayment, Map] do
+defimpl FinTex.Model.SEPACreditTransfer, for: [FinTex.User.FinSEPACreditTransfer, Map] do
 
-  def sender_account(account) do
-    account |> Map.get(:sender_account)
+  def sender_account(sepa_credit_transfer) do
+    sepa_credit_transfer |> Map.get(:sender_account)
   end
 
-  def receiver_account(account) do
-    account |> Map.get(:receiver_account)
+  def recipient_account(sepa_credit_transfer) do
+    sepa_credit_transfer |> Map.get(:recipient_account)
   end
 
-  def amount(account) do
-    account |> Map.get(:amount)
+  def amount(sepa_credit_transfer) do
+    sepa_credit_transfer |> Map.get(:amount)
   end
 
-  def currency(account) do
-    account |> Map.get(:currency)
+  def currency(sepa_credit_transfer) do
+    sepa_credit_transfer |> Map.get(:currency)
   end
 
-  def purpose(account) do
-    account |> Map.get(:purpose)
+  def purpose(sepa_credit_transfer) do
+    sepa_credit_transfer |> Map.get(:purpose)
   end
 
-  def tan_scheme(account) do
-    account |> Map.get(:tan_scheme)
+  def tan_scheme(sepa_credit_transfer) do
+    sepa_credit_transfer |> Map.get(:tan_scheme)
   end
 end
 
 
-defimpl FinTex.Model.Payment, for: List do
+defimpl FinTex.Model.SEPACreditTransfer, for: List do
 
-  def sender_account(account) do
-    account |> Keyword.get(:sender_account)
+  def sender_account(sepa_credit_transfer) do
+    sepa_credit_transfer |> Keyword.get(:sender_account)
   end
 
-  def receiver_account(account) do
-    account |> Keyword.get(:receiver_account)
+  def recipient_account(sepa_credit_transfer) do
+    sepa_credit_transfer |> Keyword.get(:recipient_account)
   end
 
-  def amount(account) do
-    account |> Keyword.get(:amount)
+  def amount(sepa_credit_transfer) do
+    sepa_credit_transfer |> Keyword.get(:amount)
   end
 
-  def currency(account) do
-    account |> Keyword.get(:currency)
+  def currency(sepa_credit_transfer) do
+    sepa_credit_transfer |> Keyword.get(:currency)
   end
 
-  def purpose(account) do
-    account |> Keyword.get(:purpose)
+  def purpose(sepa_credit_transfer) do
+    sepa_credit_transfer |> Keyword.get(:purpose)
   end
 
-  def tan_scheme(account) do
-    account |> Keyword.get(:tan_scheme)
+  def tan_scheme(sepa_credit_transfer) do
+    sepa_credit_transfer |> Keyword.get(:tan_scheme)
   end
 end

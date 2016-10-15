@@ -5,7 +5,7 @@ defmodule FinTex.Segment.HKCCS do
   alias FinTex.Model.Dialog
   alias FinTex.Parser.Lexer
   alias FinTex.User.FinAccount
-  alias FinTex.User.FinPayment
+  alias FinTex.User.FinSEPACreditTransfer
 
   use AbstractCommand
 
@@ -14,17 +14,17 @@ defmodule FinTex.Segment.HKCCS do
     "urn:iso:std:iso:20022:tech:xsd:pain.001.002.03.xsd"
   ]
 
-  defstruct [:payment, segment: nil]
+  defstruct [:sepa_credit_transfer, segment: nil]
 
-  @spec new(FinPayment.t, term) :: %__MODULE__{}
+  @spec new(FinSEPACreditTransfer.t, term) :: %__MODULE__{}
   def new(
     %__MODULE__{
-      payment: %FinPayment{
+      sepa_credit_transfer: %FinSEPACreditTransfer{
         sender_account: %FinAccount{
           iban:  sender_iban,
           bic:   sender_bic
         }
-      } = payment
+      } = sepa_credit_transfer
     },
     %Dialog{bpd: bpd}) do
 
@@ -49,8 +49,8 @@ defmodule FinTex.Segment.HKCCS do
     sepa_descriptor = ~r/\.xsd$/
     |> Regex.replace(sepa_descriptor_urn, "")
 
-    sepa_pain_message = payment
-    |> FinPayment.to_sepa_pain_message(sepa_descriptor)
+    sepa_pain_message = sepa_credit_transfer
+    |> FinSEPACreditTransfer.to_sepa_pain_message(sepa_descriptor)
     |> Lexer.encode_binary
 
     %__MODULE__{
