@@ -1,8 +1,8 @@
 defmodule FinTex.Service.AccountBalance do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Helper.Command
   alias FinTex.Model.Account
   alias FinTex.Model.Dialog
   alias FinTex.Model.Balance
@@ -14,7 +14,7 @@ defmodule FinTex.Service.AccountBalance do
   alias FinTex.Service.AbstractService
   alias FinTex.Service.SEPAInfo
 
-  use AbstractCommand
+  use Command
   use AbstractService
   use Timex
 

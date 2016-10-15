@@ -44,5 +44,4 @@ defmodule FinTex.Validator.Amount do
 
 
   defp result(false, message), do: {:error, message}
-
 end

@@ -11,13 +11,13 @@ defmodule FinTex.Model.TANScheme do
   alias FinTex.User.FinTANScheme
 
   @type t :: %__MODULE__{
-    name: binary,
-    medium_name: binary,
-    medium_name_required: boolean,
-    sec_func: pos_integer,
-    format: atom,
-    label: binary,
-    v: pos_integer
+    name: String.t | nil,
+    medium_name: binary | nil,
+    medium_name_required: boolean | nil,
+    sec_func: String.t,
+    format: atom | nil,
+    label: String.t | nil,
+    v: pos_integer | nil
   }
 
   defstruct [
@@ -39,7 +39,7 @@ defmodule FinTex.Model.TANScheme do
 
 
   @doc false
-  @spec from_tan_scheme(FinTANScheme.t) :: t
+  @spec from_tan_scheme(term) :: t
   def from_tan_scheme(tan_scheme) do
     %__MODULE__{
       sec_func:    tan_scheme |> FinTANScheme.sec_func,

@@ -1,8 +1,10 @@
-defmodule FinTex.Command.Initialize do
+defmodule FinTex.Controller.Initialize do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Helper.Command
+  alias FinTex.Model.Bank
+  alias FinTex.Model.Credentials
   alias FinTex.Model.Dialog
   alias FinTex.Segment.HKEND
   alias FinTex.Segment.HKIDN
@@ -13,12 +15,17 @@ defmodule FinTex.Command.Initialize do
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
 
-
+  @type options :: []
   @allowed_methods 3920
 
-  use AbstractCommand
+  use Command
 
+
+  @spec initialize_dialog(term, term, options) :: any
   def initialize_dialog(bank, credentials, options) when is_list(options) do
+    %{} = bank = bank |> Bank.from_bank |> validate!
+    %{} = credentials = credentials |> Credentials.from_credentials |> validate!
+
     seq = Sequencer.new("0", bank, credentials, options)
 
     request_segments = [

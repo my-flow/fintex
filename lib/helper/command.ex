@@ -1,4 +1,4 @@
-defmodule FinTex.Command.AbstractCommand do
+defmodule FinTex.Helper.Command do
   @moduledoc false
 
   alias FinTex.Model.Dialog
@@ -7,10 +7,24 @@ defmodule FinTex.Command.AbstractCommand do
 
   defmacro __using__(_) do
     quote do
+      alias FinTex.Helper.Command
       alias FinTex.Model.Dialog
-      alias FinTex.Command.AbstractCommand
-      import AbstractCommand
+      import Command
       import Logger
+    end
+  end
+
+
+  def validate!(valid_object) do
+    if valid_object |> Vex.valid? do
+      valid_object
+    else
+      raise FinTex.Error, reason: valid_object
+      |> Vex.errors
+      |> Enum.at(0)
+      |> Tuple.to_list
+      |> Enum.drop(1)
+      |> Enum.join(" ")
     end
   end
 

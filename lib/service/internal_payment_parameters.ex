@@ -1,8 +1,8 @@
 defmodule FinTex.Service.InternalPaymentParameters do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Helper.Command
   alias FinTex.Model.Account
   alias FinTex.Model.PaymentType
   alias FinTex.Segment.HKCUB
@@ -14,7 +14,7 @@ defmodule FinTex.Service.InternalPaymentParameters do
   alias FinTex.Service.SEPAPaymentParameters
   alias FinTex.Service.ServiceBehaviour
 
-  use AbstractCommand
+  use Command
   use AbstractService
 
 

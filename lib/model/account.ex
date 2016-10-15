@@ -24,7 +24,7 @@ defmodule FinTex.Model.Account do
   alias FinTex.User.FinAccount
 
   @type t :: %__MODULE__{
-    type: Atom.t,
+    type: atom,
     account_number: String.t,
     subaccount_id: String.t,
     blz: String.t,

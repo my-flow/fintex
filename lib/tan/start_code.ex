@@ -13,9 +13,9 @@ defmodule FinTex.Tan.StartCode do
 
   @type t :: %__MODULE__{
     version: :hhd13 | :hhd14,
-    length: Integer.t,
-    lde: Integer.t,
-    control_bytes: [Integer.t],
+    length: non_neg_integer,
+    lde: non_neg_integer,
+    control_bytes: [non_neg_integer],
     data: String.t
   }
 

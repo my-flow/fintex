@@ -6,6 +6,7 @@ defmodule FinTex.Validator.LatinCharSet do
 
   @swift_latin_character_set ~r/^[a-zA-Z0-9\s.,\-\/+()':\?]*$/
 
+
   def validate(value, options) when is_list(options) do
     value
     |> to_string
@@ -14,5 +15,4 @@ defmodule FinTex.Validator.LatinCharSet do
 
 
   def validate(value, true), do: validate(value, [])
-
 end

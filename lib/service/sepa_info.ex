@@ -1,9 +1,9 @@
 defmodule FinTex.Service.SEPAInfo do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
   alias FinTex.Data.AccountHandler
+  alias FinTex.Helper.Command
   alias FinTex.Model.Account
   alias FinTex.Model.Dialog
   alias FinTex.Segment.HNHBK
@@ -13,7 +13,7 @@ defmodule FinTex.Service.SEPAInfo do
   alias FinTex.Segment.HNHBS
   alias FinTex.Service.AbstractService
 
-  use AbstractCommand
+  use Command
   use AbstractService
 
 

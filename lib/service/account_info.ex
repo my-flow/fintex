@@ -1,8 +1,8 @@
 defmodule FinTex.Service.AccountInfo do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Helper.Command
   alias FinTex.Model.Account
   alias FinTex.Segment.HKKIF
   alias FinTex.Segment.HNHBK
@@ -11,7 +11,7 @@ defmodule FinTex.Service.AccountInfo do
   alias FinTex.Segment.HNSHK
   alias FinTex.Service.AbstractService
 
-  use AbstractCommand
+  use Command
   use AbstractService
 
 

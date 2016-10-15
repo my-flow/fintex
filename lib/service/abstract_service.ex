@@ -4,6 +4,7 @@ defmodule FinTex.Service.AbstractService do
   defmacro __using__(_) do
     quote do
       alias FinTex.Model.Account
+      alias FinTex.Controller.Sequencer
       alias FinTex.Service.ServiceBehaviour
 
       @behaviour ServiceBehaviour

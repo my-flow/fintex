@@ -1,18 +1,24 @@
 defmodule FinTex.Command.FinPing do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Helper.Command
+  alias FinTex.Model.Bank
   alias FinTex.Segment.HKEND
   alias FinTex.Segment.HKIDN
   alias FinTex.Segment.HKVVB
   alias FinTex.Segment.HNHBK
   alias FinTex.Segment.HNHBS
 
-  use AbstractCommand
+  use Command
+
+  @type options :: []
 
 
+  @spec ping(term, options) :: binary | no_return
   def ping(bank, options) do
+    %{} = bank = bank |> Bank.from_bank |> validate!
+
     seq = Sequencer.new(bank, options)
 
     request_segments = [

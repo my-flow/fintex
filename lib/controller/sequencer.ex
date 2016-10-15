@@ -1,12 +1,12 @@
-defmodule FinTex.Command.Sequencer do
+defmodule FinTex.Controller.Sequencer do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
   alias FinTex.Connection.HTTPBody
   alias FinTex.Connection.HTTPClient
+  alias FinTex.Helper.Command
   alias FinTex.Model.Dialog
 
-  use AbstractCommand
+  use Command
   import Supervisor.Spec
   require Record
 
@@ -23,7 +23,7 @@ defmodule FinTex.Command.Sequencer do
 
   def new(client_system_id \\ "0", bank = %{}, credentials \\ nil, options)
   when is_list(options) do
-    {_, _} = :rand.seed(:exsplus)
+    _ = :rand.seed(:exsplus)
 
     d = if credentials do
       Dialog.new(client_system_id, bank, credentials.login, credentials.client_id, credentials.pin)

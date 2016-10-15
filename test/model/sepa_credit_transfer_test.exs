@@ -25,7 +25,10 @@ defmodule FinTex.Model.SEPACreditTransferTest do
       },
       amount: 1.00,
       currency: "EUR",
-      purpose: "Purpose"
+      purpose: "Purpose",
+      tan_scheme: %{
+        sec_func: "999"
+      }
     }
     |> SEPACreditTransfer.to_sepa_pain_message("urn:iso:std:iso:20022:tech:xsd:pain.001.003.03",
       1475532464 |> DateTime.from_unix!)

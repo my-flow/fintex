@@ -1,8 +1,8 @@
 defmodule FinTex.Service.TANMedia do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Helper.Command
   alias FinTex.Model.Account
   alias FinTex.Model.TANMedium
   alias FinTex.Model.TANScheme
@@ -14,7 +14,7 @@ defmodule FinTex.Service.TANMedia do
   alias FinTex.Segment.HNHBS
   alias FinTex.Service.AbstractService
 
-  use AbstractCommand
+  use Command
   use AbstractService
 
 

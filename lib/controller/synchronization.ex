@@ -1,8 +1,8 @@
-defmodule FinTex.Command.Synchronization do
+defmodule FinTex.Controller.Synchronization do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Helper.Command
   alias FinTex.Model.Dialog
   alias FinTex.Segment.HKEND
   alias FinTex.Segment.HNHBK
@@ -13,7 +13,7 @@ defmodule FinTex.Command.Synchronization do
   alias FinTex.Service.SEPAInfo
   alias FinTex.Service.TANMedia
 
-  use AbstractCommand
+  use Command
 
   @services [
     Accounts,

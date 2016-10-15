@@ -1,14 +1,14 @@
 defmodule FinTex.Parser.Serializer do
   @moduledoc false
 
+  alias FinTex.Helper.Command
   alias FinTex.Model.Dialog
-  alias FinTex.Command.AbstractCommand
   alias FinTex.Parser.Lexer
   alias FinTex.Parser.TypeConverter
   alias FinTex.Segment.HNVSD
   alias FinTex.Segment.HNVSK
 
-  use AbstractCommand
+  use Command
 
 
   def serialize(segments, d = %Dialog{}) do

@@ -33,7 +33,7 @@ defmodule FinTex.Model.Credentials do
                   length: [min: 1, max: 255]
 
   @doc false
-  @spec from_credentials(FinCredentials.t) :: t
+  @spec from_credentials(term) :: t
   def from_credentials(credentials) do
     %__MODULE__{
       login:     credentials |> FinCredentials.login,

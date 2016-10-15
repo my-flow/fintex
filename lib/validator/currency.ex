@@ -15,5 +15,4 @@ defmodule FinTex.Validator.Currency do
 
 
   def validate(value, true), do: validate(value, [])
-
 end

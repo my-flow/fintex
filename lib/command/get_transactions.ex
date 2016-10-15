@@ -1,9 +1,12 @@
 defmodule FinTex.Command.GetTransactions do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Sequencer
-  alias FinTex.Command.Synchronization
+  alias FinTex.Controller.Sequencer
+  alias FinTex.Controller.Synchronization
+  alias FinTex.Helper.Command
+  alias FinTex.Model.Account
+  alias FinTex.Model.Bank
+  alias FinTex.Model.Credentials
   alias FinTex.Model.Transaction
   alias FinTex.Parser.Lexer
   alias FinTex.Segment.HKKAZ
@@ -13,10 +16,21 @@ defmodule FinTex.Command.GetTransactions do
   alias FinTex.Segment.HNSHK
   alias MT940.CustomerStatementMessage
 
-  use AbstractCommand
+  use Command
   use MT940
 
-  def get_transactions(bank, client_system_id, tan_scheme_sec_func, credentials, account, from, to, options) do
+  @type date_time :: DateTime.t
+  @type options :: []
+
+
+  @spec get_transactions(FinTex.t, term, term, date_time | nil, date_time | nil, options) ::
+    Enumerable.t | no_return
+  def get_transactions(fintex, credentials, account, from, to, options) do
+
+    %{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
+    bank = bank |> Bank.from_bank |> validate!
+    credentials = credentials |> Credentials.from_credentials |> validate!
+    account = account |> Account.from_account |> validate!
 
     {seq, _} = Synchronization.synchronize(bank, client_system_id, tan_scheme_sec_func, credentials, options)
 

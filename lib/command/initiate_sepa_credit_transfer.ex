@@ -1,34 +1,29 @@
 defmodule FinTex.Command.InitiateSEPACreditTransfer do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
-  alias FinTex.Command.Synchronization
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.InitiatePayment
+  alias FinTex.Controller.Synchronization
   alias FinTex.Data.AccountHandler
+  alias FinTex.Helper.Command
   alias FinTex.Model.Bank
-  alias FinTex.Model.Challenge
-  alias FinTex.Model.ChallengeResponder
   alias FinTex.Model.Credentials
   alias FinTex.Model.SEPACreditTransfer
-  alias FinTex.Model.TANScheme
-  alias FinTex.Segment.HITAN
   alias FinTex.Segment.HKCCS
-  alias FinTex.Segment.HKTAN
-  alias FinTex.Segment.HNHBK
-  alias FinTex.Segment.HNHBS
-  alias FinTex.Segment.HNSHA
-  alias FinTex.Segment.HNSHK
 
-  use AbstractCommand
+  use Command
 
   @type options :: []
   @type client_system_id :: binary
 
 
-  @spec initiate_sepa_credit_transfer(Bank.t, client_system_id, Credentials.t, SEPACreditTransfer.t,
-    ChallengeResponder.t, options) :: binary
-  def initiate_sepa_credit_transfer(bank, client_system_id, credentials, %SEPACreditTransfer{tan_scheme: tan_scheme}
+  @spec initiate_sepa_credit_transfer(FinTex.t, term, term, term, options) :: binary
+  def initiate_sepa_credit_transfer(fintex, credentials, %{tan_scheme: tan_scheme}
     = sepa_credit_transfer, challenge_responder, options) do
+
+    %{bank: bank, client_system_id: client_system_id} = fintex
+    bank = bank |> Bank.from_bank |> validate!
+    credentials = credentials |> Credentials.from_credentials |> validate!
+    sepa_credit_transfer = sepa_credit_transfer |> SEPACreditTransfer.from_sepa_credit_transfer |> validate!
 
     {seq, accounts} = Synchronization.synchronize(bank, client_system_id, tan_scheme.sec_func, credentials, options)
 
@@ -46,63 +41,7 @@ defmodule FinTex.Command.InitiateSEPACreditTransfer do
         "#{inspect sender_account.supported_transactions}"
     end
 
-    tan_scheme = sender_account.supported_tan_schemes |> find_tan_scheme!(tan_scheme.sec_func, tan_scheme.medium_name)
-
-    request_segments = [
-      %HNHBK{},
-      %HNSHK{},
-      %HKCCS{sepa_credit_transfer: sepa_credit_transfer},
-      %HKTAN{v: tan_scheme.v, process: 4, medium_name: tan_scheme.medium_name},
-      %HNSHA{},
-      %HNHBS{}
-    ]
-
-    {:ok, response} = seq |> Sequencer.call_http(request_segments)
-
-    %Challenge{ref: ref} = challenge = response[:HITAN]
-    |> Enum.at(0)
-    |> HITAN.to_challenge(tan_scheme)
-
-    response_string = challenge_responder |> apply(:read_user_input, [challenge])
-
-    request_segments = [
-      %HNHBK{},
-      %HNSHK{},
-      %HKTAN{v: tan_scheme.v, process: 2, ref: ref},
-      %HNSHA{response: response_string},
-      %HNHBS{}
-    ]
-
-    seq = seq |> Sequencer.inc
-
-    {:ok, response} = seq |> Sequencer.call_http(request_segments)
-
-    seq = seq |> Sequencer.inc
-
-    %{} = Task.async(fn -> seq |> Synchronization.terminate end)
-
-    response[:HIRMG] |> Stream.concat(response[:HIRMS])
-    |> format_messages
-    |> Enum.join(", ")
-  end
-
-
-  # filter out valid HKTAN/HITANS segment version based on given sec_func
-  defp find_tan_scheme!(supported_tan_schemes, sec_func, medium_name) do
-    supported_tan_schemes = supported_tan_schemes
-    |> Enum.filter(fn
-      %TANScheme{sec_func: ^sec_func, medium_name_required: true, medium_name: ^medium_name} -> true
-      %TANScheme{sec_func: ^sec_func, medium_name_required: false} -> true
-      _ -> false
-    end)
-
-    if supported_tan_schemes |> Enum.empty? do
-      raise FinTex.Error, reason:
-        "could not find supported TAN scheme for sec_func: #{inspect sec_func}, medium_name: #{inspect medium_name}"
-    end
-
-    # find maximum version of supported TAN schemes
-    supported_tan_schemes
-    |> Enum.max_by(fn %TANScheme{v: v} -> v end)
+    InitiatePayment.initiate_payment(seq, sender_account, sepa_credit_transfer,
+      %HKCCS{sepa_credit_transfer: sepa_credit_transfer}, challenge_responder)
   end
 end

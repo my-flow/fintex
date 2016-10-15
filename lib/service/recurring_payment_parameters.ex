@@ -1,7 +1,7 @@
 defmodule FinTex.Service.RecurringPaymentParameters do
   @moduledoc false
 
-  alias FinTex.Command.Sequencer
+  alias FinTex.Controller.Sequencer
   alias FinTex.Model.Account
   alias FinTex.Model.PaymentType
   alias FinTex.Service.AbstractService

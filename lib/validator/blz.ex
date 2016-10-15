@@ -14,5 +14,4 @@ defmodule FinTex.Validator.Blz do
 
 
   def validate(value, true), do: validate(value, [])
-
 end

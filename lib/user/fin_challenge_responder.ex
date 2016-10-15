@@ -11,9 +11,9 @@ end
 
 defimpl FinTex.User.FinChallengeResponder, for: FinTex.Model.ChallengeResponder do
 
-  alias FinTex.User.FinChallengeResponder
+  alias FinTex.Model.ChallengeResponder
 
   def read_user_input(challenge) do
-    FinChallengeResponder.read_user_input(challenge)
+    ChallengeResponder.read_user_input(challenge)
   end
 end

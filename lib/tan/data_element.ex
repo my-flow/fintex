@@ -8,8 +8,8 @@ defmodule FinTex.Tan.DataElement do
   @bit_encoding 6
 
   @type t :: %__MODULE__{
-    length: Integer.t,
-    lde: Integer.t,
+    length: non_neg_integer,
+    lde: non_neg_integer,
     data: String.t
   }
 

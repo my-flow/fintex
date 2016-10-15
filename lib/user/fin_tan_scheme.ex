@@ -6,7 +6,7 @@ defprotocol FinTex.User.FinTANScheme do
 
 
   @doc "TAN medium name"
-  @spec medium_name(t) :: binary | nil
+  @spec medium_name(t) :: String.t | nil
   def medium_name(credentials)
 end
 

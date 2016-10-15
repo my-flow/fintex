@@ -1,12 +1,24 @@
 defmodule FinTex.Command.GetAccountsInfo do
   @moduledoc false
 
+  alias FinTex.Controller.Synchronization
   alias FinTex.Data.AccountHandler
-  alias FinTex.Command.Synchronization
+  alias FinTex.Helper.Command
+  alias FinTex.Model.Bank
+  alias FinTex.Model.Credentials
   alias FinTex.Service.AggregatedService
 
+  use Command
 
-  def get_account_info(bank, client_system_id, tan_scheme_sec_func, credentials, options) do
+  @type options :: []
+
+
+  @spec get_account_info(FinTex.t, term, options) :: Enumerable.t | no_return
+  def get_account_info(fintex, credentials, options) do
+
+    %{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
+    %{} = bank = bank |> Bank.from_bank |> validate!
+    %{} = credentials = credentials |> Credentials.from_credentials |> validate!
 
     {seq, accounts} = bank
     |> Synchronization.synchronize(client_system_id, tan_scheme_sec_func, credentials, options)

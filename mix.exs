@@ -14,7 +14,7 @@ defmodule FinTex.Mixfile do
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps(),
-      dialyzer: [plt_add_deps: true],
+      dialyzer: [plt_add_deps: :transitive],
       test_coverage: [tool: ExCoveralls]
     ]
   end
@@ -38,7 +38,7 @@ defmodule FinTex.Mixfile do
   defp deps do
     [
       {:bankster,              "~> 0.2.2"},
-      {:credo,                 "~> 0.4.12",  only: [:dev, :test]},
+      {:credo,                 "~> 0.4.12", only: [:dev, :test]},
       {:decimal,               "~> 1.2.0"},
       {:earmark,               "~> 1.0.2",  only: :dev, override: true},
       {:ex_doc,                "~> 0.14.3", only: :dev},

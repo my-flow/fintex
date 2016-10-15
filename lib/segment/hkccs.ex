@@ -1,13 +1,13 @@
 defmodule FinTex.Segment.HKCCS do
   @moduledoc false
 
-  alias FinTex.Command.AbstractCommand
+  alias FinTex.Helper.Command
   alias FinTex.Model.Account
   alias FinTex.Model.Dialog
   alias FinTex.Model.SEPACreditTransfer
   alias FinTex.Parser.Lexer
 
-  use AbstractCommand
+  use Command
 
   @supported_sepa_descriptor_urns [
     "urn:iso:std:iso:20022:tech:xsd:pain.001.003.03.xsd",
@@ -16,7 +16,7 @@ defmodule FinTex.Segment.HKCCS do
 
   defstruct [:sepa_credit_transfer, segment: nil]
 
-  @spec new(SEPACreditTransfer.t, term) :: %__MODULE__{}
+  @spec new(%__MODULE__{}, term) :: %__MODULE__{}
   def new(
     %__MODULE__{
       sepa_credit_transfer: %SEPACreditTransfer{

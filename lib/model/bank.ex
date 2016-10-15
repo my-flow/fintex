@@ -32,7 +32,7 @@ defmodule FinTex.Model.Bank do
                       inclusion: ["220", "300"]
 
   @doc false
-  @spec from_bank(FinBank.t) :: t
+  @spec from_bank(term) :: t
   def from_bank(bank) do
     %__MODULE__{
       blz:      bank |> FinBank.blz,
