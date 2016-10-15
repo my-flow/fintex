@@ -1,8 +1,8 @@
 defmodule FinTex.Segment.HITANSTest do
   alias FinTex.Connection.HTTPBody
+  alias FinTex.Model.TANScheme
   alias FinTex.Model.Response
   alias FinTex.Segment.HITANS
-  alias FinTex.User.FinTANScheme
 
   use ExUnit.Case
   use FinTex
@@ -13,7 +13,7 @@ defmodule FinTex.Segment.HITANSTest do
     |> resolve(:HITANS)
     |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
     assert "photoTAN-Verfahren" == name
     assert "Freigabe durch photoTAN" == label
     assert :matrix == format
@@ -26,13 +26,13 @@ defmodule FinTex.Segment.HITANSTest do
     |> resolve(:HITANS)
     |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
     assert "iTAN-Verfahren" == name
     assert "Freigabe durch lfd. iTAN-Nr." == label
     assert :text == format
     assert "900" == sec_func    
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
     assert "mobileTAN-Verfahren" == name
     assert "Freigabe durch mobileTAN" == label
     assert :text == format
@@ -45,13 +45,13 @@ defmodule FinTex.Segment.HITANSTest do
     |> resolve(:HITANS)
     |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
     assert "iTAN" == name
     assert "TAN-Nummer" == label
     assert :text == format
     assert "900" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
     assert "smsTAN" == name
     assert "TAN-Nummer" == label
     assert :text == format
@@ -64,31 +64,31 @@ defmodule FinTex.Segment.HITANSTest do
     |> resolve(:HITANS)
     |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
     assert "iTAN" == name
     assert "TAN-Nummer" == label
     assert :text == format
     assert "900" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
     assert "smsTAN" == name
     assert "TAN-Nummer" == label
     assert :text == format
     assert "920" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
     assert "chipTAN manuell" == name
     assert "TAN-Nummer" == label
     assert :hhd == format
     assert "910" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(3)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(3)
     assert "chipTAN optisch" == name
     assert "TAN-Nummer" == label
     assert :hhd == format
     assert "911" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(4)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(4)
     assert "pushTAN" == name
     assert "TAN-Nummer" == label
     assert :text == format
@@ -101,37 +101,37 @@ defmodule FinTex.Segment.HITANSTest do
     |> resolve(:HITANS)
     |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
     assert "Smart-TAN plus" == name
     assert "Challenge" == label
     assert :hhd == format
     assert "922" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
     assert "SmartTAN plus" == name
     assert "Challenge" == label
     assert :hhd == format
     assert "932" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
     assert "mobile TAN" == name
     assert "SMS" == label
     assert :text == format
     assert "942" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(3)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(3)
     assert "SmartTAN optic" == name
     assert "Challenge" == label
     assert :hhd == format
     assert "952" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(4)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(4)
     assert "SmartTAN plus HHD 1.4" == name
     assert "Challenge" == label
     assert :hhd == format
     assert "962" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(5)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(5)
     assert "SmartTAN optic HHD 1.4" == name
     assert "Challenge" == label
     assert :hhd == format
@@ -144,25 +144,25 @@ defmodule FinTex.Segment.HITANSTest do
     |> resolve(:HITANS)
     |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
     assert "mobile TAN" == name
     assert "SMS" == label
     assert :text == format
     assert "942" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
     assert "SecureGo" == name
     assert "TAN" == label
     assert :text == format
     assert "944" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
     assert "Smart-TAN plus manuell" == name
     assert "Challenge" == label
     assert :hhd == format
     assert "962" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(3)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(3)
     assert "Smart-TAN plus optisch" == name
     assert "Challenge" == label
     assert :hhd == format
@@ -174,19 +174,19 @@ defmodule FinTex.Segment.HITANSTest do
     |> resolve(:HITANS)
     |> Enum.flat_map(&HITANS.to_tan_schemes(&1))
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(0)
     assert "Indizierte-TAN" == name
     assert "TAN-Index" == label
     assert :text == format
     assert "900" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(1)
     assert "Mobile-TAN" == name
     assert "mobileTAN" == label
     assert :text == format
     assert "901" == sec_func
 
-    %FinTANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
+    %TANScheme{name: name, label: label, format: format, sec_func: sec_func} = tan_schemes |> Enum.at(2)
     assert "photoTAN-Verfahren" == name
     assert "Freigabe durch photoTAN" == label
     assert :text == format

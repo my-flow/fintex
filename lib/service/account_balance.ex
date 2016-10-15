@@ -3,6 +3,7 @@ defmodule FinTex.Service.AccountBalance do
 
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
+  alias FinTex.Model.Account
   alias FinTex.Model.Dialog
   alias FinTex.Model.Balance
   alias FinTex.Segment.HNHBK
@@ -12,7 +13,6 @@ defmodule FinTex.Service.AccountBalance do
   alias FinTex.Segment.HNHBS
   alias FinTex.Service.AbstractService
   alias FinTex.Service.SEPAInfo
-  alias FinTex.User.FinAccount
 
   use AbstractCommand
   use AbstractService
@@ -27,7 +27,7 @@ defmodule FinTex.Service.AccountBalance do
   end
 
 
-  defp do_has_capability?(seq, %FinAccount{supported_transactions: supported_transactions, iban: iban, bic: bic}) do
+  defp do_has_capability?(seq, %Account{supported_transactions: supported_transactions, iban: iban, bic: bic}) do
     %Dialog{bpd: bpd} = seq
     |> Sequencer.dialog
 
@@ -42,7 +42,7 @@ defmodule FinTex.Service.AccountBalance do
   end
 
 
-  def update_account(seq, account = %FinAccount{}) do
+  def update_account(seq, account = %Account{}) do
     request_segments = [
       %HNHBK{},
       %HNSHK{},
@@ -55,7 +55,7 @@ defmodule FinTex.Service.AccountBalance do
 
     info = response[:HISAL] |> Enum.at(0)
 
-    account = %FinAccount{account |
+    account = %Account{account |
       balance: %Balance{
         balance:          info |> Enum.at(4) |> Enum.at(1),
         balance_date:     to_date(

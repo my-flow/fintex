@@ -9,6 +9,8 @@ defmodule FinTex.Command.InitiateSEPACreditTransfer do
   alias FinTex.Model.Challenge
   alias FinTex.Model.ChallengeResponder
   alias FinTex.Model.Credentials
+  alias FinTex.Model.SEPACreditTransfer
+  alias FinTex.Model.TANScheme
   alias FinTex.Segment.HITAN
   alias FinTex.Segment.HKCCS
   alias FinTex.Segment.HKTAN
@@ -16,8 +18,6 @@ defmodule FinTex.Command.InitiateSEPACreditTransfer do
   alias FinTex.Segment.HNHBS
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNSHK
-  alias FinTex.User.FinSEPACreditTransfer
-  alias FinTex.User.FinTANScheme
 
   use AbstractCommand
 
@@ -25,9 +25,9 @@ defmodule FinTex.Command.InitiateSEPACreditTransfer do
   @type client_system_id :: binary
 
 
-  @spec initiate_sepa_credit_transfer(Bank.t, client_system_id, Credentials.t, FinSEPACreditTransfer.t,
+  @spec initiate_sepa_credit_transfer(Bank.t, client_system_id, Credentials.t, SEPACreditTransfer.t,
     ChallengeResponder.t, options) :: binary
-  def initiate_sepa_credit_transfer(bank, client_system_id, credentials, %FinSEPACreditTransfer{tan_scheme: tan_scheme}
+  def initiate_sepa_credit_transfer(bank, client_system_id, credentials, %SEPACreditTransfer{tan_scheme: tan_scheme}
     = sepa_credit_transfer, challenge_responder, options) do
 
     {seq, accounts} = Synchronization.synchronize(bank, client_system_id, tan_scheme.sec_func, credentials, options)
@@ -35,7 +35,7 @@ defmodule FinTex.Command.InitiateSEPACreditTransfer do
     sender_account = accounts |> AccountHandler.find_account(sepa_credit_transfer.sender_account)
 
     sepa_credit_transfer = if sender_account do
-       %FinSEPACreditTransfer{sepa_credit_transfer | sender_account: sender_account}
+       %SEPACreditTransfer{sepa_credit_transfer | sender_account: sender_account}
     else
       raise FinTex.Error, reason: "could not find sender account: #{inspect sepa_credit_transfer.sender_account}"
     end
@@ -91,8 +91,8 @@ defmodule FinTex.Command.InitiateSEPACreditTransfer do
   defp find_tan_scheme!(supported_tan_schemes, sec_func, medium_name) do
     supported_tan_schemes = supported_tan_schemes
     |> Enum.filter(fn
-      %FinTANScheme{sec_func: ^sec_func, medium_name_required: true, medium_name: ^medium_name} -> true
-      %FinTANScheme{sec_func: ^sec_func, medium_name_required: false} -> true
+      %TANScheme{sec_func: ^sec_func, medium_name_required: true, medium_name: ^medium_name} -> true
+      %TANScheme{sec_func: ^sec_func, medium_name_required: false} -> true
       _ -> false
     end)
 
@@ -103,6 +103,6 @@ defmodule FinTex.Command.InitiateSEPACreditTransfer do
 
     # find maximum version of supported TAN schemes
     supported_tan_schemes
-    |> Enum.max_by(fn %FinTANScheme{v: v} -> v end)
+    |> Enum.max_by(fn %TANScheme{v: v} -> v end)
   end
 end

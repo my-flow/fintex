@@ -3,7 +3,9 @@ defmodule FinTex.Service.TANMedia do
 
   alias FinTex.Command.AbstractCommand
   alias FinTex.Command.Sequencer
+  alias FinTex.Model.Account
   alias FinTex.Model.TANMedium
+  alias FinTex.Model.TANScheme
   alias FinTex.Segment.HITAB
   alias FinTex.Segment.HNHBK
   alias FinTex.Segment.HNSHK
@@ -11,8 +13,6 @@ defmodule FinTex.Service.TANMedia do
   alias FinTex.Segment.HNSHA
   alias FinTex.Segment.HNHBS
   alias FinTex.Service.AbstractService
-  alias FinTex.User.FinAccount
-  alias FinTex.User.FinTANScheme
 
   use AbstractCommand
   use AbstractService
@@ -27,8 +27,8 @@ defmodule FinTex.Service.TANMedia do
     &&
     accounts
     |> Map.values
-    |> Enum.flat_map(fn %FinAccount{supported_tan_schemes: tan_schemes} -> tan_schemes end)
-    |> Enum.any?(fn %FinTANScheme{medium_name_required: medium_name_required} -> medium_name_required end)
+    |> Enum.flat_map(fn %Account{supported_tan_schemes: tan_schemes} -> tan_schemes end)
+    |> Enum.any?(fn %TANScheme{medium_name_required: medium_name_required} -> medium_name_required end)
   end
 
 
@@ -52,23 +52,23 @@ defmodule FinTex.Service.TANMedia do
   end
 
 
-  defp update(account = %FinAccount{supported_tan_schemes: supported_tan_schemes}, tan_media) do
+  defp update(account = %Account{supported_tan_schemes: supported_tan_schemes}, tan_media) do
     supported_tan_schemes =
       for tan_scheme <- supported_tan_schemes,
       tan_medium <- tan_media,
       supported?(tan_scheme, tan_medium) do
-        %FinTANScheme{tan_scheme | medium_name: tan_medium.name}
+        %TANScheme{tan_scheme | medium_name: tan_medium.name}
       end
 
-    %FinAccount{account | supported_tan_schemes: supported_tan_schemes}
+    %Account{account | supported_tan_schemes: supported_tan_schemes}
   end
 
 
-  defp supported?(%FinTANScheme{medium_name_required: true, format: format}, %TANMedium{format: format}) do
+  defp supported?(%TANScheme{medium_name_required: true, format: format}, %TANMedium{format: format}) do
     true
   end
 
-  defp supported?(%FinTANScheme{medium_name_required: true}, %TANMedium{format: :all}) do
+  defp supported?(%TANScheme{medium_name_required: true}, %TANMedium{format: :all}) do
     true
   end
 

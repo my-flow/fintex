@@ -1,6 +1,6 @@
 defmodule FinTex.Model.AccountTest do
   alias FinTex.DataProvider
-  alias FinTex.User.FinAccount
+  alias FinTex.Model.Account
   use ExUnit.Case
   use FinTex
 
@@ -24,7 +24,7 @@ defmodule FinTex.Model.AccountTest do
 
   test "it should accept a valid account", context do
     assert context[:account]
-    |> FinAccount.from_account
+    |> Account.from_account
     |> Vex.valid?
   end
 
@@ -39,7 +39,7 @@ defmodule FinTex.Model.AccountTest do
 
       {:error, _} = FinTex.transactions(fintex, credentials, account, nil, nil, [])
       refute account
-      |> FinAccount.from_account
+      |> Account.from_account
       |> Vex.valid?
     end
   end
@@ -55,7 +55,7 @@ defmodule FinTex.Model.AccountTest do
 
       {:error, _} = FinTex.transactions(fintex, credentials, account, nil, nil, [])
       refute account
-      |> FinAccount.from_account
+      |> Account.from_account
       |> Vex.valid?
     end
   end
@@ -71,7 +71,7 @@ defmodule FinTex.Model.AccountTest do
 
       {:error, _} = FinTex.transactions(fintex, credentials, account, nil, nil, [])
       refute account
-      |> FinAccount.from_account
+      |> Account.from_account
       |> Vex.valid?
     end
   end
@@ -81,7 +81,7 @@ defmodule FinTex.Model.AccountTest do
     account = context[:account]
     |> Map.put(:iban, nil)
     |> Map.put(:bic, nil)
-    |> FinAccount.from_account
+    |> Account.from_account
 
     assert account |> Vex.valid?
 

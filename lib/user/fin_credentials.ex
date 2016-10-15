@@ -1,56 +1,22 @@
-defmodule FinTex.User.FinCredentials do
-  @moduledoc """
-    Provides a default implementation of the `FinTex.Model.Credentials` protocol.
+defprotocol FinTex.User.FinCredentials do
 
-    The following fields are public:
-    * `login`     - user name
-    * `client_id` - client ID. Can be `nil`.
-    * `pin`       - personal identification number
-  """
-
-  alias FinTex.Model.Credentials
-
-  @type t :: %__MODULE__{
-    login: binary,
-    client_id: binary | nil,
-    pin: binary
-  }
-
-  defstruct [
-    :login,
-    :client_id,
-    :pin
-  ]
-
-  use Vex.Struct
-
-  validates :login, presence: true,
-                    length: [min: 1, max: 255]
-
-  validates :client_id, length: [min: 1, max: 255, allow_nil: true]
-
-  validates :pin, presence: true,
-                  length: [min: 1, max: 255]
-
-  @doc false
-  @spec from_credentials(Credentials.t) :: t
-  def from_credentials(credentials) do
-    %__MODULE__{
-      login:     credentials |> Credentials.login,
-      client_id: pick_if_set(credentials |> Credentials.login, credentials |> Credentials.client_id),
-      pin:       credentials |> Credentials.pin
-    }
-  end
+  @doc "user name"
+  @spec login(t) :: String.t
+  def login(credentials)
 
 
-  defp pick_if_set(login, nil), do: login
+  @doc "client ID. Can be `nil`."
+  @spec client_id(t) :: String.t | nil
+  def client_id(credentials)
 
-  defp pick_if_set(_, client_id), do: client_id
 
+  @doc "personal identification number"
+  @spec pin(t) :: String.t
+  def pin(credentials)
 end
 
 
-defimpl FinTex.Model.Credentials, for: [FinTex.User.FinCredentials, Map] do
+defimpl FinTex.User.FinCredentials, for: [FinTex.Model.Credentials, Map] do
 
   def login(credentials) do
     credentials |> Map.get(:login)
@@ -68,7 +34,7 @@ defimpl FinTex.Model.Credentials, for: [FinTex.User.FinCredentials, Map] do
 end
 
 
-defimpl FinTex.Model.Credentials, for: List do
+defimpl FinTex.User.FinCredentials, for: List do
 
   def login(credentials) do
     credentials |> Keyword.get(:login)

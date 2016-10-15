@@ -1,16 +1,43 @@
-defprotocol FinTex.Model.Bank do
+defmodule FinTex.Model.Bank do
+  @moduledoc """
+    Provides a default implementation of the `FinTex.User.FinBank` protocol.
 
-  @doc "8 digits bank code"
-  @spec blz(t) :: binary
-  def blz(bank)
+    The following fields are public:
+    * `blz`     - 8 digits bank code
+    * `url`     - URL of the bank server
+    * `version` - API version. Possible values are `220` or `300`.
+  """
 
+  alias FinTex.User.FinBank
 
-  @doc "URL of the bank server."
-  @spec url(t) :: binary
-  def url(bank)
+  @type t :: %__MODULE__{
+    blz: binary,
+    url: binary,
+    version: binary
+  }
 
+  defstruct [
+    :blz,
+    :url,
+    :version
+  ]
 
-  @doc "API version. Possible values are `220` or `300`."
-  @spec version(t) :: binary
-  def version(bank)
+  use Vex.Struct
+
+  validates :blz, presence: true, blz: true
+
+  validates :url, uri: true
+
+  validates :version, presence: true,
+                      inclusion: ["220", "300"]
+
+  @doc false
+  @spec from_bank(FinBank.t) :: t
+  def from_bank(bank) do
+    %__MODULE__{
+      blz:      bank |> FinBank.blz,
+      url:      bank |> FinBank.url,
+      version:  bank |> FinBank.version
+    }
+  end
 end

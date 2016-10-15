@@ -1,98 +1,32 @@
-defmodule FinTex.User.FinAccount do
-  @moduledoc """
-  The following fields are public:
-    * `account_number`          - Account number
-    * `subaccount_id`           - Subaccount ID
-    * `blz`                     - Bank code
-    * `bank_name`               - Bank name
-    * `currency`                - Three-character currency code (ISO 4217)
-    * `iban`                    - IBAN
-    * `bic`                     - BIC
-    * `name`                    - Account name
-    * `owner`                   - Name of the account holder
-    * `type`                    - Account type. Possible values are `:giro_account`, `:savings_account`,
-                                  `:credit_card` or `:loan_account`, `:cash_book`, `:depot` or `:unknown`.
-    * `balance`                 - Account balance
-    * `supported_payments`      - List of payment types with payment parameters
-    * `supported_transactions`  - List of transaction names
-    * `supported_tan_schemes`   - List of TAN schemes
-    * `preferred_tan_scheme`    - Security function of the TAN scheme preferred by the user
-  """
+defprotocol FinTex.User.FinAccount do
 
-  alias FinTex.Model.Account
-  alias FinTex.Model.Balance
-  alias FinTex.Model.TANScheme
+  @doc "Account number"
+  @spec account_number(t) :: String.t
+  def account_number(account)
 
-  @type t :: %__MODULE__{
-    type: Atom.t,
-    account_number: String.t,
-    subaccount_id: String.t,
-    blz: String.t,
-    bank_name: String.t,
-    currency: String.t,
-    iban: String.t,
-    bic: String.t,
-    name: String.t,
-    owner: String.t,
-    balance: Balance.t,
-    supported_payments: map,
-    supported_tan_schemes: [TANScheme.t],
-    preferred_tan_scheme: String.t,
-    supported_transactions: [String.t]
-  }
+  @doc "Subaccount ID"
+  @spec subaccount_id(t) :: String.t
+  def subaccount_id(account)
 
-  defstruct [
-    :account_number,
-    :subaccount_id,
-    :blz,
-    :bank_name,
-    :currency,
-    :iban,
-    :bic,
-    :name,
-    :owner,
-    type: :unknown,
-    balance: nil,
-    supported_payments: Map.new,
-    supported_tan_schemes: [],
-    preferred_tan_scheme: nil,
-    supported_transactions: []
-  ]
+  @doc "Bank code"
+  @spec blz(t) :: String.t
+  def blz(account)
 
-  use Vex.Struct
+  @doc "IBAN"
+  @spec iban(t) :: String.t
+  def iban(account)
 
-  validates :blz, blz: [allow_nil: true]
+  @doc "BIC"
+  @spec bic(t) :: String.t
+  def bic(account)
 
-  validates :iban, presence: [if: :bic], iban: [if: :bic]
-
-  validates :bic, presence: [if: :iban], bic: [if: :iban]
-
-  validates :owner, presence: true, length: [in: 1..140]
-
-  @doc false
-  @spec from_account(Account.t) :: t
-  def from_account(account) do
-    %__MODULE__{
-      account_number:         account |> Account.account_number,
-      subaccount_id:          account |> Account.subaccount_id,
-      blz:                    account |> Account.blz,
-      iban:                   account |> Account.iban,
-      bic:                    account |> Account.bic,
-      owner:                  account |> Account.owner
-    }
-  end
-
-
-  def key(%__MODULE__{
-    account_number: account_number,
-    subaccount_id: subaccount_id
-  }) do
-    "#{account_number}#{subaccount_id}"
-  end
+  @doc "Name of the account holder"
+  @spec owner(t) :: String.t
+  def owner(account)
 end
 
 
-defimpl FinTex.Model.Account, for: [FinTex.User.FinAccount, Map] do
+defimpl FinTex.User.FinAccount, for: [FinTex.Model.Account, Map] do
 
   def account_number(account) do
     account |> Map.get(:account_number)
@@ -120,7 +54,7 @@ defimpl FinTex.Model.Account, for: [FinTex.User.FinAccount, Map] do
 end
 
 
-defimpl FinTex.Model.Account, for: List do
+defimpl FinTex.User.FinAccount, for: List do
 
   def account_number(account) do
     account |> Keyword.get(:account_number)

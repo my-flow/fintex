@@ -2,14 +2,14 @@ defmodule FinTex.Segment.HITAN do
   @moduledoc false
 
   alias FinTex.Model.Challenge
-  alias FinTex.User.FinTANScheme
+  alias FinTex.Model.TANScheme
 
   defstruct [segment: nil]
 
 
   def to_challenge(
     segment = [["HITAN", _, 1 | _] | _],
-    %FinTANScheme{
+    %TANScheme{
       name: name,
       label: label,
       format: format
@@ -26,7 +26,7 @@ defmodule FinTex.Segment.HITAN do
 
   def to_challenge(
     segment = [["HITAN", _, 2 | _] | _],
-    %FinTANScheme{
+    %TANScheme{
       name: name,
       label: label,
       format: format
@@ -43,7 +43,7 @@ defmodule FinTex.Segment.HITAN do
 
   def to_challenge(
     segment = [["HITAN", _, 3 | _] | _],
-    %FinTANScheme{
+    %TANScheme{
       name: name,
       label: label,
       format: format
@@ -61,7 +61,7 @@ defmodule FinTex.Segment.HITAN do
 
   def to_challenge(
     segment = [["HITAN", _, 4 | _] | _],
-    %FinTANScheme{
+    %TANScheme{
       name: name,
       label: label,
       format: format
@@ -80,7 +80,7 @@ defmodule FinTex.Segment.HITAN do
 
   def to_challenge(
     segment = [["HITAN", _, 5 | _] | _],
-    %FinTANScheme{
+    %TANScheme{
       name: name,
       label: label,
       format: format

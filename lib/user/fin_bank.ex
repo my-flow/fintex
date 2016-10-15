@@ -1,49 +1,22 @@
-defmodule FinTex.User.FinBank do
-  @moduledoc """
-    Provides a default implementation of the `FinTex.Model.Bank` protocol.
+defprotocol FinTex.User.FinBank do
 
-    The following fields are public:
-    * `blz`     - 8 digits bank code
-    * `url`     - URL of the bank server
-    * `version` - API version. Possible values are `220` or `300`.
-  """
+  @doc "8 digits bank code"
+  @spec blz(t) :: binary
+  def blz(bank)
 
-  alias FinTex.Model.Bank
 
-  @type t :: %__MODULE__{
-    blz: binary,
-    url: binary,
-    version: binary
-  }
+  @doc "URL of the bank server."
+  @spec url(t) :: binary
+  def url(bank)
 
-  defstruct [
-    :blz,
-    :url,
-    :version
-  ]
 
-  use Vex.Struct
-
-  validates :blz, presence: true, blz: true
-
-  validates :url, uri: true
-
-  validates :version, presence: true,
-                      inclusion: ["220", "300"]
-
-  @doc false
-  @spec from_bank(Bank.t) :: t
-  def from_bank(bank) do
-    %__MODULE__{
-      blz:      bank |> Bank.blz,
-      url:      bank |> Bank.url,
-      version:  bank |> Bank.version
-    }
-  end
+  @doc "API version. Possible values are `220` or `300`."
+  @spec version(t) :: binary
+  def version(bank)
 end
 
 
-defimpl FinTex.Model.Bank, for: [FinTex.User.FinBank, Map] do
+defimpl FinTex.User.FinBank, for: [FinTex.Model.Bank, Map] do
 
   def blz(bank) do
     bank |> Map.get(:blz)
@@ -61,7 +34,7 @@ defimpl FinTex.Model.Bank, for: [FinTex.User.FinBank, Map] do
 end
 
 
-defimpl FinTex.Model.Bank, for: List do
+defimpl FinTex.User.FinBank, for: List do
 
   def blz(bank) do
     bank |> Keyword.get(:blz)

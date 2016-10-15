@@ -2,8 +2,8 @@ defmodule FinTex.Segment.HKKAZ do
   @moduledoc false
 
   alias FinTex.Helper.Segment
+  alias FinTex.Model.Account
   alias FinTex.Model.Dialog
-  alias FinTex.User.FinAccount
 
   defstruct [:account, :from, :to, :start_point, segment: nil]
 
@@ -12,7 +12,7 @@ defmodule FinTex.Segment.HKKAZ do
 
   def new(
     %__MODULE__{
-      account: %FinAccount{
+      account: %Account{
         iban:           iban,
         bic:            bic,
         blz:            blz,
