@@ -114,13 +114,13 @@ defmodule FinTex.Service.Accounts do
                                    |> String.split
                                    |> Stream.map(&String.capitalize/1)
                                    |> Enum.join(" ")
-                                   |> String.strip,
+                                   |> String.trim,
         name:                    u |> Enum.at(6 + offset),
         bank_name:               bpd
                                  |> Map.get("HIBPA")
                                  |> Enum.at(0)
                                  |> Enum.at(3)
-                                 |> String.strip,
+                                 |> String.trim,
         supported_transactions:  u
                                  |> Stream.drop(8 + offset)
                                  |> Stream.filter(fn l -> l |> is_list && !Enum.empty?(l) end)

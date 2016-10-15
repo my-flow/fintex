@@ -30,7 +30,7 @@ defmodule FinTex.Parser.Serializer do
     |> Kernel.-(byte_size("$SIZE"))
     |> Kernel.+(12)
     |> Integer.to_string
-    |> String.rjust(12, ?0)
+    |> String.pad_leading(12, "0")
 
     ~r/\$SIZE/
     |> Regex.replace(string, "#{size}")

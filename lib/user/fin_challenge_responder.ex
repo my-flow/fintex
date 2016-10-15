@@ -53,7 +53,7 @@ defmodule FinTex.User.FinChallengeResponder do
   defp do_read_user_input(challenge = %Challenge{label: label}, _) do
     response = "#{label}: "
     |> IO.gets
-    |> String.strip
+    |> String.trim
     do_read_user_input(challenge, response)
   end
 end

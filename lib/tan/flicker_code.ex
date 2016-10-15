@@ -76,7 +76,7 @@ defmodule FinTex.Tan.FlickerCode do
   defp clean(code) when is_binary(code) do
     code = code
     |> String.replace(" ", "")
-    |> String.strip
+    |> String.trim
 
     case ~r/.*CHLGUC\d{4}(.*)CHLGTEXT.*/ |> Regex.run(code) do
       nil     -> code

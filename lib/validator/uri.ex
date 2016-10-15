@@ -10,7 +10,7 @@ defmodule FinTex.Validator.Uri do
       %URI{host: nil}
         -> result(false, message(options, "must have a valid host", value: value))
       %URI{host: host}
-        -> host |> to_char_list |> :inet.gethostbyname |> extract_message(value, options)
+        -> host |> to_charlist |> :inet.gethostbyname |> extract_message(value, options)
     end
   end
 

@@ -3,7 +3,7 @@ defmodule FinTex.Helper.Conversion do
 
   def to_hex(s) when is_binary(s) do
     s
-    |> String.to_char_list
+    |> String.to_charlist
     |> Stream.map(&to_hex(&1))
     |> Enum.join
   end
@@ -12,7 +12,7 @@ defmodule FinTex.Helper.Conversion do
   def to_hex(n, len \\ 2) when is_integer(n) and is_integer(len) do
     n
     |> Integer.to_string(16)
-    |> String.rjust(len, ?0)
+    |> String.pad_leading(len, "0")
   end
 
 

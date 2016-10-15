@@ -33,7 +33,7 @@ defmodule FinTex.Connection.HTTPClient do
         []
       _ ->
         %URI{host: host} = URI.parse(url)
-        hostname = to_char_list(host)
+        hostname = to_charlist(host)
         {verify_fun, initial_user_state} = options[:ssl_options][:verify_fun]
         Keyword.merge(
           [
