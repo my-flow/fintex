@@ -22,8 +22,6 @@ defmodule FinTex do
   alias FinTex.User.FinCredentials
   alias FinTex.User.FinSEPACreditTransfer
 
-  use Timex
-
   @type login :: binary
   @type client_id :: binary
   @type pin :: binary

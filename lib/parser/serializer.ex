@@ -9,7 +9,6 @@ defmodule FinTex.Parser.Serializer do
   alias FinTex.Segment.HNVSK
 
   use AbstractCommand
-  use Timex
 
 
   def serialize(segments, d = %Dialog{}) do

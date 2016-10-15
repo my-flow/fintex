@@ -63,7 +63,7 @@ defmodule FinTex.Model.SEPACreditTransfer do
   end
 
 
-  def to_sepa_pain_message(%__MODULE__{} = sepa_credit_transfer, schema) when is_binary(schema) do
+  def to_sepa_pain_message(%__MODULE__{} = sepa_credit_transfer, schema, %DateTime{} = dt) when is_binary(schema) do
     %__MODULE__{
       sender_account: %Account{
         iban:  sender_iban,
@@ -91,6 +91,8 @@ defmodule FinTex.Model.SEPACreditTransfer do
     recipient_bic = sanitize(recipient_bic)
     recipient_owner = sanitize(recipient_owner)
 
+    timestamp = dt |> Timex.format!("%Y%m%d%H%M%S", :strftime)
+
     :Document
     |> doc(
       %{
@@ -101,8 +103,8 @@ defmodule FinTex.Model.SEPACreditTransfer do
       [
         CstmrCdtTrfInitn: [
           GrpHdr: [
-            MsgId: "M" <> Timex.format!(Timex.now, "%Y%m%d%H%M%S", :strftime),
-            CreDtTm: Timex.format!(Timex.now, "{ISO:Extended:Z}"),
+            MsgId: "M#{timestamp}",
+            CreDtTm: dt |> DateTime.to_iso8601,
             NbOfTxs: 1,
             CtrlSum: amount,
             InitgPty: [
@@ -110,7 +112,7 @@ defmodule FinTex.Model.SEPACreditTransfer do
             ]
           ],
           PmtInf: [
-            PmtInfId: "P" <> Timex.format!(Timex.now, "%Y%m%d%H%M%S", :strftime),
+            PmtInfId: "P#{timestamp}",
             PmtMtd: "TRF",
             NbOfTxs: 1,
             CtrlSum: amount,

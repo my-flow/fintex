@@ -13,8 +13,6 @@ defmodule FinTex.Model.Transaction do
     * `booked`          - This flag indicates whether the transaction is booked or pending
   """
 
-  use Timex
-
   @type t :: %__MODULE__{
     name: binary,
     account_number: binary,

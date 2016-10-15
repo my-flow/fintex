@@ -50,7 +50,7 @@ defmodule FinTex.Segment.HKCCS do
     |> Regex.replace(sepa_descriptor_urn, "")
 
     sepa_pain_message = sepa_credit_transfer
-    |> SEPACreditTransfer.to_sepa_pain_message(sepa_descriptor)
+    |> SEPACreditTransfer.to_sepa_pain_message(sepa_descriptor, DateTime.utc_now)
     |> Lexer.encode_binary
 
     %__MODULE__{
