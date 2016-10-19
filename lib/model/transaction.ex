@@ -67,7 +67,7 @@ defmodule FinTex.Model.Transaction do
       amount: amount |> Decimal.mult(sign |> Decimal.new),
       booking_date: entry_date,
       value_date: value_date,
-      purpose: details |> Enum.join,
+      purpose: details,
       code: code,
       booking_text: transaction_description
     }
