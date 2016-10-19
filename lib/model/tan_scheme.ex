@@ -39,11 +39,11 @@ defmodule FinTex.Model.TANScheme do
 
 
   @doc false
-  @spec from_tan_scheme(term) :: t
-  def from_tan_scheme(tan_scheme) do
+  @spec from_fin_tan_scheme(term) :: t
+  def from_fin_tan_scheme(fin_tan_scheme) do
     %__MODULE__{
-      sec_func:    tan_scheme |> FinTANScheme.sec_func,
-      medium_name: tan_scheme |> FinTANScheme.medium_name
+      sec_func:    fin_tan_scheme |> FinTANScheme.sec_func,
+      medium_name: fin_tan_scheme |> FinTANScheme.medium_name
     }
   end
 end

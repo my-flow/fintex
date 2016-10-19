@@ -7,7 +7,7 @@ defmodule FinTex.Model.BankTest do
 
 
   test "it should accept a struct" do
-    bank = DataProvider.bank |> Bank.from_bank
+    bank = DataProvider.bank |> Bank.from_fin_bank
 
     assert nil != bank
     assert bank.blz == bank |> FinBank.blz
@@ -36,7 +36,7 @@ defmodule FinTex.Model.BankTest do
 
 
   test "it should validate blz" do
-    bank = DataProvider.bank |> Bank.from_bank
+    bank = DataProvider.bank |> Bank.from_fin_bank
 
     assert %Bank{bank | blz: "10000000"} |> Vex.valid?
     assert %Bank{bank | blz: "12030000"} |> Vex.valid?
@@ -49,7 +49,7 @@ defmodule FinTex.Model.BankTest do
 
 
   test "it should validate URL" do
-    bank = DataProvider.bank |> Bank.from_bank
+    bank = DataProvider.bank |> Bank.from_fin_bank
 
     refute %Bank{bank | url: "asdf"} |> Vex.valid? # protocol missing
     refute %Bank{bank | url: "http://google.com/"} |> Vex.valid? # https protocol missing
@@ -58,7 +58,7 @@ defmodule FinTex.Model.BankTest do
 
 
   test "it should validate version" do
-    bank = DataProvider.bank |> Bank.from_bank
+    bank = DataProvider.bank |> Bank.from_fin_bank
 
     refute %Bank{bank | version: "200"} |> Vex.valid?
   end

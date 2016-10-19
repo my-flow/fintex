@@ -70,15 +70,15 @@ defmodule FinTex.Model.Account do
   validates :owner, presence: true, length: [in: 1..140]
 
   @doc false
-  @spec from_account(FinAccount.t) :: t
-  def from_account(account) do
+  @spec from_fin_account(FinAccount.t) :: t
+  def from_fin_account(fin_account) do
     %__MODULE__{
-      account_number:         account |> FinAccount.account_number,
-      subaccount_id:          account |> FinAccount.subaccount_id,
-      blz:                    account |> FinAccount.blz,
-      iban:                   account |> FinAccount.iban,
-      bic:                    account |> FinAccount.bic,
-      owner:                  account |> FinAccount.owner
+      account_number:         fin_account |> FinAccount.account_number,
+      subaccount_id:          fin_account |> FinAccount.subaccount_id,
+      blz:                    fin_account |> FinAccount.blz,
+      iban:                   fin_account |> FinAccount.iban,
+      bic:                    fin_account |> FinAccount.bic,
+      owner:                  fin_account |> FinAccount.owner
     }
   end
 

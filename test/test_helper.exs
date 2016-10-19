@@ -48,7 +48,7 @@ defmodule FinTex.DataProvider do
 
 
   def fintex do
-    %{
+    %FinTex{
       bank: bank,
       client_system_id: @client_system_id,
       tan_scheme_sec_func: @preferred_tan_scheme

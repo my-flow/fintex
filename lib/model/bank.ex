@@ -32,12 +32,12 @@ defmodule FinTex.Model.Bank do
                       inclusion: ["220", "300"]
 
   @doc false
-  @spec from_bank(term) :: t
-  def from_bank(bank) do
+  @spec from_fin_bank(term) :: t
+  def from_fin_bank(fin_bank) do
     %__MODULE__{
-      blz:      bank |> FinBank.blz,
-      url:      bank |> FinBank.url,
-      version:  bank |> FinBank.version
+      blz:      fin_bank |> FinBank.blz,
+      url:      fin_bank |> FinBank.url,
+      version:  fin_bank |> FinBank.version
     }
   end
 end

@@ -17,7 +17,7 @@ defmodule FinTex.Command.FinPing do
 
   @spec ping(term, options) :: binary | no_return
   def ping(bank, options) do
-    %{} = bank = bank |> Bank.from_bank |> validate!
+    %{} = bank = bank |> Bank.from_fin_bank |> validate!
 
     seq = Sequencer.new(bank, options)
 

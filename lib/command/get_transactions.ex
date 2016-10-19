@@ -5,7 +5,6 @@ defmodule FinTex.Command.GetTransactions do
   alias FinTex.Controller.Synchronization
   alias FinTex.Helper.Command
   alias FinTex.Model.Account
-  alias FinTex.Model.Bank
   alias FinTex.Model.Credentials
   alias FinTex.Model.Transaction
   alias FinTex.Parser.Lexer
@@ -27,10 +26,11 @@ defmodule FinTex.Command.GetTransactions do
     Enumerable.t | no_return
   def get_transactions(fintex, credentials, account, from, to, options) do
 
-    %{bank: bank, tan_scheme_sec_func: tan_scheme_sec_func, client_system_id: client_system_id} = fintex
-    bank = bank |> Bank.from_bank |> validate!
-    credentials = credentials |> Credentials.from_credentials |> validate!
-    account = account |> Account.from_account |> validate!
+    bank = fintex |> FinTex.bank |> validate!
+    client_system_id = fintex |> FinTex.client_system_id
+    tan_scheme_sec_func = fintex |> FinTex.tan_scheme_sec_func
+    credentials = credentials |> Credentials.from_fin_credentials |> validate!
+    account = account |> Account.from_fin_account |> validate!
 
     {seq, _} = Synchronization.synchronize(bank, client_system_id, tan_scheme_sec_func, credentials, options)
 

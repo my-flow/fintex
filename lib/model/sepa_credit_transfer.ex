@@ -50,15 +50,15 @@ defmodule FinTex.Model.SEPACreditTransfer do
 
 
   @doc false
-  @spec from_sepa_credit_transfer(FinSEPACreditTransfer.t) :: t
-  def from_sepa_credit_transfer(sepa_credit_transfer) do
+  @spec from_fin_sepa_credit_transfer(FinSEPACreditTransfer.t) :: t
+  def from_fin_sepa_credit_transfer(sepa_credit_transfer) do
     %__MODULE__{
-      sender_account:    sepa_credit_transfer |> FinSEPACreditTransfer.sender_account |> Account.from_account,
-      recipient_account: sepa_credit_transfer |> FinSEPACreditTransfer.recipient_account |> Account.from_account,
+      sender_account:    sepa_credit_transfer |> FinSEPACreditTransfer.sender_account |> Account.from_fin_account,
+      recipient_account: sepa_credit_transfer |> FinSEPACreditTransfer.recipient_account |> Account.from_fin_account,
       amount:            sepa_credit_transfer |> FinSEPACreditTransfer.amount,
       currency:          sepa_credit_transfer |> FinSEPACreditTransfer.currency,
       purpose:           sepa_credit_transfer |> FinSEPACreditTransfer.purpose,
-      tan_scheme:        sepa_credit_transfer |> FinSEPACreditTransfer.tan_scheme |> TANScheme.from_tan_scheme
+      tan_scheme:        sepa_credit_transfer |> FinSEPACreditTransfer.tan_scheme |> TANScheme.from_fin_tan_scheme
     }
   end
 

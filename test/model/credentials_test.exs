@@ -7,7 +7,7 @@ defmodule FinTex.Model.CredentialsTest do
 
 
   test "it should accept a struct" do
-    credentials = DataProvider.credentials |> Credentials.from_credentials
+    credentials = DataProvider.credentials |> Credentials.from_fin_credentials
 
     assert nil != credentials
     assert credentials.login == credentials |> FinCredentials.login
@@ -37,7 +37,7 @@ defmodule FinTex.Model.CredentialsTest do
 
 
   test "it should set up the client ID" do
-    credentials = DataProvider.credentials |> Map.put(:client_id, nil) |> Credentials.from_credentials
+    credentials = DataProvider.credentials |> Map.put(:client_id, nil) |> Credentials.from_fin_credentials
 
     assert nil != credentials
     assert credentials.login == credentials |> FinCredentials.login
@@ -47,16 +47,16 @@ defmodule FinTex.Model.CredentialsTest do
 
 
   test "it should validate login" do
-    credentials = DataProvider.credentials |> Credentials.from_credentials
+    credentials = DataProvider.credentials |> Credentials.from_fin_credentials
 
     refute %Credentials{credentials | login: ""}
-    |> Credentials.from_credentials
+    |> Credentials.from_fin_credentials
     |> Vex.valid?
   end
 
 
   test "it should validate PIN" do
-    credentials = DataProvider.credentials |> Credentials.from_credentials
+    credentials = DataProvider.credentials |> Credentials.from_fin_credentials
 
     refute %Credentials{credentials | pin: ""} |> Vex.valid?
   end

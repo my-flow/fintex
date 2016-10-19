@@ -23,8 +23,8 @@ defmodule FinTex.Controller.Initialize do
 
   @spec initialize_dialog(term, term, options) :: any
   def initialize_dialog(bank, credentials, options) when is_list(options) do
-    %{} = bank = bank |> Bank.from_bank |> validate!
-    %{} = credentials = credentials |> Credentials.from_credentials |> validate!
+    %{} = bank = bank |> Bank.from_fin_bank |> validate!
+    %{} = credentials = credentials |> Credentials.from_fin_credentials |> validate!
 
     seq = Sequencer.new("0", bank, credentials, options)
 

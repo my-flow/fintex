@@ -33,12 +33,12 @@ defmodule FinTex.Model.Credentials do
                   length: [min: 1, max: 255]
 
   @doc false
-  @spec from_credentials(term) :: t
-  def from_credentials(credentials) do
+  @spec from_fin_credentials(term) :: t
+  def from_fin_credentials(fin_credentials) do
     %__MODULE__{
-      login:     credentials |> FinCredentials.login,
-      client_id: pick_if_set(credentials |> FinCredentials.login, credentials |> FinCredentials.client_id),
-      pin:       credentials |> FinCredentials.pin
+      login:     fin_credentials |> FinCredentials.login,
+      client_id: pick_if_set(fin_credentials |> FinCredentials.login, fin_credentials |> FinCredentials.client_id),
+      pin:       fin_credentials |> FinCredentials.pin
     }
   end
 

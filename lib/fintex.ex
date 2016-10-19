@@ -57,6 +57,24 @@ defmodule FinTex do
   end
 
 
+  @spec bank(t) :: Bank.t
+  def bank(%__MODULE__{bank: bank}) do
+    bank |> Bank.from_fin_bank
+  end
+
+
+  @spec tan_scheme_sec_func(t) :: binary
+  def tan_scheme_sec_func(%__MODULE__{tan_scheme_sec_func: tan_scheme_sec_func}) do
+    tan_scheme_sec_func
+  end
+
+
+  @spec client_system_id(t) :: binary
+  def client_system_id(%__MODULE__{client_system_id: client_system_id}) do
+    client_system_id
+  end
+
+
   @spec accounts!(t, term, options) :: Enumerable.t | no_return
   def accounts!(fintex, credentials, options \\ [])
   when is_list(options) do
