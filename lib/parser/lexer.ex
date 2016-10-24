@@ -34,12 +34,6 @@ defmodule FinTex.Parser.Lexer do
   end
 
 
-  @spec remove_newline(String.t) :: String.t
-  def remove_newline(string) when is_binary(string) do
-    ~r(\R) |> Regex.replace(string, "")
-  end
-
-
   @spec split(String.t) :: [String.t]
   def split(raw) when is_binary(raw) do
     raw

@@ -3,7 +3,6 @@ defmodule FinTex.Connection.HTTPBody do
 
   alias FinTex.Model.Dialog
   alias FinTex.Model.Response
-  alias FinTex.Parser.Lexer
   alias FinTex.Parser.Serializer
   alias FinTex.Parser.TypeConverter
 
@@ -18,8 +17,7 @@ defmodule FinTex.Connection.HTTPBody do
 
   def decode_body(response_body) when is_binary(response_body) do
     result = response_body
-    |> Lexer.remove_newline
-    |> Base.decode64
+    |> Base.decode64(ignore: :whitespace, padding: false)
 
     case result do
       :error -> raise FinTex.Error, reason: "could not base 64 decode server response \"#{response_body}\""
