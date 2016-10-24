@@ -1,7 +1,7 @@
 defmodule FinTex.Segment.HIRMG do
   @moduledoc false
 
-  alias FinTex.Parser.Lexer
+  alias FinTex.Helper.Conversion
 
   defstruct [segment: nil]
 
@@ -18,7 +18,7 @@ defmodule FinTex.Segment.HIRMG do
 
   defp to_feedback(group) when is_list(group) do
     group
-      |> List.update_at(0, &Lexer.to_digit/1)
+      |> List.update_at(0, &Conversion.to_digit/1)
   end
 end
 

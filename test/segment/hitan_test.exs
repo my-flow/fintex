@@ -1,6 +1,6 @@
 defmodule FinTex.Segment.HITANTest do
-  alias FinTex.Parser.Lexer
   alias FinTex.Parser.Serializer
+  alias FinTex.Parser.Tokenizer
   alias FinTex.Parser.TypeConverter
   alias FinTex.Segment.HITAN
   use ExUnit.Case
@@ -8,7 +8,7 @@ defmodule FinTex.Segment.HITANTest do
 
   test "it should not split the ref" do
     types = "HITAN:5:5:4+4++564SEOsuAlEBAACYTveGhm?+owAQA+SMS wurde versandt."
-    |> Lexer.split
+    |> Tokenizer.split
     |> TypeConverter.string_to_type
 
     assert "[[[\"HITAN\", 5, 5, 4], \"4\", nil, \"564SEOsuAlEBAACYTveGhm+owAQA\", \"SMS wurde versandt.\"]]" == types |> inspect

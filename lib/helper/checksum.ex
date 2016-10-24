@@ -1,8 +1,11 @@
 defmodule FinTex.Helper.Checksum do
   @moduledoc false
 
+  @spec luhn(String.t, 2..36, 2..36 | nil) :: integer
   def luhn(input, base, mod), do: Luhn.checksum(input, base, mod)
 
+
+  @spec xor(String.t) :: String.t
   def xor(input) when is_binary(input) do
     use Bitwise
     import FinTex.Helper.Conversion

@@ -4,6 +4,7 @@ defmodule FinTex.Parser.Serializer do
   alias FinTex.Helper.Command
   alias FinTex.Model.Dialog
   alias FinTex.Parser.Lexer
+  alias FinTex.Parser.Tokenizer
   alias FinTex.Parser.TypeConverter
   alias FinTex.Segment.HNVSD
   alias FinTex.Segment.HNVSK
@@ -97,6 +98,6 @@ defmodule FinTex.Parser.Serializer do
 
 
   defp split(raw) do
-    raw |> Lexer.split
+    raw |> Tokenizer.split
   end
 end

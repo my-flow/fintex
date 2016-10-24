@@ -1,7 +1,7 @@
 defmodule FinTex.Segment.HICSES do
   @moduledoc false
 
-  alias FinTex.Parser.Lexer
+  alias FinTex.Helper.Conversion
 
   defstruct [segment: nil]
 
@@ -10,12 +10,12 @@ defmodule FinTex.Segment.HICSES do
       segment:
         [
           segment |> Enum.at(0),
-          segment |> Enum.at(1) |> Lexer.to_number,
-          segment |> Enum.at(2) |> Lexer.to_number,
+          segment |> Enum.at(1) |> Conversion.to_number,
+          segment |> Enum.at(2) |> Conversion.to_number,
           segment |> Enum.at(3),
           [
-            segment |> Enum.at(4) |> Enum.at(0) |> Lexer.to_number,
-            segment |> Enum.at(4) |> Enum.at(1) |> Lexer.to_number
+            segment |> Enum.at(4) |> Enum.at(0) |> Conversion.to_number,
+            segment |> Enum.at(4) |> Enum.at(1) |> Conversion.to_number
           ]
           | segment |> Enum.drop(5)
         ]

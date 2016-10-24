@@ -1,6 +1,7 @@
 defmodule FinTex.Helper.Amount do
   @moduledoc false
 
+  @spec parse(String.t, -1 | 1) :: Decimal.t
   def parse(string, sign) when is_binary(string) and (sign == -1 or sign == 1) do
     string
     |> parse
@@ -8,6 +9,7 @@ defmodule FinTex.Helper.Amount do
   end
 
 
+  @spec parse(String.t) :: Decimal.t
   def parse(string) when is_binary(string) do
     string
     |> String.replace(",", ".")

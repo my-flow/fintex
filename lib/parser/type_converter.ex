@@ -1,18 +1,18 @@
 defmodule FinTex.Parser.TypeConverter do
   @moduledoc false
 
-  alias FinTex.Parser.Lexer
+  alias FinTex.Helper.Conversion
 
 
   def string_to_type(segments) do
     segments
     |> Stream.map(fn
       [[name, pos, v, nil | t1] | t2] ->
-        [[name, Lexer.to_number(pos), Lexer.to_number(v) | t1] | t2]
+        [[name, Conversion.to_number(pos), Conversion.to_number(v) | t1] | t2]
       [[name, pos, v, ref | t1] | t2] ->
-        [[name, Lexer.to_number(pos), Lexer.to_number(v), Lexer.to_number(ref) | t1] | t2]
+        [[name, Conversion.to_number(pos), Conversion.to_number(v), Conversion.to_number(ref) | t1] | t2]
       [[name, pos, v | t1] | t2] ->
-        [[name, Lexer.to_number(pos), Lexer.to_number(v) | t1] | t2]
+        [[name, Conversion.to_number(pos), Conversion.to_number(v) | t1] | t2]
     end)
     |> Enum.map(fn s -> handle(s, :new) end)
   end

@@ -49,7 +49,7 @@ defmodule FinTex.Tan.DataElement do
     len = m |> render_data |> String.length |> div(2)
 
     cond do
-      encoding(m) == :bcd -> to_hex(len)
+      encoding(m) == :bcd -> to_hex(len, 2)
       version == :hhd14   -> to_hex(len + (1 <<< @bit_encoding), 2)
       true                -> "1" <> to_hex(len, 1)
     end

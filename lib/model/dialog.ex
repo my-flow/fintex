@@ -2,9 +2,28 @@ defmodule FinTex.Model.Dialog do
   @moduledoc false
 
   alias FinTex.Config.Identifier
+  alias FinTex.Model.Bank
 
   @anonymous_login "9999999999"
   @max_sec_ref 99_999_999
+
+  @type t :: %__MODULE__{
+    bank: Bank.t,
+    pin: binary,
+    country_code: binary,
+    user_agent_name: binary,
+    user_agent_version: binary,
+    login: binary,
+    client_id: binary,
+    dialog_id: non_neg_integer,
+    message_no: pos_integer,
+    sec_ref: non_neg_integer,
+    client_system_id: binary,
+    tan_scheme_sec_func: binary,
+    bpd: map,
+    pintan: map,
+    supported_tan_schemes: list
+  }
 
   defstruct [
     :bank,

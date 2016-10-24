@@ -1,8 +1,8 @@
 defmodule FinTex.Segment.HNHBK do
   @moduledoc false
 
+  alias FinTex.Helper.Conversion
   alias FinTex.Model.Dialog
-  alias FinTex.Parser.Lexer
 
   defstruct [segment: nil]
 
@@ -30,10 +30,10 @@ defmodule FinTex.Segment.HNHBK do
     %__MODULE__{
       segment:
         segment
-        |> List.update_at(1, &Lexer.to_digit/1)
-        |> List.update_at(2, &Lexer.to_number/1)
-        |> List.update_at(3, &Lexer.to_id/1)
-        |> List.update_at(4, &Lexer.to_number/1)
+        |> List.update_at(1, &Conversion.to_digit/1)
+        |> List.update_at(2, &Conversion.to_number/1)
+        |> List.update_at(3, &Conversion.to_id/1)
+        |> List.update_at(4, &Conversion.to_number/1)
         |> List.update_at(5, &to_reference_message/1)
       }
   end
@@ -41,8 +41,8 @@ defmodule FinTex.Segment.HNHBK do
 
   defp to_reference_message(group) when is_list(group) do
     group
-    |> List.update_at(0, &Lexer.to_id/1)
-    |> List.update_at(1, &Lexer.to_number/1)
+    |> List.update_at(0, &Conversion.to_id/1)
+    |> List.update_at(1, &Conversion.to_number/1)
   end
 
 end
