@@ -61,8 +61,9 @@ defmodule FinTex.Service.Accounts do
     |> Enum.at(0)
     |> Enum.into(MapSet.new)
 
-    supported_tan_schemes = pintan
-    |> Map.get("HKTAN")
+    supported_tan_schemes = pintan |> Map.get("HKTAN") || bpd |> Map.get("HKTAN" |> control_structure_to_bpd)
+
+    supported_tan_schemes = supported_tan_schemes
     |> Stream.flat_map(&HITANS.to_tan_schemes(&1))
     |> Stream.filter(fn %TANScheme{sec_func: sec_func} -> tan_scheme_sec_funcs |> MapSet.member?(sec_func) end)
     |> Enum.uniq_by(fn %TANScheme{sec_func: sec_func} -> sec_func end)

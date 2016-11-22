@@ -16,7 +16,7 @@ defmodule FinTex.Segment.HIPINS do
           segment |> Enum.at(4) |> Enum.at(2),
           segment |> Enum.at(4) |> Enum.at(3),
           segment |> Enum.at(4) |> Enum.at(4),
-          segment |> Enum.at(4) |> Enum.drop(5) |> Stream.chunk(2) |> Stream.map(fn [k, v] -> {k, v} end)
+          segment |> Enum.at(4) |> Enum.drop(5) |> Stream.chunk(2) |> Enum.map(fn [k, v] -> {k, v} end)
         ]
       ]
     }

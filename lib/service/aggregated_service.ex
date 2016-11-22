@@ -3,7 +3,6 @@ defmodule FinTex.Service.AggregatedService do
 
   alias FinTex.Service.AbstractService
   alias FinTex.Service.AccountBalance
-  alias FinTex.Service.AccountInfo
   alias FinTex.Service.InternalPaymentParameters
   alias FinTex.Service.RecurringPaymentParameters
   alias FinTex.Service.ScheduledPaymentParameters
@@ -13,7 +12,6 @@ defmodule FinTex.Service.AggregatedService do
   use AbstractService
 
   @services [
-    AccountInfo,
     InternalPaymentParameters,
     SEPAPaymentParameters,
     RecurringPaymentParameters,

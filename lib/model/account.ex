@@ -10,8 +10,6 @@ defmodule FinTex.Model.Account do
     * `bic`                     - BIC
     * `name`                    - Account name
     * `owner`                   - Name of the account holder
-    * `type`                    - Account type. Possible values are `:giro_account`, `:savings_account`,
-                                  `:credit_card` or `:loan_account`, `:cash_book`, `:depot` or `:unknown`.
     * `balance`                 - Account balance
     * `supported_payments`      - List of payment types with payment parameters
     * `supported_transactions`  - List of transaction names
@@ -24,7 +22,6 @@ defmodule FinTex.Model.Account do
   alias FinTex.User.FinAccount
 
   @type t :: %__MODULE__{
-    type: atom,
     account_number: String.t,
     subaccount_id: String.t,
     blz: String.t,
@@ -51,7 +48,6 @@ defmodule FinTex.Model.Account do
     :bic,
     :name,
     :owner,
-    type: :unknown,
     balance: nil,
     supported_payments: Map.new,
     supported_tan_schemes: [],
