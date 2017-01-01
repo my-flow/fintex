@@ -109,6 +109,6 @@ For exact information please refer to the [German version of the specification](
 
 # Copyright & License
 
-Copyright (c) 2015-2016 [Florian J. Breunig](http://www.my-flow.com)
+Copyright (c) 2015-2017 [Florian J. Breunig](http://www.my-flow.com)
 
 Licensed under MIT, see LICENSE file.
