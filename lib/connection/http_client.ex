@@ -34,16 +34,17 @@ defmodule FinTex.Connection.HTTPClient do
       _ ->
         %URI{host: host} = URI.parse(url)
         hostname = to_charlist(host)
-        {verify_fun, initial_user_state} = options[:ssl_options][:verify_fun]
+        {{module, function, arity}, initial_user_state} = options[:ssl_options][:verify_fun]
+        verify_fun = :erlang.make_fun(module, function, arity)
         Keyword.merge(
+          options[:ssl_options],
           [
             verify_fun: {
               verify_fun,
               List.keyreplace(initial_user_state, :check_hostname, 0, {:check_hostname, hostname})
             },
             server_name_indication: hostname
-          ],
-          options[:ssl_options]
+          ]
         )
     end
 
