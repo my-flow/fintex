@@ -22,7 +22,7 @@ config :fintex, :http_options,
 #   [
 #     verify: :verify_peer,
 #     cacertfile: Path.join(["/", "etc", "ssl", "certs", "ca-certificates.crt"]) |> to_char_list,
-#     verify_fun: {&:ssl_verify_hostname.verify_fun/3, []},
+#     verify_fun: {{:ssl_verify_hostname, :verify_fun, 3}, []},
 #     depth: 99
 #   ]
 
